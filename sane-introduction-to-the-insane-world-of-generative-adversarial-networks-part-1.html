@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+      <meta charset="utf-8">
+  <meta http-equiv="Content-Type" content="text/html" charset="UTF-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+
+
+  <title>Sane Introduction to the Insane World of Generative Adversarial Networks - Part 1</title>
+
+
+  <meta name="HandheldFriendly" content="True" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="referrer" content="origin" />
+  <meta name="generator" content="Pelican" />
+  <link href="mhnazeri.github.io" rel="canonical" />
+
+  <!-- Feed -->
+
+  <link href="mhnazeri.github.io/theme/css/style.css" type="text/css" rel="stylesheet" />
+
+  <!-- Code highlight color scheme -->
+      <link href="mhnazeri.github.io/theme/css/code_blocks/github.css" rel="stylesheet">
+
+
+  <!-- Custom fonts -->
+  <link href='https://fonts.googleapis.com/css?family=Montserrat:400,300' rel='stylesheet' type='text/css' />
+  <link href="https://fonts.googleapis.com/css?family=Lato" rel="stylesheet" type="text/css" />
+
+  <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+  <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+  <!--[if lt IE 9]>
+    <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+    <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+  <![endif]-->
+
+
+    <link href="mhnazeri.github.io/sane-introduction-to-the-insane-world-of-generative-adversarial-networks-part-1.html" rel="canonical" />
+
+        <meta name="description" content="GANs are consists of two neural network (or any differentiable model) that are playing a minimax game in order to learn train data distribution.">
+
+        <meta name="author" content="M.H. Nazeri">
+
+        <meta name="tags" content="deep_learning">
+        <meta name="tags" content="gans">
+
+        <meta property="og:locale" content="" />
+    <meta property="og:site_name" content="My Blog" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="My Blog" />
+    <meta property="og:description" content="View the blog." />
+    <meta property="og:url" content="mhnazeri.github.io" />
+      <meta property="og:image" content="mhnazeri.github.io/static/cover.jpg" />
+
+  <meta property="og:type" content="article">
+            <meta property="article:author" content="mhnazeri.github.io/author/mh-nazeri.html">
+  <meta property="og:url" content="mhnazeri.github.io/sane-introduction-to-the-insane-world-of-generative-adversarial-networks-part-1.html">
+  <meta property="og:title" content="Sane Introduction to the Insane World of Generative Adversarial Networks - Part 1">
+  <meta property="article:published_time" content="2019-01-17 00:00:00+03:30">
+            <meta property="og:description" content="GANs are consists of two neural network (or any differentiable model) that are playing a minimax game in order to learn train data distribution.">
+
+            <meta property="og:image" content="mhnazeri.github.io/static/cover.jpg">
+</head>
+<!-- TODO : Body class -->
+<body class="home-template">
+
+<nav id="menu">
+  <a class="close-button">Close</a>
+  <div class="nav-wrapper">
+    <p class="nav-label">Menu</p>
+    <ul>
+
+
+    </ul>
+  </div>
+</nav>
+    <!-- Progressbar -->
+    <div class="progress-container">
+        <span class="progress-bar"></span>
+    </div>
+
+    <!-- Page Header -->
+    <!-- Set your background image for this header on the line below. -->
+    <header id="post-header" class="has-cover">
+      <div class="inner">
+        <nav id="navigation">
+            <span id="home-button" class="nav-button">
+                <a class="home-button" href="mhnazeri.github.io" title="Home"><i class="ic ic-arrow-left"></i> Home</a>
+            </span>
+          <span id="menu-button" class="nav-button">
+            <a class="menu-button"><i class="ic ic-menu"></i> Menu</a>
+          </span>
+        </nav>
+        <h1 class="post-title">Sane Introduction to the Insane World of Generative Adversarial Networks - Part 1</h1>
+        <!-- TODO : Proper class for headline -->
+        <span class="post-meta">
+                <a href="mhnazeri.github.io/author/mh-nazeri.html">M.h. nazeri</a>
+            | <time datetime="Thu 17 January 2019">Thu 17 January 2019</time>
+        </span>
+        <!-- TODO : Modified check -->
+        
+            <div class="post-cover cover" style="background-image: url('static/cover.jpg')">            
+        
+      </div>
+    </header>    
+
+  <section id="wrapper">
+    <a class="hidden-close"></a>
+
+    <!-- Post content -->
+    <main class="content" role="main">
+        <article class="post">
+        <div class="inner">
+            <section class="post-content">
+                <p>In this article I'm going to explain the idea behind GANs and how they work but I'm not going in to any details about GANs. I divided this tutorial about GANs in to separate
+parts in order not to bore the readers. In upcomming articles I'm going to explain GANs in detail and discuss recent ideas in GANs and try to cover all necessary details about GANs in these series.</p>
+<p>In supervised learning, our data is in form of <span class="math">\((x, y)\)</span> pair, <span class="math">\(x\)</span> is our vector of features and <span class="math">\(y\)</span> is the corresponding label. But in todays world, every minute a humongous amount
+of data being generated by users of social media. These data is not in the form of <span class="math">\((x, y)\)</span>, they are simple <span class="math">\(x\)</span> (<span class="math">\(x\)</span> is a vector of features) with no label tagged to them. This
+make using these data difficult. So we need algorithms that can learn new information from this data without any guidance from us. Here the Generative Adversarial Networks, the goal
+of this series come in to play.</p>
+<blockquote>
+<p>"The most interesting idea in the last 10 years, in machine learning." (Yann Lecun)</p>
+</blockquote>
+<p>This saying from <a href="http://yann.lecun.com/">Yann Lecun</a> shows the beauty behind GANs and their impact on future research.
+Before going in to the details of GANs, first we need some foundation. I'm starting simple and as the series grows the content of each article will get more complicated, but I'm
+hoping with knowledge that we obtain in each article, we can understand future artciles better.</p>
+<h2>What is a random variable?</h2>
+<p>In probability theory a random variable (RV) is an outcome of any random event such as tossing a coin, in this example a random variable is either head or tail. RV can be an outcome of any distribution, now you may ask what is a distribution? A probability distribution is a mathematical function that can produce probability of occurence of any different outcome. In simple words, a distribution is a description of a random phenomenon in terms of probabilities. There are many different probability distributions but to name a few, we have <a href="https://en.wikipedia.org/wiki/Normal_distribution">Normal Distribution or Gaussian Distribution</a>, <a href="https://en.wikipedia.org/wiki/Uniform_distribution_(continuous)">Uniform Distribution</a> and etc. . Drawing a real number from a distribution is called sampling, which is the probability of occuring a random variable.</p>
+<h2>How images stored in computer?</h2>
+<p>A picture is collection of numbers called matrix, if we use RGB color space, we have three matrices for an image, each representing the Red, Blue, Green of the image, their combination form the final image. So, each image stored as three matrices in computer (for simplicity).</p>
+<p>Now imagine you have a folder full of pictures of cats. Each number from the matrix of each image is drawn from a distribution, as long as they are cats, their distribution is the same, if we draw some numbers from this hypothetical distribution, we can generate a picture of a cat, but we don't have access to this distribution, it is very complex distribution in a very high dimensional space. The core problem in generative models is to learn this underlying structure of data (learning data distribution), if we can learn this distribution, by sampling random variables from this distribution we can generate new data like real ones. This is the goal in Generative Models and specially Generative Adversarial Networks.</p>
+<h2>Generative Adversarial Networks in Simple Words</h2>
+<p>There were some models before which tried to learn the underlying hidden structure of data, some succeeded but some failed to generalize. Generative adversarial networks or simply GANs are often regarded as producing the best samples. We can summarize GANs in a paragraph:</p>
+<p>GANs are unsupervised model to learn the underlying distribtion of training data in order to generate new samples. Today these models have many applications in realistic artwork generation, super resolution, colorization, forcasting in time series, simulation, planning and so on. These models instead of directly learning the distribution of data, they try to learn this distribution in an implicit manner, by running a minimax game between two models. One model try to generate fake data and the other model discriminate these data from the real data, the former model try to maximize the error of the latter and the latter try to minimize its error.</p>
+<script type="text/javascript">if (!document.getElementById('mathjaxscript_pelican_#%@#$@#')) {
+    var align = "center",
+        indent = "0em",
+        linebreak = "false";
+
+    if (false) {
+        align = (screen.width < 768) ? "left" : align;
+        indent = (screen.width < 768) ? "0em" : indent;
+        linebreak = (screen.width < 768) ? 'true' : linebreak;
+    }
+
+    var mathjaxscript = document.createElement('script');
+    mathjaxscript.id = 'mathjaxscript_pelican_#%@#$@#';
+    mathjaxscript.type = 'text/javascript';
+    mathjaxscript.src = 'https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.3/latest.js?config=TeX-AMS-MML_HTMLorMML';
+    mathjaxscript[(window.opera ? "innerHTML" : "text")] =
+        "MathJax.Hub.Config({" +
+        "    config: ['MMLorHTML.js']," +
+        "    TeX: { extensions: ['AMSmath.js','AMSsymbols.js','noErrors.js','noUndefined.js'], equationNumbers: { autoNumber: 'AMS' } }," +
+        "    jax: ['input/TeX','input/MathML','output/HTML-CSS']," +
+        "    extensions: ['tex2jax.js','mml2jax.js','MathMenu.js','MathZoom.js']," +
+        "    displayAlign: '"+ align +"'," +
+        "    displayIndent: '"+ indent +"'," +
+        "    showMathMenu: true," +
+        "    messageStyle: 'normal'," +
+        "    tex2jax: { " +
+        "        inlineMath: [ ['\\\\(','\\\\)'] ], " +
+        "        displayMath: [ ['$$','$$'] ]," +
+        "        processEscapes: true," +
+        "        preview: 'TeX'," +
+        "    }, " +
+        "    'HTML-CSS': { " +
+        "        styles: { '.MathJax_Display, .MathJax .mo, .MathJax .mi, .MathJax .mn': {color: 'inherit ! important'} }," +
+        "        linebreaks: { automatic: "+ linebreak +", width: '90% container' }," +
+        "    }, " +
+        "}); " +
+        "if ('default' !== 'default') {" +
+            "MathJax.Hub.Register.StartupHook('HTML-CSS Jax Ready',function () {" +
+                "var VARIANT = MathJax.OutputJax['HTML-CSS'].FONTDATA.VARIANT;" +
+                "VARIANT['normal'].fonts.unshift('MathJax_default');" +
+                "VARIANT['bold'].fonts.unshift('MathJax_default-bold');" +
+                "VARIANT['italic'].fonts.unshift('MathJax_default-italic');" +
+                "VARIANT['-tex-mathit'].fonts.unshift('MathJax_default-italic');" +
+            "});" +
+            "MathJax.Hub.Register.StartupHook('SVG Jax Ready',function () {" +
+                "var VARIANT = MathJax.OutputJax.SVG.FONTDATA.VARIANT;" +
+                "VARIANT['normal'].fonts.unshift('MathJax_default');" +
+                "VARIANT['bold'].fonts.unshift('MathJax_default-bold');" +
+                "VARIANT['italic'].fonts.unshift('MathJax_default-italic');" +
+                "VARIANT['-tex-mathit'].fonts.unshift('MathJax_default-italic');" +
+            "});" +
+        "}";
+    (document.body || document.getElementsByTagName('head')[0]).appendChild(mathjaxscript);
+}
+</script>
+            </section>
+
+            <section class="post-info">
+                <div class="post-share">
+                    <a class="twitter" href="https://twitter.com/share?text=Sane Introduction to the Insane World of Generative Adversarial Networks - Part 1&amp;url=mhnazeri.github.io/sane-introduction-to-the-insane-world-of-generative-adversarial-networks-part-1.html" onclick="window.open(this.href, 'twitter-share', 'width=550,height=235');return false;">
+                    <i class="ic ic-twitter"></i><span class="hidden">Twitter</span>
+                    </a>
+                    <a class="facebook" href="https://www.facebook.com/sharer/sharer.php?u=mhnazeri.github.io/sane-introduction-to-the-insane-world-of-generative-adversarial-networks-part-1.html" onclick="window.open(this.href, 'facebook-share','width=580,height=296');return false;">
+                    <i class="ic ic-facebook"></i><span class="hidden">Facebook</span>
+                    </a>
+                    <a class="googleplus" href="https://plus.google.com/share?url=mhnazeri.github.io/sane-introduction-to-the-insane-world-of-generative-adversarial-networks-part-1.html" onclick="window.open(this.href, 'google-plus-share', 'width=490,height=530');return false;">
+                    <i class="ic ic-googleplus"></i><span class="hidden">Google+</span>
+                    </a>
+                    <div class="clear"></div>
+                </div>
+
+                <aside class="post-tags">
+<a href="mhnazeri.github.io/tag/deep_learning.html">deep_learning</a><a href="mhnazeri.github.io/tag/gans.html">gans</a>                </aside>
+
+                <div class="clear"></div>
+
+ 
+
+                </section>
+
+
+                <aside class="post-nav">
+                    <div class="clear"></div>
+                </aside>
+
+            </div>
+        </article>
+    </main>
+      <!-- TODO : Body class -->
+    <div id="body-class" style="display: none;" class=""></div>
+  
+    <footer id="footer">
+      <div class="inner">
+        <section class="credits">
+          <span class="credits-theme">Theme <a href="https://github.com/arulrajnet/attila" rel="nofollow">Attila</a></span>
+          <span class="credits-software">Published with <a href="https://github.com/getpelican/pelican" rel="nofollow">Pelican</a></span>
+        </section>
+      </div>
+    </footer>
+  </section>
+
+  <script type="text/javascript" src="mhnazeri.github.io/theme/js/script.js"></script>
+  
+</body>
+</html>
