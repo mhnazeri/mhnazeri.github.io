@@ -14,14 +14,14 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta name="referrer" content="origin" />
   <meta name="generator" content="Pelican" />
-  <link href=".." rel="canonical" />
+  <link href="" rel="canonical" />
 
   <!-- Feed -->
 
-  <link href="../theme/css/style.css" type="text/css" rel="stylesheet" />
+  <link href="/theme/css/style.css" type="text/css" rel="stylesheet" />
 
   <!-- Code highlight color scheme -->
-      <link href="../theme/css/code_blocks/github.css" rel="stylesheet">
+      <link href="/theme/css/code_blocks/github.css" rel="stylesheet">
 
 
   <!-- Custom fonts -->
@@ -36,12 +36,12 @@
   <![endif]-->
 
       <meta property="og:locale" content="" />
-    <meta property="og:site_name" content="Musings of a Computer Scientist" />
+    <meta property="og:site_name" content="Nazeri's Blog" />
     <meta property="og:type" content="website" />
-    <meta property="og:title" content="Musings of a Computer Scientist" />
-    <meta property="og:description" content="View the blog." />
-    <meta property="og:url" content=".." />
-      <meta property="og:image" content="../static/images/cover.jpg" />
+    <meta property="og:title" content="Nazeri's Blog" />
+    <meta property="og:description" content="Musings of a Computer Scientist" />
+    <meta property="og:url" content="" />
+      <meta name="og:image" content="/theme/images/post-bg.jpg">
 </head>
 <!-- TODO : Body class -->
 <body class="home-template">
@@ -62,14 +62,14 @@
       <div class="inner">
         <nav id="navigation">
             <span id="home-button" class="nav-button">
-                <a class="home-button" href=".." title="Home"><i class="ic ic-arrow-left"></i> Home</a>
+                <a class="home-button" href="" title="Home"><i class="ic ic-arrow-left"></i> Home</a>
             </span>
           <span id="menu-button" class="nav-button">
             <a class="menu-button"><i class="ic ic-menu"></i> Menu</a>
           </span>
         </nav>
         <h1 class="post-title">About</h1>      
-            <div class="post-cover cover" style="background-image: url('static/images/cover.jpg')">            
+            <div class="post-cover cover" style="background-image: url('/theme/images/post-bg.jpg')">
         
       </div>
     </header>    
@@ -85,9 +85,9 @@
 <p>I got his bachelor degree in Computer Science from <a href="www.uk.ac.ir/en/home">Shahid Bahonar University of Kerman</a> in 2015. 
 I'm currently M.S. student of Computer Science at <a href="www.iasbs.ac.ir">Institute for Advanced Studies for Basic Sciences (IASBS)</a>.
 My primary research interests lies in Deep Generative Models, Deep Reinforcement Learning and their impact on our lives.
-Currently, I'm working on Generative Adversarial Networks and their application in Trajectory Prediction for Autonomous Vehicles as his M.S. thesis.</p>
+Currently, I'm working on Generative Adversarial Networks and their application in Trajectory Prediction for Autonomous Vehicles as my M.S. thesis.</p>
 <h2>Contact Information</h2>
-<p>Yoy can contact me via <a href="https://www.linkedin.com/in/mohammad-nazeri-49404168/">linkedin</a>, <a href="https://github.com/mhnazeri">gitgub</a> or <a href="m.nazeri@iasbs.ac.ir">email</a>.</p>
+<p>Yoy can contact me via <a href="https://www.linkedin.com/in/mohammad-nazeri-49404168/">linkedin</a>, <a href="https://github.com/mhnazeri">github</a> or email me via: m.nazeri_at_iasbs.ac.ir.</p>
           </section>
       </div>
       </article>
@@ -105,7 +105,16 @@ Currently, I'm working on Generative Adversarial Networks and their application 
     </footer>
   </section>
 
-  <script type="text/javascript" src="../theme/js/script.js"></script>
+  <script type="text/javascript" src="/theme/js/script.js"></script>
   
+<script type="text/javascript">
+    var disqus_shortname = 'mhnazeri';
+    (function () {
+        var s = document.createElement('script'); s.async = true;
+        s.type = 'text/javascript';
+        s.src = '//' + disqus_shortname + '.disqus.com/count.js';
+        (document.getElementsByTagName('HEAD')[0] || document.getElementsByTagName('BODY')[0]).appendChild(s);
+    }());
+</script>
 </body>
 </html>

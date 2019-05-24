@@ -4,98 +4,98 @@ xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9 http://www.sitem
 xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 
 <url>
-<loc>/</loc>
-<lastmod>2019-05-24T04:40:10-00:00</lastmod>
+<loc>https://mhnazeri.github.io/</loc>
+<lastmod>2019-05-24T05:50:28-00:00</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
 
 <url>
-<loc>/archives.html</loc>
-<lastmod>2019-05-24T04:40:10-00:00</lastmod>
+<loc>https://mhnazeri.github.io/archives.html</loc>
+<lastmod>2019-05-24T05:50:28-00:00</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
 
 <url>
-<loc>/tags.html</loc>
-<lastmod>2019-05-24T04:40:10-00:00</lastmod>
+<loc>https://mhnazeri.github.io/tags.html</loc>
+<lastmod>2019-05-24T05:50:28-00:00</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
 
 <url>
-<loc>/categories.html</loc>
-<lastmod>2019-05-24T04:40:10-00:00</lastmod>
+<loc>https://mhnazeri.github.io/categories.html</loc>
+<lastmod>2019-05-24T05:50:28-00:00</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
 
 <url>
-<loc>/pages/about/</loc>
+<loc>https://mhnazeri.github.io/pages/about/</loc>
 <lastmod>2018-02-14T00:00:00+03:30</lastmod>
 <changefreq>monthly</changefreq>
 <priority>0.5</priority>
 </url>
 
 <url>
-<loc>/2019/05/what-does-trajectory-prediction-mean-in-self-driving-vehicles.html</loc>
+<loc>https://mhnazeri.github.io/2019/05/what-does-trajectory-prediction-mean-in-self-driving-vehicles.html</loc>
 <lastmod>2019-05-23T00:00:00+04:30</lastmod>
 <changefreq>monthly</changefreq>
 <priority>0.5</priority>
 </url>
 
 <url>
-<loc>/2019/01/sane-introduction-to-the-insane-world-of-generative-adversarial-networks-part-1.html</loc>
+<loc>https://mhnazeri.github.io/2019/01/sane-introduction-to-the-insane-world-of-generative-adversarial-networks-part-1.html</loc>
 <lastmod>2019-01-17T00:00:00+03:30</lastmod>
 <changefreq>monthly</changefreq>
 <priority>0.5</priority>
 </url>
 
 <url>
-<loc>/category/gans</loc>
+<loc>https://mhnazeri.github.io/category/gans</loc>
 <lastmod>2019-01-17T00:00:00+03:26</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
 
 <url>
-<loc>/category/trajectory</loc>
+<loc>https://mhnazeri.github.io/category/trajectory</loc>
 <lastmod>2019-05-23T00:00:00+03:26</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
 
 <url>
-<loc>/tag/self_driving_vehicles</loc>
+<loc>https://mhnazeri.github.io/tag/self_driving_vehicles</loc>
 <lastmod>2019-05-23T00:00:00+03:26</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
 
 <url>
-<loc>/tag/trajectory</loc>
+<loc>https://mhnazeri.github.io/tag/trajectory</loc>
 <lastmod>2019-05-23T00:00:00+03:26</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
 
 <url>
-<loc>/tag/deep_learning</loc>
+<loc>https://mhnazeri.github.io/tag/deep_learning</loc>
 <lastmod>2019-01-17T00:00:00+03:26</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
 
 <url>
-<loc>/tag/gans</loc>
+<loc>https://mhnazeri.github.io/tag/gans</loc>
 <lastmod>2019-01-17T00:00:00+03:26</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
 
 <url>
-<loc>/author/nazeri</loc>
+<loc>https://mhnazeri.github.io/author/nazeri</loc>
 <lastmod>2019-05-23T00:00:00+03:26</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
