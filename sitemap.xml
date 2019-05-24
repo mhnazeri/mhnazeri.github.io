@@ -5,28 +5,28 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 
 <url>
 <loc>https://mhnazeri.github.io/</loc>
-<lastmod>2019-05-24T05:50:28-00:00</lastmod>
+<lastmod>2019-05-24T16:06:43-00:00</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
 
 <url>
 <loc>https://mhnazeri.github.io/archives.html</loc>
-<lastmod>2019-05-24T05:50:28-00:00</lastmod>
+<lastmod>2019-05-24T16:06:43-00:00</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
 
 <url>
 <loc>https://mhnazeri.github.io/tags.html</loc>
-<lastmod>2019-05-24T05:50:28-00:00</lastmod>
+<lastmod>2019-05-24T16:06:43-00:00</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
 
 <url>
 <loc>https://mhnazeri.github.io/categories.html</loc>
-<lastmod>2019-05-24T05:50:28-00:00</lastmod>
+<lastmod>2019-05-24T16:06:43-00:00</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
@@ -39,14 +39,14 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 </url>
 
 <url>
-<loc>https://mhnazeri.github.io/2019/05/what-does-trajectory-prediction-mean-in-self-driving-vehicles.html</loc>
+<loc>https://mhnazeri.github.io/what-does-trajectory-prediction-mean-in-self-driving-vehicles.html</loc>
 <lastmod>2019-05-23T00:00:00+04:30</lastmod>
 <changefreq>monthly</changefreq>
 <priority>0.5</priority>
 </url>
 
 <url>
-<loc>https://mhnazeri.github.io/2019/01/sane-introduction-to-the-insane-world-of-generative-adversarial-networks-part-1.html</loc>
+<loc>https://mhnazeri.github.io/sane-introduction-to-the-insane-world-of-generative-adversarial-networks-part-1.html</loc>
 <lastmod>2019-01-17T00:00:00+03:30</lastmod>
 <changefreq>monthly</changefreq>
 <priority>0.5</priority>
