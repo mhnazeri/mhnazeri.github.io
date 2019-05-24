@@ -142,12 +142,10 @@ as autonomous vehicles or driverless vehicles) were introduced. This new tech-
 nology will spare thousands of lives yearly, in addition, hundreds of thousands of
 injuries would be avoided. In self-driving vehicles, vehicles uses different kinds
 of sensors like cameras, ultrasonic, lidars and ... in order to take control of
-vehicle. These vehicles won’t get drowsy, drunk, distracted, because, they are
-not human.</p>
+vehicle. These vehicles won’t get drowsy, drunk, distracted and ... .</p>
 <h1>History</h1>
-<p>In order to advance the development of self-driving vehicles, DARPA 2 held 3
-competitions. The first one called DARPA Grand Challenge held in 2004, re-
-quired vehicles to navigate through a course of 142 miles long throughout Mojave
+<p>In order to advance the development of self-driving vehicles, DARPA held 3
+competitions. The first one called DARPA Grand Challenge held in 2004, required vehicles to navigate through a course of 142 miles long throughout Mojave
 desert within 10 hour time limit. But, all cars failed during the first few miles.
 Next year, in 2005, DARPA again held the competition. This time it required
 vehicles to navigate 132 miles long route through flats, dry lakes bed and moun-
@@ -164,8 +162,8 @@ a 6 hour time limit. The vehicles had to obey the California traffic rules. This
 time. Carnegie Mellon University’s vehicle, ”Boss” claimed the first place, the
 Stanford University’s vehicle ”Junior” finished in second and Virginia Tech’s
 vehicle ”Odin” came in third place.
-In order to measure the level of autonomy of self-driving vehicles SAE Inter-
-national 3 have defined 5 levels of automation based on the human intervention
+In order to measure the level of autonomy of self-driving vehicles SAE International (Society
+of Automotive Engineers) has defined 5 levels of automation based on the human intervention
 and attentiveness. Each level describes the extend in which the vehicle takes
 over the task and responsibilities from the driver and how the vehicle and driver
 would be interact with each other. 
@@ -177,10 +175,8 @@ would be interact with each other.
 trols the car without any support from a driver assistance system.”</li>
 <li>Level 1 - Driver Assistance:
 Vehicle is controlled by the driver, but
-some driving assist features may be included in the vehicle design. Ex-
-amples of this include the Active Cruise Control with Stop&amp;Go function,
-which independently adjust the distance to the car in front of you. Colli-
-sion and Pedestrian Warning with City Brake Activation which prevents
+some driving assist features may be included in the vehicle design. Examples of this include the Active Cruise Control with Stop&amp;Go function,
+which independently adjust the distance to the car in front of you. Collision and Pedestrian Warning with City Brake Activation which prevents
 collision via automatic braking.</li>
 <li>Level 2 - Partial Automation:
 Vehicle has combined automated
@@ -201,12 +197,10 @@ can do majority of driving tasks independently.</li>
 The vehicle is capable of performing all
 driving functions under all conditions. In level 5 the true autonomous
 driving becomes a reality. Drivers don’t need to be fit to drive and don’t
-even need to have license. There isn’t even a cockpit therefore, every per-
-son in the vehicle becomes a passenger, opening new mobility possibilities
+even need to have license. There isn’t even a cockpit therefore, every person in the vehicle becomes a passenger, opening new mobility possibilities
 for disabled people.</li>
 </ul>
-<p>Level 3, Level 4 and Level 5 are still in the testing phase. The driving assis-
-tance systems in Level 1 are very common now a days and some cars even offer
+<p>Level 3, Level 4 and Level 5 are still in the testing phase. The driving assistance systems in Level 1 are very common now a days and some cars even offer
 driving Level 2 which extends the autonomous driving capabilities to steering,
 lane keeping as well as remote controlled parking.
 There are many challenges to achieve fully autonomous vehicles, one of them
@@ -215,24 +209,17 @@ human motions and behaviors in addition of predicting trajectories of other
 vehicles in the environment in order to prevent collisions.</p>
 <h1>Architecture of Self-Driving Vehicles</h1>
 <p>The typical architecture of self-driving vehicles consists of Perception System
-and Decision Making System, each of them includes different subsystems (see
-Figure 2). In the following section we are going to discuss these systems and
+and Decision Making System, each of them includes different subsystems. In the following section we are going to discuss these systems and their
 subsystems.</p>
 <h2>Perception System</h2>
 <p>The perception system is responsible for estimating the state of the vehicle
-and creating an internal representation of the environment surrounding the vehicle. It creates this representation based on the inputs it receives from sen-
-sors like Light Detection and Ranging (LIDAR), Radio Detection and Rang-
-ing (RADAR), camera, Global Positioning System (GPS), Inertia Measurement
-Unit (IMU), odometer, etc. This systems contains different parts such as Local-
-izer, Mapper, Moving Objects Tracking, Traffic Signalization Detection.
+and creating an internal representation of the environment surrounding the vehicle. It creates this representation based on the inputs it receives from sensors like Light Detection and Ranging (LIDAR), Radio Detection and Ranging (RADAR), camera, Global Positioning System (GPS), Inertia Measurement
+Unit (IMU), odometer, etc. This systems contains different parts such as Localizer, Mapper, Moving Objects Tracking, Traffic Signalization Detection.
 <img alt="Levels of Automation" src="https://mhnazeri.github.io/images/architecture.png"></p>
 <p><em>[Badue et al., 2019]</em></p>
 <p><em>Localization)</em> Localizer is responsible for estimating the current state of the
-car and creating an internal representation of the environment around the ego-
-vehicle.[Badue et al., 2019] <em>Mapper)</em> Is responsible for merging the offline maps
-like Google Maps or OpenStreetMap with internal representation of the en-
-vironment created by the Localizer and creating online map. <em>Moving Objects Tracking)</em> Is responsible for recognizing, tracking and removing of the mov-
-ing objects in the scene.[Badue et al., 2019] <em>Traffic Signalization Detection)</em>
+car and creating an internal representation of the environment around the ego-vehicle.[Badue et al., 2019] <em>Mapper)</em> Is responsible for merging the offline maps
+like Google Maps or OpenStreetMap with internal representation of the environment created by the Localizer and creating online map. <em>Moving Objects Tracking)</em> Is responsible for recognizing, tracking and removing of the moving objects in the scene.[Badue et al., 2019] <em>Traffic Signalization Detection)</em>
 Is responsible for recognition and detection of the traffic signs alongside the
 streets.[Badue et al., 2019]</p>
 <h2>Decision Making System</h2>
@@ -273,8 +260,7 @@ Most authors in this field have been divided the problem in to local and global
 planning. A great amount of navigation techniques have been taken from mo-
 bile robotics and modified to face the challenges of road networks and driving
 rules.[González et al., 2016] These planning techniques have been classified in
-to four groups according to their implementation: graph search, sampling, in-
-terpolating and numerical optimization.[González et al., 2016]</p>
+to four groups according to their implementation: graph search, sampling, interpolating and numerical optimization.[González et al., 2016]</p>
 <p>Avoiding dangerous situation that may happen during the driving is the
 current focus of the field of Motion Planning. To give and example of this
 situation, imagine that you want to enter a highway, a vehicle is driving on the
@@ -289,8 +275,8 @@ trajectories are acceptable. Here acceptable means valid paths (arriving at
 destination without trespassing the traffic laws and avoiding collisions. In this
 work we are going to refer to these paths as acceptable paths or trajectories)
 that the vehicle can take without crashing in to obstacles.</p>
-<p>Ok, in this artcile we learned how autonomous vehicles work and what is motion planning and where does trajectory prediction belong in the autonomous vehicle
-architecture. In upcoming arcticles I'm going to write math oriented arcticles to tackle this problem.</p>
+<p>In this artcile we learned how autonomous vehicles work and what is motion planning and where does trajectory prediction belong in the anatomy of autonomous vehicles
+architecture. In upcoming arcticles I'm going to write about trajectoy prediction.</p>
 <h3>Sources</h3>
 <ul>
 <li>
