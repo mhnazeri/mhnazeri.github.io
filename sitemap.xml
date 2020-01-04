@@ -5,21 +5,21 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 
 <url>
 <loc>https://mhnazeri.now.sh/</loc>
-<lastmod>2020-01-04T18:58:52-00:00</lastmod>
+<lastmod>2020-01-04T20:45:19-00:00</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
 
 <url>
 <loc>https://mhnazeri.now.sh/archives.html</loc>
-<lastmod>2020-01-04T18:58:52-00:00</lastmod>
+<lastmod>2020-01-04T20:45:19-00:00</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
 
 <url>
 <loc>https://mhnazeri.now.sh/tags.html</loc>
-<lastmod>2020-01-04T18:58:52-00:00</lastmod>
+<lastmod>2020-01-04T20:45:19-00:00</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
@@ -32,7 +32,7 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 </url>
 
 <url>
-<loc>https://mhnazeri.now.sh/what-does-trajectory-prediction-mean-in-self-driving-vehicles.html</loc>
+<loc>https://mhnazeri.now.sh/trajectory-prediction-in-self-driving-vehicles-part-1-introduction.html</loc>
 <lastmod>2019-05-23T00:00:00+04:30</lastmod>
 <changefreq>monthly</changefreq>
 <priority>0.5</priority>

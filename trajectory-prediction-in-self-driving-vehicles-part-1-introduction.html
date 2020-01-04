@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+      <meta charset="utf-8">
+  <meta http-equiv="Content-Type" content="text/html" charset="UTF-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+
+
+  <title>Trajectory Prediction in Self-Driving Vehicles - Part 1: Introduction</title>
+
+
+  <meta name="HandheldFriendly" content="True" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="referrer" content="origin" />
+  <meta name="generator" content="Pelican" />
+  <link href="https://mhnazeri.now.sh" rel="canonical" />
+
+  <!-- Feed -->
+
+  <link href="https://mhnazeri.now.sh/theme/css/style.css" type="text/css" rel="stylesheet" />
+
+  <!-- Code highlight color scheme -->
+      <link href="https://mhnazeri.now.sh/theme/css/code_blocks/github.css" rel="stylesheet">
+
+
+  <!-- Custom fonts -->
+  <link href='https://fonts.googleapis.com/css?family=Montserrat:400,300' rel='stylesheet' type='text/css' />
+  <link href="https://fonts.googleapis.com/css?family=Lato" rel="stylesheet" type="text/css" />
+
+  <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+  <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+  <!--[if lt IE 9]>
+    <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+    <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+  <![endif]-->
+
+
+    <link href="https://mhnazeri.now.sh/trajectory-prediction-in-self-driving-vehicles-part-1-introduction.html" rel="canonical" />
+
+        <meta name="description" content="Avoiding dangerous situation that may happen during the driving is the current focus of the field of Motion Planning. To give an example...">
+
+        <meta name="author" content="Nazeri">
+
+        <meta name="tags" content="self_driving_vehicles">
+        <meta name="tags" content="trajectory">
+
+        <meta property="og:locale" content="" />
+    <meta property="og:site_name" content="Nazeri's Blog" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Nazeri's Blog" />
+    <meta property="og:description" content="Musings of a Computer Scientist" />
+    <meta property="og:url" content="https://mhnazeri.now.sh" />
+      <meta name="og:image" content="https://mhnazeri.now.sh/theme/images/post-bg.jpg">
+      <meta property="article:publisher" content="https://github.com/mhnazeri" />
+
+  <meta property="og:type" content="article">
+            <meta property="article:author" content="https://mhnazeri.now.sh/author/nazeri">
+  <meta property="og:url" content="https://mhnazeri.now.sh/trajectory-prediction-in-self-driving-vehicles-part-1-introduction.html">
+  <meta property="og:title" content="Trajectory Prediction in Self-Driving Vehicles - Part 1: Introduction">
+  <meta property="article:published_time" content="2019-05-23 00:00:00+04:30">
+            <meta property="og:description" content="Avoiding dangerous situation that may happen during the driving is the current focus of the field of Motion Planning. To give an example...">
+
+            <meta property="og:image" content="https://mhnazeri.now.sh/theme/images/post-bg.jpg">
+        <meta name="twitter:card" content="summary_large_image">
+        <meta name="twitter:site" content="@https://www.linkedin.com/in/mohammad-nazeri-49404168/">
+        <meta name="twitter:title" content="Trajectory Prediction in Self-Driving Vehicles - Part 1: Introduction">
+        <meta name="twitter:url" content="https://mhnazeri.now.sh/trajectory-prediction-in-self-driving-vehicles-part-1-introduction.html">
+
+            <meta name="twitter:image:src" content="https://mhnazeri.now.sh/theme/images/post-bg.jpg">
+
+            <meta name="twitter:description" content="Avoiding dangerous situation that may happen during the driving is the current focus of the field of Motion Planning. To give an example...">
+</head>
+<!-- TODO : Body class -->
+<body class="home-template">
+
+<nav id="menu">
+  <a class="close-button">Close</a>
+  <div class="nav-wrapper">
+    <p class="nav-label">Menu</p>
+    <ul>
+          <li><a href="https://mhnazeri.now.sh" role="presentation">Home</a></li>
+          <li><a href="https://github.com/mhnazeri" role="presentation">Github</a></li>
+          <li><a href="https://www.linkedin.com/in/mohammad-nazeri-49404168/" role="presentation">Linkedin</a></li>
+          <li><a href="pages/about.html" role="presentation">About</a></li>
+
+
+    </ul>
+  </div>
+</nav>
+    <!-- Progressbar -->
+    <div class="progress-container">
+        <span class="progress-bar"></span>
+    </div>
+
+    <!-- Page Header -->
+    <!-- Set your background image for this header on the line below. -->
+    <header id="post-header" class="has-cover">
+      <div class="inner">
+        <nav id="navigation">
+            <span id="home-button" class="nav-button">
+                <a class="home-button" href="https://mhnazeri.now.sh" title="Home"><i class="ic ic-arrow-left"></i> Home</a>
+            </span>
+          <span id="menu-button" class="nav-button">
+            <a class="menu-button"><i class="ic ic-menu"></i> Menu</a>
+          </span>
+        </nav>
+        <h1 class="post-title">Trajectory Prediction in Self-Driving Vehicles - Part 1: Introduction</h1>
+        <!-- TODO : Proper class for headline -->
+        <span class="post-meta">
+                <a href="https://mhnazeri.now.sh/author/nazeri">Nazeri</a>
+            | <time datetime="23 May 2019">23 May 2019</time>
+        </span>
+        <!-- TODO : Modified check -->
+        
+            <div class="post-cover cover" style="background-image: url('https://mhnazeri.now.sh/theme/images/post-bg.jpg')">
+        
+      </div>
+    </header>    
+
+  <section id="wrapper">
+    <a class="hidden-close"></a>
+
+    <!-- Post content -->
+    <main class="content" role="main">
+        <article class="post">
+        <div class="inner">
+            <section class="post-content">
+                <p>Last week, I presented a talk about <strong>Trajectory Prediction</strong>, Here is the gist of that talk and corresponding <a href="https://drive.google.com/open?id=1ZdzWG33fL6_muutrgriXhll-z8smsg71">slides</a>.</p>
+<p>Every day we hear people getting killed in car accidents in the news. Drivers
+are too drunk to drive, texting to each other while driving, driving way too fast
+than should be, distracted by other objects in the scene, can’t see signs in the
+night, get drowsy or even road conditions like slippery roads in snowy weather
+can cause accidents. These are just a few examples of reasons behind accidents.
+According to National Highway Traffic Safety Administration (NHTSA) a mere
+2 percent caused by environment, another 2 percent caused by fault in car’s
+engines, 2 percent caused by unknown reasons and a full 94 percent of accidents
+caused by human errors. In 2016, more than 37000 people lost their lives in
+crashes on U.S. highways.
+To eliminate the human error, the concept of self-driving vehicles (also known
+as autonomous vehicles or driverless vehicles) were introduced. This new technology will spare thousands of lives yearly, in addition, hundreds of thousands of injuries would be avoided. In self-driving vehicles, vehicles use different kinds of sensors like cameras, ultrasonic, LIDAR and ... in order to take control of vehicle. These vehicles won’t get drowsy, drunk, distracted and ... .</p>
+<h1>History</h1>
+<p>In order to advance the development of self-driving vehicles, DARPA held 3 competitions. The first one called DARPA Grand Challenge held in 2004, required vehicles to navigate through a course of 142 miles long throughout Mojave desert within 10 hours time limit. But, all cars failed during the first few miles.</p>
+<p>Next year, in 2005, DARPA  held the competition again. This time it required
+vehicles to navigate 132 miles long route through flats, dry lake beds and mountain passes including 3 narrow tunnels and more than 10 sharp right/left turns.
+This competition had 23 finalists, among them four vehicles could complete the
+track within the allotted time limit. The Stanford University’s vehicle, ”Stanley” claimed first place and Carnegie Mellon University’s car ”Sandstorm” and ”Highlander” finished in second and third places.</p>
+<p>The third competition known as DARPA Urban Challenge was held at the former George Air Force base, California, USA in 2007 and required driverless vehicles to navigate a 60 miles long route throughout a simulated urban environment together with other self-driving vehicles and human driven vehicles within a 6 hours time limit. The vehicles had to obey the California traffic rules. This competition had 11 finalists and 6 cars completed the route within the allotted time. Carnegie Mellon University’s vehicle, ”Boss” claimed the first place, the Stanford University’s vehicle ”Junior” finished in second and Virginia Tech’s vehicle ”Odin” came in third place.</p>
+<p>In order to measure the level of autonomy of self-driving vehicles SAE International (Society
+of Automotive Engineers) has defined 5 levels of automation based on the human intervention
+and attentiveness. Each level describes the extend in which the vehicle takes
+over the task and responsibilities from the driver and how the vehicle and driver
+would be interact with each other. 
+<img alt="Levels of Automation" src="https://mhnazeri.now.sh/images/automation_levels.png"></p>
+<p><em>Image Courtesy of <a href="https://www.nhtsa.gov/technology-innovation/automated-vehicles-safety">www.nhtsa.gov</a></em></p>
+<ul>
+<li>Level 0 - No Automation:
+”No Automation is where the driver controls the car without any support from a driver assistance system.”</li>
+<li>Level 1 - Driver Assistance:
+Vehicle is controlled by the driver, but some driving assist features may be included in the vehicle design. Examples of this include the Active Cruise Control with Stop&amp;Go function, which independently adjust the distance to the car in front of you. Collision and Pedestrian Warning with City Brake Activation which prevents collision via automatic braking.</li>
+<li>Level 2 - Partial Automation:
+Vehicle has combined automated functions, like Steering and Lane Control Assistant including Traffic Jam
+Assistant, but the driver must remain engaged with the driving task.</li>
+<li>Level 3 - Conditional Automation:
+Driver is a necessity but is not required to monitor the environment. The driver must be ready to take control of the vehicle at all times with notice. Example of conditional automation systems is, the car will be able to drive autonomously over long distances in certain traffic situations, such as motorways. The driver, however, must be able to take over control within a few seconds, such as at road construction sites.</li>
+<li>Level 4 - High Automation: The vehicle is capable of performing all driving functions under certain conditions. The driver have the option to control the vehicle and the vehicle still has a cockpit. In level 4 the vehicle can do majority of driving tasks independently.</li>
+<li>Level 5 - Full Automation:
+The vehicle is capable of performing all driving functions under all conditions. In level 5 the true autonomous driving becomes a reality. Drivers don’t need to be fit to drive and don’t even need to have license. There isn’t even a cockpit therefore, every person in the vehicle becomes a passenger, opening new mobility possibilities for disabled people.</li>
+</ul>
+<p>Level 3, Level 4 and Level 5 are still in the testing phase. The driving assistance systems in Level 1 are very common now a days and some cars even offer driving Level 2 which extends the autonomous driving capabilities to steering, lane keeping as well as remote controlled parking. There are many challenges to achieve fully autonomous vehicles, one of them is, they share a common environment with us, therefore they need to predict human motions and behaviors in addition of predicting trajectories of other vehicles in the environment in order to prevent collisions.</p>
+<h1>Architecture of Self-Driving Vehicles</h1>
+<p>The typical architecture of self-driving vehicles consists of Perception System and Decision Making System, each of them include different subsystems. In the following section we are going to discuss these systems and their subsystems.</p>
+<h2>Perception System</h2>
+<p>The perception system is responsible for estimating the state of the vehicle and creating an internal representation of the environment surrounding the vehicle. It creates this representation based on inputs it receives from sensors like Light Detection and Ranging (LIDAR), Radio Detection and Ranging (RADAR), camera, Global Positioning System (GPS), Inertia Measurement Unit (IMU), odometer, etc. This systems contains different parts such as Localizer, Mapper, Moving Objects Tracking, Traffic Signalization  detection.
+<img alt="Levels of Automation" src="https://mhnazeri.now.sh/images/architecture.png"></p>
+<p><em>[Badue et al., 2019]</em></p>
+<p><em>Localization)</em> Localizer is responsible for estimating the current state of the car and creating an internal representation of the environment around the ego-vehicle [Badue et al., 2019]. </p>
+<p><em>Mapper)</em> Is responsible for merging the offline maps like Google Maps or OpenStreetMap with internal representation of the environment created by the Localizer and creating online map [Badue et al., 2019]. </p>
+<p><em>Moving Objects Tracking)</em> Is responsible for recognizing, tracking and removing of the moving objects in the scene [Badue et al., 2019].</p>
+<p><em>Traffic Signalization Detection)</em> Is responsible for recognition and detection of the traffic signs alongside the streets [Badue et al., 2019].</p>
+<h2>Decision Making System</h2>
+<p>The decision making system is responsible for navigating the vehicle from its initial position to the final goal defined by the user according to the vehicle’s state and internal representation of the environment as well as traffic rules. This system like perception system is composed of different modules such as
+Route Planning, Path Planning, Behaviour Selector, Motion Planner, Obstacle Avoider and Controller [Badue et al., 2019].</p>
+<p><em>Route Planning)</em> Is responsible for receiving user input and find a route <span class="math">\(W\)</span>
+in offline map from current location to the destination. Route <span class="math">\(W\)</span> is consist of a sequence of way points, i.e. <span class="math">\(W = {w_1 , w_2 , w_3 , ..., w_{|W|} }\)</span>. Each way point <span class="math">\(w_i\)</span> is a coordinate pair of <span class="math">\((x_i , y_i )\)</span> in the offline map [Badue et al., 2019].</p>
+<p><em>Path Planning)</em> Extends way points to consist vehicle state, internal representation of the environment as well as traffic rules. We call the new sequence the sequence
+of Paths i.e. <span class="math">\(P = {P_1 , P_2 , ..., P_c , ..., P_{|P|} }\)</span>. Each Path is a sequence of poses, i.e. <span class="math">\(P_i = {p_1 , p_2 , ..., p_{|P |}}\)</span> where each pose <span class="math">\(p_i\)</span> is a coordinate pair in th offline map and the ego-vehicle’s orientation at this position, i.e. <span class="math">\(p_i = (x_i , y_i , θ_i )\)</span>  [Badue et al., 2019] .</p>
+<p><em>Behaviour Selector)</em> Is responsible for selecting the current car behavior such as object avoidance, intersection handling, and lane keeping. It does so by choosing desired velocity and a pose for a few seconds (about 5s) ahead of the current state. The pair pose in <span class="math">\(P_g\)</span> and the current velocity is called
+Goal. A Goal is <span class="math">\(Goal_g = (x_g , y_g , θ_g , v_g )\)</span>. The Behavior Selector is responsible for choosing this Goal [Badue et al., 2019].</p>
+<p><em>Motion Planner)</em> Is responsible for computing a Trajectory, <span class="math">\(T\)</span> , from current state to the current Goal defined by the Behavior Selector. A Trajectory <span class="math">\(T = {c_1 , c_2 , ..., c_{|T|} }\)</span> is sequence of commands,
+<span class="math">\(c_k = (v_k , φ_k , t_k )\)</span>, where <span class="math">\(v_k\)</span> is velocity at time <span class="math">\(k\)</span>, <span class="math">\(φ_k\)</span> is steering angle at time <span class="math">\(k\)</span>, and <span class="math">\(t_k\)</span> is the duration of <span class="math">\(c_k\)</span> . (The focus of my work is currently Trajectory Prediction which is part of Motion Planner. We will discuss this in more details in future artciles.)</p>
+<p><em>Obstacle Avoider)</em> Receives the Trajectory computed by the Motion Planner module and modify it to avoid collisions with obstacles in the environment. This modification is usually consist of reducing the velocity of the vehicle.</p>
+<h2>Controller</h2>
+<p>Finally the Controller module convert the received modified trajectory in to commands and send it to the actuators of the steering wheel, throttle and brake in order to make the vehicle move in the real environment.</p>
+<h1>Motion Planning</h1>
+<p>The task of Motion Planning has been studied extensively in the last decade. Most authors in this field have been divided the problem in to local and global planning. A great amount of navigation techniques have been taken from mobile robotics and modified to face the challenges of road networks and driving
+rules [González et al., 2016]. These planning techniques have been classified in to four groups according to their implementation: graph search, sampling, interpolating and numerical optimization [González et al., 2016].</p>
+<p>Avoiding dangerous situation that may happen during the driving is the current focus of the field of Motion Planning [González et al., 2016]. To give and example of this situation, imagine that you want to enter a highway, a vehicle is driving on the right lane, you don’t know if that car would be gentle and allow you to pass, or it will accelerate and go first, or it will change lane or so on ... . Predicting the path of other vehicle’s in a multi agent (pedestrians, bicycles, vehicles, ...) setting is a very important task in order to prevent collisions and plan safe paths. Autonomous robots are getting prevalent and they live in the same society as we do, it is very important for them to acquire abilities like humans’ ability for manoeuvering in crowded spaces. It is also important to know what trajectories are acceptable. Here acceptable means valid paths (arriving at destination without trespassing the traffic laws and avoiding collisions.) that the vehicle can take without crashing in to obstacles.</p>
+<p>In this artcile we learned how autonomous vehicles work and what is motion planning and where does trajectory prediction belong in the anatomy of autonomous vehicles architecture. In upcoming arcticles I'm going to elaborate more on the trajectoy prediction task.</p>
+<h3>Sources</h3>
+<ul>
+<li>
+<p>Badue, C., Guidolini, R., Carneiro, R. V., Azevedo, P.,
+Cardoso, V. B., Forechi, A., Jesus, L. F. R., Berriel, R. F., Paixão, T. M.,
+Mutz, F. W., Oliveira-Santos, T., and de Souza, A. F. (2019). Self-driving
+cars: A survey. CoRR, abs/1901.04407.</p>
+</li>
+<li>
+<p>González, D., Pérez, J., Milanés, V., and Nashashibi, F.
+(2016). A review of motion planning techniques for automated vehicles. IEEE
+Transactions on Intelligent Transportation Systems, 17(4):1135–1145.</p>
+</li>
+<li>
+<p><a href="https://www.ayersandwhitlow.com/blog/2018/01/nhtsa-nearly-all-car-crashes-are-due-to-human-error.shtml">National Highway Traffic Safety Administration </a></p>
+</li>
+<li>
+<p><a href="https://www.bmw.com/en/automotive-life/autonomous-driving.html">www.bmw.com</a></p>
+</li>
+<li>
+<p><a href="https://www.nhtsa.gov/technology-innovation/automated-vehicles-safety">www.nhtsa.gov</a></p>
+</li>
+</ul>
+<script type="text/javascript">if (!document.getElementById('mathjaxscript_pelican_#%@#$@#')) {
+    var align = "center",
+        indent = "0em",
+        linebreak = "false";
+
+    if (false) {
+        align = (screen.width < 768) ? "left" : align;
+        indent = (screen.width < 768) ? "0em" : indent;
+        linebreak = (screen.width < 768) ? 'true' : linebreak;
+    }
+
+    var mathjaxscript = document.createElement('script');
+    mathjaxscript.id = 'mathjaxscript_pelican_#%@#$@#';
+    mathjaxscript.type = 'text/javascript';
+    mathjaxscript.src = 'https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.3/latest.js?config=TeX-AMS-MML_HTMLorMML';
+    mathjaxscript[(window.opera ? "innerHTML" : "text")] =
+        "MathJax.Hub.Config({" +
+        "    config: ['MMLorHTML.js']," +
+        "    TeX: { extensions: ['AMSmath.js','AMSsymbols.js','noErrors.js','noUndefined.js'], equationNumbers: { autoNumber: 'AMS' } }," +
+        "    jax: ['input/TeX','input/MathML','output/HTML-CSS']," +
+        "    extensions: ['tex2jax.js','mml2jax.js','MathMenu.js','MathZoom.js']," +
+        "    displayAlign: '"+ align +"'," +
+        "    displayIndent: '"+ indent +"'," +
+        "    showMathMenu: true," +
+        "    messageStyle: 'normal'," +
+        "    tex2jax: { " +
+        "        inlineMath: [ ['\\\\(','\\\\)'] ], " +
+        "        displayMath: [ ['$$','$$'] ]," +
+        "        processEscapes: true," +
+        "        preview: 'TeX'," +
+        "    }, " +
+        "    'HTML-CSS': { " +
+        "        styles: { '.MathJax_Display, .MathJax .mo, .MathJax .mi, .MathJax .mn': {color: 'inherit ! important'} }," +
+        "        linebreaks: { automatic: "+ linebreak +", width: '90% container' }," +
+        "    }, " +
+        "}); " +
+        "if ('default' !== 'default') {" +
+            "MathJax.Hub.Register.StartupHook('HTML-CSS Jax Ready',function () {" +
+                "var VARIANT = MathJax.OutputJax['HTML-CSS'].FONTDATA.VARIANT;" +
+                "VARIANT['normal'].fonts.unshift('MathJax_default');" +
+                "VARIANT['bold'].fonts.unshift('MathJax_default-bold');" +
+                "VARIANT['italic'].fonts.unshift('MathJax_default-italic');" +
+                "VARIANT['-tex-mathit'].fonts.unshift('MathJax_default-italic');" +
+            "});" +
+            "MathJax.Hub.Register.StartupHook('SVG Jax Ready',function () {" +
+                "var VARIANT = MathJax.OutputJax.SVG.FONTDATA.VARIANT;" +
+                "VARIANT['normal'].fonts.unshift('MathJax_default');" +
+                "VARIANT['bold'].fonts.unshift('MathJax_default-bold');" +
+                "VARIANT['italic'].fonts.unshift('MathJax_default-italic');" +
+                "VARIANT['-tex-mathit'].fonts.unshift('MathJax_default-italic');" +
+            "});" +
+        "}";
+    (document.body || document.getElementsByTagName('head')[0]).appendChild(mathjaxscript);
+}
+</script>
+            </section>
+
+            <section class="post-info">
+                <div class="post-share">
+                    <a class="twitter" href="https://twitter.com/share?text=Trajectory Prediction in Self-Driving Vehicles - Part 1: Introduction&amp;url=https://mhnazeri.now.sh/trajectory-prediction-in-self-driving-vehicles-part-1-introduction.html" onclick="window.open(this.href, 'twitter-share', 'width=550,height=235');return false;">
+                    <i class="ic ic-twitter"></i><span class="hidden">Twitter</span>
+                    </a>
+                    <a class="facebook" href="https://www.facebook.com/sharer/sharer.php?u=https://mhnazeri.now.sh/trajectory-prediction-in-self-driving-vehicles-part-1-introduction.html" onclick="window.open(this.href, 'facebook-share','width=580,height=296');return false;">
+                    <i class="ic ic-facebook"></i><span class="hidden">Facebook</span>
+                    </a>
+                    <a class="googleplus" href="https://plus.google.com/share?url=https://mhnazeri.now.sh/trajectory-prediction-in-self-driving-vehicles-part-1-introduction.html" onclick="window.open(this.href, 'google-plus-share', 'width=490,height=530');return false;">
+                    <i class="ic ic-googleplus"></i><span class="hidden">Google+</span>
+                    </a>
+                    <div class="clear"></div>
+                </div>
+
+                <aside class="post-tags">
+<a href="https://mhnazeri.now.sh/tag/self_driving_vehicles">self_driving_vehicles</a><a href="https://mhnazeri.now.sh/tag/trajectory">trajectory</a>                </aside>
+
+                <div class="clear"></div>
+
+                <aside class="post-author">
+                        <figure class="post-author-avatar">
+                            <img src="assets/images/avatar.jpg" alt="Nazeri" />
+                        </figure>
+                    <div class="post-author-bio">
+                        <h4 class="post-author-name"><a href="https://mhnazeri.now.sh/author/nazeri">Nazeri</a></h4>
+                            <p class="post-author-about">I'm currently M.S. student of Computer Science at (IASBS). For autonomous agents become prevalent in our society, they must percept, reason and forecast the future based on these observations.</p>
+                            <span class="post-author-website"><a href="http://mhnazeri.now.sh"><i class="ic ic-link"></i> Website</a></span>
+                        <span class="post-author-github"><a target="_blank" href="https://github.com/mhnazeri"><i class="ic ic-github"></i> Github</a></span>
+                        <span class="post-author-linkedin"><a target="_blank" href="https://linkedin.com/in/mohammad-nazeri-49404168/"><i class="ic ic-linkedin"></i> Linkedin</a></span>
+                            <span class="post-author-twitter"><a target="_blank" href="https://twitter.com/mhnazeri"><i class="ic ic-twitter"></i> Twitter</a></span>
+                    </div>
+                    <div class="clear"></div>
+                </aside>
+ 
+
+                </section>
+                <div id="commento"></div>
+                <script src="https://cdn.commento.io/js/commento.js"></script>
+
+                <aside class="post-nav">
+                    <a class="post-nav-prev" href="https://mhnazeri.now.sh/sane-introduction-to-the-insane-world-of-generative-adversarial-networks-part-1.html">
+                        <section class="post-nav-teaser">
+                            <i class="ic ic-arrow-right"></i>
+                                <h2 class="post-nav-title">Sane Introduction to the Insane World of Generative Adversarial Networks - Part 1</h2>
+                            <p class="post-nav-excerpt">GANs are consists of two neural network (or any differentiable model) that are playing...</p>
+                        </section>
+                    </a>
+                    <div class="clear"></div>
+                </aside>
+
+            </div>
+        </article>
+    </main>
+      <!-- TODO : Body class -->
+    <div id="body-class" style="display: none;" class=""></div>
+  
+    <footer id="footer">
+      <div class="inner">
+        <section class="credits">
+          <span class="credits-theme">Theme <a href="https://github.com/arulrajnet/attila" rel="nofollow">Attila</a></span>
+          <span class="credits-software">Published with <a href="https://github.com/getpelican/pelican" rel="nofollow">Pelican</a></span>
+        </section>
+      </div>
+    </footer>
+  </section>
+
+  <script type="text/javascript" src="https://mhnazeri.now.sh/theme/js/script.js"></script>
+  
+</body>
+</html>
