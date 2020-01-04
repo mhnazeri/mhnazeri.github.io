@@ -4,42 +4,42 @@ xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9 http://www.sitem
 xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 
 <url>
-<loc>https://mhnazeri.github.io/</loc>
-<lastmod>2019-06-08T08:56:33-00:00</lastmod>
+<loc>https://mhnazeri.now.sh/</loc>
+<lastmod>2020-01-04T18:58:52-00:00</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
 
 <url>
-<loc>https://mhnazeri.github.io/archives.html</loc>
-<lastmod>2019-06-08T08:56:33-00:00</lastmod>
+<loc>https://mhnazeri.now.sh/archives.html</loc>
+<lastmod>2020-01-04T18:58:52-00:00</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
 
 <url>
-<loc>https://mhnazeri.github.io/tags.html</loc>
-<lastmod>2019-06-08T08:56:33-00:00</lastmod>
+<loc>https://mhnazeri.now.sh/tags.html</loc>
+<lastmod>2020-01-04T18:58:52-00:00</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
 
 <url>
-<loc>https://mhnazeri.github.io/pages/about.html</loc>
+<loc>https://mhnazeri.now.sh/pages/about.html</loc>
 <lastmod>2018-02-14T00:00:00+03:30</lastmod>
 <changefreq>monthly</changefreq>
 <priority>0.5</priority>
 </url>
 
 <url>
-<loc>https://mhnazeri.github.io/what-does-trajectory-prediction-mean-in-self-driving-vehicles.html</loc>
+<loc>https://mhnazeri.now.sh/what-does-trajectory-prediction-mean-in-self-driving-vehicles.html</loc>
 <lastmod>2019-05-23T00:00:00+04:30</lastmod>
 <changefreq>monthly</changefreq>
 <priority>0.5</priority>
 </url>
 
 <url>
-<loc>https://mhnazeri.github.io/sane-introduction-to-the-insane-world-of-generative-adversarial-networks-part-1.html</loc>
+<loc>https://mhnazeri.now.sh/sane-introduction-to-the-insane-world-of-generative-adversarial-networks-part-1.html</loc>
 <lastmod>2019-01-17T00:00:00+03:30</lastmod>
 <changefreq>monthly</changefreq>
 <priority>0.5</priority>
