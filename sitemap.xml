@@ -3,74 +3,59 @@
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   
   <url>
-    <loc>http://mhnazeri.now.sh/</loc>
+    <loc>/</loc>
     <lastmod>2020-07-30T01:46:41+04:30</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   
   <url>
-    <loc>http://mhnazeri.now.sh/posts/</loc>
+    <loc>/posts/</loc>
     <lastmod>2020-07-30T01:46:41+04:30</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   
   <url>
-    <loc>http://mhnazeri.now.sh/posts/sharingan/</loc>
+    <loc>/posts/sharingan/</loc>
     <lastmod>2020-07-30T01:46:41+04:30</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   
   <url>
-    <loc>http://mhnazeri.now.sh/posts/image_segmentation/</loc>
-    <lastmod>2020-07-30T00:15:46+04:30</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  
-  <url>
-    <loc>http://mhnazeri.now.sh/posts/parameter_management/</loc>
+    <loc>/posts/parameter_management/</loc>
     <lastmod>2020-05-16T00:45:00+04:30</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   
   <url>
-    <loc>http://mhnazeri.now.sh/posts/trajectory/</loc>
-    <lastmod>2019-05-23T23:46:50+04:30</lastmod>
+    <loc>/categories/</loc>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   
   <url>
-    <loc>http://mhnazeri.now.sh/posts/gans/</loc>
-    <lastmod>2019-01-17T23:29:20+04:30</lastmod>
+    <loc>/mhnazeri/</loc>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   
   <url>
-    <loc>http://mhnazeri.now.sh/categories/</loc>
+    <loc>/tags/</loc>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   
   <url>
-    <loc>http://mhnazeri.now.sh/tags/</loc>
+    <loc>/true/</loc>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   
   <url>
-    <loc>http://mhnazeri.now.sh/true/</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  
-  <url>
-    <loc>http://mhnazeri.now.sh/vs/</loc>
+    <loc>/vs/</loc>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>

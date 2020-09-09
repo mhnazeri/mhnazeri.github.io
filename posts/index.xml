@@ -1,21 +1,21 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Posts on Nazeri&#39;s Blog</title>
-    <link>http://mhnazeri.now.sh/posts/</link>
+    <link>/posts/</link>
     <description>Recent content in Posts on Nazeri&#39;s Blog</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <lastBuildDate>Thu, 30 Jul 2020 01:46:41 +0430</lastBuildDate>
     
-        <atom:link href="http://mhnazeri.now.sh/posts/index.xml" rel="self" type="application/rss+xml" />
+        <atom:link href="/posts/index.xml" rel="self" type="application/rss+xml" />
     
     
     <item>
       <title>SharinGAN</title>
-      <link>http://mhnazeri.now.sh/posts/sharingan/</link>
+      <link>/posts/sharingan/</link>
       <pubDate>Thu, 30 Jul 2020 01:46:41 +0430</pubDate>
       
-      <guid>http://mhnazeri.now.sh/posts/sharingan/</guid>
+      <guid>/posts/sharingan/</guid>
       <description>&lt;p&gt;Generative models specially with the emerge of &lt;a href=&#34;https://papers.nips.cc/paper/5423-generative-adversarial-nets.pdf&#34;&gt;Generative Adversarial Networks (GANs)&lt;/a&gt; have become the spotlight of Deep Learning in recent years. They have &lt;a href=&#34;https://github.com/nashory/gans-awesome-applications&#34;&gt;many applications in the wild&lt;/a&gt; and sometimes they are just for &lt;a href=&#34;https://theaisummer.com/deepfakes/&#34;&gt;fun&lt;/a&gt;.
 One fun application that I really liked, was the use of GAN to generate &lt;a href=&#34;https://www.youtube.com/watch?v=8fnynVsR53k&#34;&gt;fake Sharingans&lt;/a&gt; (to read more about what sharingan is please read &lt;a href=&#34;https://naruto.fandom.com/wiki/Sharingan&#34;&gt;this article&lt;/a&gt;). Inspired by that video and pytorch&#39;s &lt;a href=&#34;https://pytorch.org/tutorials/beginner/dcgan_faces_tutorial.html&#34;&gt;DCGAN tutorial&lt;/a&gt;, in this post I&#39;m going to show you how to generate sharingans step by step. You can download the PyTorch source code from &lt;a href=&#34;https://github.com/mhnazeri/sharingan&#34;&gt;here&lt;/a&gt;. I highly recommend to download the full source code because here I only explain important steps in writing DL model, things such as config files are not discussed here. To read more about project configuration see my &lt;a href=&#34;https://mhnazeri.now.sh/posts/parameter_management/&#34;&gt;Hyper-parameter Management&lt;/a&gt; article.&lt;/p&gt;
 
@@ -384,17 +384,17 @@ One fun application that I really liked, was the use of GAN to generate &lt;a hr
 &lt;h1 id=&#34;results&#34;&gt;Results&lt;/h1&gt;
 
 &lt;p&gt;After 200 epochs the results are like this:
-&lt;figure&gt;&lt;img src=&#34;http://mhnazeri.now.sh/images/sharingan_200.png&#34; alt=&#34;Result&#34;&gt;&lt;/figure&gt;&lt;/p&gt;
+&lt;figure&gt;&lt;img src=&#34;/images/sharingan_200.png&#34; alt=&#34;Result&#34;&gt;&lt;/figure&gt;&lt;/p&gt;
 
 &lt;p&gt;As you can see, the generator learns some pattern from the data. Of course if you train it for more epochs, it gets better and better. One improvement (again according to GAN hacks) that we can add is to train &lt;em&gt;D&lt;/em&gt; more than &lt;em&gt;G&lt;/em&gt;. The notion behind it is that if &lt;em&gt;D&lt;/em&gt; do its job perfectly, then &lt;em&gt;G&lt;/em&gt; challenged and need to can change more to keep up.&lt;/p&gt;
 
 &lt;p&gt;I perform another modification on &lt;em&gt;D&lt;/em&gt;&#39;s loss. As the output of &lt;em&gt;D&lt;/em&gt; is a probability, its gradients are small, as a result, the changes in weights will be minor. To make gradients bigger for bigger changes, I add squared distance of real images with fake images to the &lt;em&gt;D&lt;/em&gt;&#39;s loss with some weight &lt;span  class=&#34;math&#34;&gt;\(\beta\)&lt;/span&gt; (here &lt;span  class=&#34;math&#34;&gt;\(\beta=0.01\)&lt;/span&gt;). So, the &lt;em&gt;D&lt;/em&gt;&#39;s loss becomes this:&lt;/p&gt;
 &lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-python&#34; data-lang=&#34;python&#34;&gt;errD_fake &lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;=&lt;/span&gt; criterion(output, label) &lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;+&lt;/span&gt; (beta &lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;*&lt;/span&gt; (fake&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;.&lt;/span&gt;detach() &lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;-&lt;/span&gt; real_cpu)&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;.&lt;/span&gt;pow(&lt;span style=&#34;color:#099&#34;&gt;2&lt;/span&gt;)&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;.&lt;/span&gt;mean(&lt;span style=&#34;color:#099&#34;&gt;0&lt;/span&gt;)&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;.&lt;/span&gt;sum())&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 &lt;p&gt;Although we should keep this in mind, the gradients should not get too big. In the next section I will discuss how to prevent this. But for now, this modification yield this result for &lt;code&gt;1000&lt;/code&gt; epochs:
-&lt;figure&gt;&lt;img src=&#34;http://mhnazeri.now.sh/images/sharingan_modified_collapsed.gif&#34; alt=&#34;Result&#34;&gt;&lt;/figure&gt;&lt;/p&gt;
+&lt;figure&gt;&lt;img src=&#34;/images/sharingan_modified_collapsed.gif&#34; alt=&#34;Result&#34;&gt;&lt;/figure&gt;&lt;/p&gt;
 
 &lt;p&gt;As you can see here, the images getting better and better until they hit a wall and reset, and at the end, &lt;em&gt;G&lt;/em&gt; only generate one sharingan, that is because this pattern was able to fool &lt;em&gt;D&lt;/em&gt; and &lt;em&gt;G&lt;/em&gt; does not bother itself to generate another sharingan. This situation is called &lt;em&gt;mode collapse&lt;/em&gt; in GAN literature.
-&lt;figure&gt;&lt;img src=&#34;http://mhnazeri.now.sh/images/sharingan_mod_loss.png&#34; alt=&#34;Result&#34;&gt;&lt;/figure&gt;&lt;/p&gt;
+&lt;figure&gt;&lt;img src=&#34;/images/sharingan_mod_loss.png&#34; alt=&#34;Result&#34;&gt;&lt;/figure&gt;&lt;/p&gt;
 
 &lt;p&gt;If we take a look at the loss functions of &lt;em&gt;D&lt;/em&gt; and &lt;em&gt;G&lt;/em&gt;, we can see two spikes in &lt;em&gt;D&lt;/em&gt;&#39;s loss. Those spikes are exactly where we see that generated images falling apart. &lt;em&gt;G&lt;/em&gt; generates garbage and &lt;em&gt;D&lt;/em&gt; can&#39;t decide.&lt;/p&gt;
 
@@ -409,29 +409,29 @@ optimizerD&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;.&lt;/span&gt;
 nn&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;.&lt;/span&gt;utils&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;.&lt;/span&gt;spectral_norm(nn&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;.&lt;/span&gt;Conv2d(&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;...&lt;/span&gt;))&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 &lt;p&gt;With these optimizations and without modified &lt;em&gt;D&lt;/em&gt;&#39;s loss, after 200 epochs we get:&lt;/p&gt;
 
-&lt;p&gt;&lt;figure&gt;&lt;img src=&#34;http://mhnazeri.now.sh/images/sharingan_mod_sn.gif&#34; alt=&#34;Result&#34;&gt;&lt;/figure&gt;
-&lt;figure&gt;&lt;img src=&#34;http://mhnazeri.now.sh/images/sharingan_200_mod.png&#34; alt=&#34;Result&#34;&gt;&lt;/figure&gt;&lt;/p&gt;
+&lt;p&gt;&lt;figure&gt;&lt;img src=&#34;/images/sharingan_mod_sn.gif&#34; alt=&#34;Result&#34;&gt;&lt;/figure&gt;
+&lt;figure&gt;&lt;img src=&#34;/images/sharingan_200_mod.png&#34; alt=&#34;Result&#34;&gt;&lt;/figure&gt;&lt;/p&gt;
 
 &lt;p&gt;Comparing the first run with the optimized version , we can see that in the latter, &lt;em&gt;G&lt;/em&gt; does its best to generate sharingans with different patterns. After 800 more epochs:&lt;/p&gt;
 
-&lt;p&gt;&lt;figure&gt;&lt;img src=&#34;http://mhnazeri.now.sh/images/sharingan_1000_mod.gif&#34; alt=&#34;Result&#34;&gt;&lt;/figure&gt;&lt;/p&gt;
+&lt;p&gt;&lt;figure&gt;&lt;img src=&#34;/images/sharingan_1000_mod.gif&#34; alt=&#34;Result&#34;&gt;&lt;/figure&gt;&lt;/p&gt;
 
-&lt;p&gt;&lt;figure&gt;&lt;img src=&#34;http://mhnazeri.now.sh/images/sharingan_800.png&#34; alt=&#34;Result&#34;&gt;&lt;/figure&gt;&lt;/p&gt;
+&lt;p&gt;&lt;figure&gt;&lt;img src=&#34;/images/sharingan_800.png&#34; alt=&#34;Result&#34;&gt;&lt;/figure&gt;&lt;/p&gt;
 
 &lt;p&gt;&lt;em&gt;G&lt;/em&gt; collapsed again but this time it has more variety.&lt;/p&gt;
 
-&lt;p&gt;&lt;figure&gt;&lt;img src=&#34;http://mhnazeri.now.sh/images/sharingan_loss_800.png&#34; alt=&#34;Result&#34;&gt;&lt;/figure&gt;&lt;/p&gt;
+&lt;p&gt;&lt;figure&gt;&lt;img src=&#34;/images/sharingan_loss_800.png&#34; alt=&#34;Result&#34;&gt;&lt;/figure&gt;&lt;/p&gt;
 
 &lt;p&gt;Taking a look at the loss function we can see this time we&#39;ve managed to prevent spikes in &lt;em&gt;D&lt;/em&gt;&#39;s loss. If we train the model with less epochs the collapse would not occur. So 1000 epochs is overkill for this small dataset as in early epochs we can see good results and we should stop the training there (early stopping).&lt;/p&gt;
 
 &lt;p&gt;And here is the result with optimizations and modified &lt;em&gt;D&lt;/em&gt; loss function after 300 epochs (I didn&#39;t trained it more because as we saw above, it is likely would collapse):&lt;/p&gt;
 
-&lt;p&gt;&lt;figure&gt;&lt;img src=&#34;http://mhnazeri.now.sh/images/sharingan_mod_300.gif&#34; alt=&#34;Result&#34;&gt;&lt;/figure&gt;
-&lt;figure&gt;&lt;img src=&#34;http://mhnazeri.now.sh/images/sharingan_mod_300.png&#34; alt=&#34;Result&#34;&gt;&lt;/figure&gt;&lt;/p&gt;
+&lt;p&gt;&lt;figure&gt;&lt;img src=&#34;/images/sharingan_mod_300.gif&#34; alt=&#34;Result&#34;&gt;&lt;/figure&gt;
+&lt;figure&gt;&lt;img src=&#34;/images/sharingan_mod_300.png&#34; alt=&#34;Result&#34;&gt;&lt;/figure&gt;&lt;/p&gt;
 
 &lt;p&gt;And for the loss:&lt;/p&gt;
 
-&lt;p&gt;&lt;figure&gt;&lt;img src=&#34;http://mhnazeri.now.sh/images/sharingan_loss_mod_300.png&#34; alt=&#34;Result&#34;&gt;&lt;/figure&gt;&lt;/p&gt;
+&lt;p&gt;&lt;figure&gt;&lt;img src=&#34;/images/sharingan_loss_mod_300.png&#34; alt=&#34;Result&#34;&gt;&lt;/figure&gt;&lt;/p&gt;
 
 &lt;p&gt;The loss is much better and more stable.&lt;/p&gt;
 
@@ -440,20 +440,11 @@ nn&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;.&lt;/span&gt;utils&lt
     </item>
     
     <item>
-      <title>Image_segmentation</title>
-      <link>http://mhnazeri.now.sh/posts/image_segmentation/</link>
-      <pubDate>Thu, 30 Jul 2020 00:15:46 +0430</pubDate>
-      
-      <guid>http://mhnazeri.now.sh/posts/image_segmentation/</guid>
-      <description></description>
-    </item>
-    
-    <item>
       <title>Hyper-parameter Management in Deep Learning Projects</title>
-      <link>http://mhnazeri.now.sh/posts/parameter_management/</link>
+      <link>/posts/parameter_management/</link>
       <pubDate>Sat, 16 May 2020 00:45:00 +0430</pubDate>
       
-      <guid>http://mhnazeri.now.sh/posts/parameter_management/</guid>
+      <guid>/posts/parameter_management/</guid>
       <description>&lt;p&gt;Deep Learning (DL) projects have a plethora of hyper-parameters. Especially in research, they are like knobs that should be adjusted to yields the best results. There are multiple ways one can manage these hyper-parameters in Python. In this article, I&amp;rsquo;m going to discuss 3 common approaches.&lt;/p&gt;
 &lt;h1 id=&#34;argument-parser&#34;&gt;Argument Parser&lt;/h1&gt;
 &lt;p&gt;The first approach which is very easy and common is to use Python&amp;rsquo;s built-in argument parser module. All we need to do is to define some parameters preferably with default values or pass/change them during the program execution. Let&amp;rsquo;s create a simple script called &lt;code&gt;main.py&lt;/code&gt;:&lt;/p&gt;
@@ -578,168 +569,6 @@ nn&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;.&lt;/span&gt;utils&lt
 &lt;p&gt;In situations where we have a huge project with a plethora of hyper-parameters, multiple datasets, multiple optimizer and we want to experiment with different values but we are short on time, &lt;a href=&#34;https://hydra.cc&#34;&gt;&lt;strong&gt;Hydra&lt;/strong&gt;&lt;/a&gt; is the hero we want. It is &amp;ldquo;a framework for elegantly configuring complex applications&amp;rdquo; developed at Facebook. It uses YAML, therefore inherent its advantages. It also gives us the ability to run multiple experiments in parallel with different configurations. We can put all our configuration files in a separate directory such as &lt;code&gt;configs&lt;/code&gt;. We can also create different folders to hold different configurations (called &lt;code&gt;config group&lt;/code&gt;) for different parts of the project to prevent extensive config files and easily alternate between them. Another cool feature of &lt;em&gt;hydra&lt;/em&gt; is that you can treat YAML keys as arguments and change them when executing the program like &lt;code&gt;argparse&lt;/code&gt; module. If you see the need to use &lt;em&gt;hydra&lt;/em&gt; in your project, its &lt;a href=&#34;https://hydra.cc/docs/tutorial/simple_cli/&#34;&gt;tutorial page&lt;/a&gt; is comprehensive. It is a feature-packed framework and writing a tutorial about it is out of scope of this short article.&lt;/p&gt;
 &lt;h1 id=&#34;wrapping-up&#34;&gt;Wrapping up&lt;/h1&gt;
 &lt;p&gt;Although it seems that the approaches above are incrementally get better and better, but actually, it is not the case. All of these approaches have their own pros and cons. Choosing one is highly correlated to your project&amp;rsquo;s size and needs. I hope by showing simple examples I could give you an insight on how to choose an approach. So, which one is your favorite approach?&lt;/p&gt;
-</description>
-    </item>
-    
-    <item>
-      <title>Trajectory Forecasting in Autonomous Vehicles - Part 1: Introduction</title>
-      <link>http://mhnazeri.now.sh/posts/trajectory/</link>
-      <pubDate>Thu, 23 May 2019 23:46:50 +0430</pubDate>
-      
-      <guid>http://mhnazeri.now.sh/posts/trajectory/</guid>
-      <description>&lt;p&gt;Last week, I presented a talk about &lt;strong&gt;Trajectory Prediction&lt;/strong&gt;, Here is the gist of that talk and corresponding &lt;a href=&#34;https://drive.google.com/open?id=1ZdzWG33fL6_muutrgriXhll-z8smsg71&#34;&gt;slides&lt;/a&gt;.&lt;/p&gt;
-
-&lt;p&gt;Every day we hear people getting killed in car accidents in the news. Drivers
-are too drunk to drive, texting to each other while driving, driving way too fast
-than should be, distracted by other objects in the scene, can’t see signs in the
-night, get drowsy or even road conditions like slippery roads in snowy weather
-can cause accidents. These are just a few examples of reasons behind accidents.
-According to National Highway Traffic Safety Administration (NHTSA) a mere
-2 percent caused by environment, another 2 percent caused by fault in car’s
-engines, 2 percent caused by unknown reasons and a full 94 percent of accidents
-caused by human errors. In 2016, more than 37000 people lost their lives in
-crashes on U.S. highways.
-To eliminate the human error, the concept of self-driving vehicles (also known
-as autonomous vehicles or driverless vehicles) were introduced. This new technology will spare thousands of lives yearly, in addition, hundreds of thousands of injuries would be avoided. In self-driving vehicles, vehicles use different kinds of sensors like cameras, ultrasonic, LIDAR and ... in order to take control of vehicle. These vehicles won’t get drowsy, drunk, distracted and ... .&lt;/p&gt;
-
-&lt;h1 id=&#34;history&#34;&gt;History&lt;/h1&gt;
-
-&lt;p&gt;In order to advance the development of self-driving vehicles, DARPA held 3 competitions. The first one called DARPA Grand Challenge held in 2004, required vehicles to navigate through a course of 142 miles long throughout Mojave desert within 10 hours time limit. But, all cars failed during the first few miles.&lt;/p&gt;
-
-&lt;p&gt;Next year, in 2005, DARPA  held the competition again. This time it required
-vehicles to navigate 132 miles long route through flats, dry lake beds and mountain passes including 3 narrow tunnels and more than 10 sharp right/left turns.
-This competition had 23 finalists, among them four vehicles could complete the
-track within the allotted time limit. The Stanford University’s vehicle, ”Stanley” claimed first place and Carnegie Mellon University’s car ”Sandstorm” and ”Highlander” finished in second and third places.&lt;/p&gt;
-
-&lt;p&gt;The third competition known as DARPA Urban Challenge was held at the former George Air Force base, California, USA in 2007 and required driverless vehicles to navigate a 60 miles long route throughout a simulated urban environment together with other self-driving vehicles and human driven vehicles within a 6 hours time limit. The vehicles had to obey the California traffic rules. This competition had 11 finalists and 6 cars completed the route within the allotted time. Carnegie Mellon University’s vehicle, ”Boss” claimed the first place, the Stanford University’s vehicle ”Junior” finished in second and Virginia Tech’s vehicle ”Odin” came in third place.&lt;/p&gt;
-
-&lt;p&gt;In order to measure the level of autonomy of self-driving vehicles SAE International (Society
-of Automotive Engineers) has defined 5 levels of automation based on the human intervention
-and attentiveness. Each level describes the extend in which the vehicle takes
-over the task and responsibilities from the driver and how the vehicle and driver
-would be interact with each other.
-&lt;figure&gt;&lt;img src=&#34;http://mhnazeri.now.sh/images/automation_levels.png&#34; alt=&#34;Levels of Automation&#34;&gt;&lt;/figure&gt;&lt;/p&gt;
-
-&lt;p&gt;&lt;em&gt;Image Courtesy of &lt;a href=&#34;https://www.nhtsa.gov/technology-innovation/automated-vehicles-safety&#34;&gt;www.nhtsa.gov&lt;/a&gt;&lt;/em&gt;&lt;/p&gt;
-
-&lt;ul&gt;
-&lt;li&gt;Level 0 - No Automation:
-”No Automation is where the driver controls the car without any support from a driver assistance system.”&lt;/li&gt;
-&lt;li&gt;Level 1 - Driver Assistance:
-Vehicle is controlled by the driver, but some driving assist features may be included in the vehicle design. Examples of this include the Active Cruise Control with Stop&amp;amp;Go function, which independently adjust the distance to the car in front of you. Collision and Pedestrian Warning with City Brake Activation which prevents collision via automatic braking.&lt;/li&gt;
-&lt;li&gt;Level 2 - Partial Automation:
-Vehicle has combined automated functions, like Steering and Lane Control Assistant including Traffic Jam
-Assistant, but the driver must remain engaged with the driving task.&lt;/li&gt;
-&lt;li&gt;Level 3 - Conditional Automation:
-Driver is a necessity but is not required to monitor the environment. The driver must be ready to take control of the vehicle at all times with notice. Example of conditional automation systems is, the car will be able to drive autonomously over long distances in certain traffic situations, such as motorways. The driver, however, must be able to take over control within a few seconds, such as at road construction sites.&lt;/li&gt;
-&lt;li&gt;Level 4 - High Automation: The vehicle is capable of performing all driving functions under certain conditions. The driver have the option to control the vehicle and the vehicle still has a cockpit. In level 4 the vehicle can do majority of driving tasks independently.&lt;/li&gt;
-&lt;li&gt;Level 5 - Full Automation:
-The vehicle is capable of performing all driving functions under all conditions. In level 5 the true autonomous driving becomes a reality. Drivers don’t need to be fit to drive and don’t even need to have license. There isn’t even a cockpit therefore, every person in the vehicle becomes a passenger, opening new mobility possibilities for disabled people.&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;Level 3, Level 4 and Level 5 are still in the testing phase. The driving assistance systems in Level 1 are very common now a days and some cars even offer driving Level 2 which extends the autonomous driving capabilities to steering, lane keeping as well as remote controlled parking. There are many challenges to achieve fully autonomous vehicles, one of them is, they share a common environment with us, therefore they need to predict human motions and behaviors in addition of predicting trajectories of other vehicles in the environment in order to prevent collisions.&lt;/p&gt;
-
-&lt;h1 id=&#34;architecture-of-selfdriving-vehicles&#34;&gt;Architecture of Self-Driving Vehicles&lt;/h1&gt;
-
-&lt;p&gt;The typical architecture of self-driving vehicles consists of Perception System and Decision Making System, each of them include different subsystems. In the following section we are going to discuss these systems and their subsystems.&lt;/p&gt;
-
-&lt;h2 id=&#34;perception-system&#34;&gt;Perception System&lt;/h2&gt;
-
-&lt;p&gt;The perception system is responsible for estimating the state of the vehicle and creating an internal representation of the environment surrounding the vehicle. It creates this representation based on inputs it receives from sensors like Light Detection and Ranging (LIDAR), Radio Detection and Ranging (RADAR), camera, Global Positioning System (GPS), Inertia Measurement Unit (IMU), odometer, etc. This systems contains different parts such as Localizer, Mapper, Moving Objects Tracking, Traffic Signalization  detection.
-&lt;figure&gt;&lt;img src=&#34;http://mhnazeri.now.sh/images/architecture.png&#34; alt=&#34;Architecture&#34;&gt;&lt;/figure&gt;&lt;/p&gt;
-
-&lt;p&gt;&lt;em&gt;[Badue et al., 2019]&lt;/em&gt;&lt;/p&gt;
-
-&lt;p&gt;&lt;em&gt;Localization)&lt;/em&gt; Localizer is responsible for estimating the current state of the car and creating an internal representation of the environment around the ego-vehicle [Badue et al., 2019].&lt;/p&gt;
-
-&lt;p&gt;&lt;em&gt;Mapper)&lt;/em&gt; Is responsible for merging the offline maps like Google Maps or OpenStreetMap with internal representation of the environment created by the Localizer and creating online map [Badue et al., 2019].&lt;/p&gt;
-
-&lt;p&gt;&lt;em&gt;Moving Objects Tracking)&lt;/em&gt; Is responsible for recognizing, and tracking of the moving objects in the scene [Badue et al., 2019].&lt;/p&gt;
-
-&lt;p&gt;&lt;em&gt;Traffic Signalization Detection)&lt;/em&gt; Is responsible for recognition and detection of the traffic signs alongside the streets [Badue et al., 2019].&lt;/p&gt;
-
-&lt;h2 id=&#34;decision-making-system&#34;&gt;Decision Making System&lt;/h2&gt;
-
-&lt;p&gt;The decision making system is responsible for navigating the vehicle from its initial position to the final goal defined by the user according to the vehicle’s state and internal representation of the environment as well as traffic rules. This system like perception system is composed of different modules such as
-Route Planning, Path Planning, Behaviour Selector, Motion Planner, Obstacle Avoider and Controller [Badue et al., 2019].&lt;/p&gt;
-
-&lt;p&gt;&lt;em&gt;Route Planning)&lt;/em&gt; Is responsible for receiving user input and find a route &lt;span  class=&#34;math&#34;&gt;\(W\)&lt;/span&gt;
-in offline map from current location to the destination. Route &lt;span  class=&#34;math&#34;&gt;\(W\)&lt;/span&gt; is consist of a sequence of way points, i.e. &lt;span  class=&#34;math&#34;&gt;\(W = \{w_1 , w_2 , w_3 , ..., w_{|W|} \}\)&lt;/span&gt;. Each way point &lt;span  class=&#34;math&#34;&gt;\(w_i\)&lt;/span&gt; is a coordinate pair of &lt;span  class=&#34;math&#34;&gt;\((x_i , y_i )\)&lt;/span&gt; in the offline map [Badue et al., 2019].&lt;/p&gt;
-
-&lt;p&gt;&lt;em&gt;Path Planning)&lt;/em&gt; Extends way points to consist vehicle state, internal representation of the environment as well as traffic rules. We call the new sequence the sequence
-of Paths i.e. &lt;span  class=&#34;math&#34;&gt;\(P = \{P_1 , P_2 , ..., P_c , ..., P_{|P|} \}\)&lt;/span&gt;. Each Path is a sequence of poses, i.e. &lt;span  class=&#34;math&#34;&gt;\(P_i = \{p_1 , p_2 , ..., p_{|P |}\}\)&lt;/span&gt; where each pose &lt;span  class=&#34;math&#34;&gt;\(p_i\)&lt;/span&gt; is a coordinate pair in th offline map and the ego-vehicle’s orientation at this position, i.e. &lt;span  class=&#34;math&#34;&gt;\(p_i = (x_i , y_i , \theta_i )\)&lt;/span&gt;  [Badue et al., 2019] .&lt;/p&gt;
-
-&lt;p&gt;&lt;em&gt;Behaviour Selector)&lt;/em&gt; Is responsible for selecting the current car behavior such as object avoidance, intersection handling, and lane keeping. It does so by choosing desired velocity and a pose for a few seconds (about 5s) ahead of the current state. The pair pose in &lt;span  class=&#34;math&#34;&gt;\(P_g\)&lt;/span&gt; and the current velocity is called
-Goal. A Goal is &lt;span  class=&#34;math&#34;&gt;\(Goal_g = (x_g , y_g , θ_g , v_g )\)&lt;/span&gt;. The Behavior Selector is responsible for choosing this Goal [Badue et al., 2019].&lt;/p&gt;
-
-&lt;p&gt;&lt;em&gt;Motion Planner)&lt;/em&gt; Is responsible for computing a Trajectory, &lt;span  class=&#34;math&#34;&gt;\(T\)&lt;/span&gt; , from current state to the current Goal defined by the Behavior Selector. A Trajectory &lt;span  class=&#34;math&#34;&gt;\(T = \{c_1 , c_2 , ..., c_{|T|} \}\)&lt;/span&gt; is sequence of commands,
-&lt;span  class=&#34;math&#34;&gt;\(c_k = (v_k , φ_k , t_k )\)&lt;/span&gt;, where &lt;span  class=&#34;math&#34;&gt;\(v_k\)&lt;/span&gt; is velocity at time &lt;span  class=&#34;math&#34;&gt;\(k\)&lt;/span&gt;, &lt;span  class=&#34;math&#34;&gt;\(φ_k\)&lt;/span&gt; is steering angle at time &lt;span  class=&#34;math&#34;&gt;\(k\)&lt;/span&gt;, and &lt;span  class=&#34;math&#34;&gt;\(t_k\)&lt;/span&gt; is the duration of &lt;span  class=&#34;math&#34;&gt;\(c_k\)&lt;/span&gt; . (The focus of my work is currently Trajectory Prediction which is part of Motion Planner. We will discuss this in more details in future artciles.)&lt;/p&gt;
-
-&lt;p&gt;&lt;em&gt;Obstacle Avoider)&lt;/em&gt; Receives the Trajectory computed by the Motion Planner module and modify it to avoid collisions with obstacles in the environment. This modification is usually consist of reducing the velocity of the vehicle.&lt;/p&gt;
-
-&lt;h2 id=&#34;controller&#34;&gt;Controller&lt;/h2&gt;
-
-&lt;p&gt;Finally the Controller module convert the received modified trajectory in to commands and send it to the actuators of the steering wheel, throttle and brake in order to make the vehicle move in the real environment.&lt;/p&gt;
-
-&lt;h1 id=&#34;motion-planning&#34;&gt;Motion Planning&lt;/h1&gt;
-
-&lt;p&gt;The task of Motion Planning has been studied extensively in the last decade. Most authors in this field have been divided the problem in to local and global planning. A great amount of navigation techniques have been taken from mobile robotics and modified to face the challenges of road networks and driving
-rules [González et al., 2016]. These planning techniques have been classified in to four groups according to their implementation: graph search, sampling, interpolating and numerical optimization [González et al., 2016].&lt;/p&gt;
-
-&lt;p&gt;Avoiding dangerous situation that may happen during the driving is the current focus of the field of Motion Planning [González et al., 2016]. To give and example of this situation, imagine that you want to enter a highway, a vehicle is driving on the right lane, you don’t know if that car would be gentle and allow you to pass, or it will accelerate and go first, or it will change lane or so on ... . Predicting the path of other vehicle’s in a multi agent (pedestrians, bicycles, vehicles, ...) setting is a very important task in order to prevent collisions and plan safe paths. Autonomous robots are getting prevalent and they live in the same society as we do, it is very important for them to acquire abilities like humans’ ability for manoeuvering in crowded spaces. It is also important to know what trajectories are acceptable. Here acceptable means valid paths (arriving at destination without trespassing the traffic laws and avoiding collisions.) that the vehicle can take without crashing in to obstacles.&lt;/p&gt;
-
-&lt;p&gt;In this artcile we learned how autonomous vehicles work and what is motion planning and where does trajectory prediction belong in the anatomy of autonomous vehicles architecture. In upcoming arcticles I&#39;m going to elaborate more on the trajectoy prediction task.&lt;/p&gt;
-
-&lt;h3 id=&#34;sources&#34;&gt;Sources&lt;/h3&gt;
-
-&lt;ul&gt;
-&lt;li&gt;&lt;p&gt;Badue, C., Guidolini, R., Carneiro, R. V., Azevedo, P.,
-Cardoso, V. B., Forechi, A., Jesus, L. F. R., Berriel, R. F., Paixão, T. M.,
-Mutz, F. W., Oliveira-Santos, T., and de Souza, A. F. (2019). Self-driving
-cars: A survey. CoRR, abs/1901.04407.&lt;/p&gt;&lt;/li&gt;
-
-&lt;li&gt;&lt;p&gt;González, D., Pérez, J., Milanés, V., and Nashashibi, F.
-(2016). A review of motion planning techniques for automated vehicles. IEEE
-Transactions on Intelligent Transportation Systems, 17(4):1135–1145.&lt;/p&gt;&lt;/li&gt;
-
-&lt;li&gt;&lt;p&gt;&lt;a href=&#34;https://www.ayersandwhitlow.com/blog/2018/01/nhtsa-nearly-all-car-crashes-are-due-to-human-error.shtml&#34;&gt;National Highway Traffic Safety Administration &lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
-
-&lt;li&gt;&lt;p&gt;&lt;a href=&#34;https://www.bmw.com/en/automotive-life/autonomous-driving.html&#34;&gt;www.bmw.com&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
-
-&lt;li&gt;&lt;p&gt;&lt;a href=&#34;https://www.nhtsa.gov/technology-innovation/automated-vehicles-safety&#34;&gt;www.nhtsa.gov&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
-&lt;/ul&gt;
-</description>
-    </item>
-    
-    <item>
-      <title>Sane Introduction to the Insane World of Generative Adversarial Networks</title>
-      <link>http://mhnazeri.now.sh/posts/gans/</link>
-      <pubDate>Thu, 17 Jan 2019 23:29:20 +0430</pubDate>
-      
-      <guid>http://mhnazeri.now.sh/posts/gans/</guid>
-      <description>&lt;p&gt;In these series of articles I&amp;rsquo;m going to explain the idea behind Generative Adversarial Networks (GANs) and how they work. I divided this tutorial into separate parts to not bore the readers. In upcoming articles I&amp;rsquo;m going to explain GANs in detail and how to implement one. Picture below shows some use cases of the GANs.
-&lt;img src=&#34;http://mhnazeri.now.sh/images/pix2pix.jpg&#34; alt=&#34;GAN applications&#34;&gt;
-Image coutesy of &lt;a href=&#34;https://phillipi.github.io/pix2pix/&#34;&gt;https://phillipi.github.io&lt;/a&gt;&lt;/p&gt;
-&lt;blockquote&gt;
-&lt;p&gt;&amp;ldquo;The most interesting idea in the last 10 years, in machine learning.&amp;rdquo; (Yann Lecun)&lt;/p&gt;
-&lt;/blockquote&gt;
-&lt;p&gt;This saying from &lt;a href=&#34;http://yann.lecun.com/&#34;&gt;Yann Lecun&lt;/a&gt; shows the beauty behind GANs and their impact on future research.
-Before going in to the details of GANs, first we need some foundation. I&amp;rsquo;m starting simple and as the series grows the content of each article will get more complicated, but I&amp;rsquo;m
-hoping with knowledge that we obtain in each article, we can understand future articles better.&lt;/p&gt;
-&lt;h2 id=&#34;what-is-a-random-variable&#34;&gt;What is a Random Variable?&lt;/h2&gt;
-&lt;p&gt;In probability theory a random variable (RV) is an outcome of any random event such as tossing a coin, in this example a random variable is either head or tail. RV can be an outcome of any distribution, now you may ask what is a distribution? A probability distribution is a mathematical function that can produce probability of occurrence of any different outcome. In simple words, a distribution is a description of a random phenomenon in terms of probabilities. There are many different probability distributions but to name a few, we have &lt;a href=&#34;https://en.wikipedia.org/wiki/Normal_distribution&#34;&gt;Normal Distribution or Gaussian Distribution&lt;/a&gt;, &lt;a href=&#34;https://en.wikipedia.org/wiki/Uniform_distribution_(continuous)&#34;&gt;Uniform Distribution&lt;/a&gt; and etc. . Drawing a real number from a distribution is called sampling, which is the probability of occurring a random variable.
-We will need these definitions as we go forward. So, try not to forget them.&lt;/p&gt;
-&lt;h2 id=&#34;use-case-generating-images&#34;&gt;Use Case: Generating Images&lt;/h2&gt;
-&lt;p&gt;A picture is collection of numbers called matrix, if we use RGB color space, we have three matrices for an image, each representing the Red, Blue, Green of the image, their combination form the final image. So, each image stored as three matrices.&lt;/p&gt;
-&lt;p&gt;Now imagine you have a folder full of pictures of cats. Each number from the matrix of each image is drawn from a distribution, as long as they are cats, their distribution is the same, if we draw some numbers from this hypothetical distribution, we can generate a picture of a cat, but we don&amp;rsquo;t have access to this distribution, it is very complex distribution in a very high dimensional space. The core problem in generative models is to learn this underlying structure of data (learning data distribution), if we can learn this distribution, by sampling random variables from this distribution we can generate new data like real ones. This is the goal in Generative Models and specially Generative Adversarial Networks.&lt;/p&gt;
-&lt;h2 id=&#34;generative-adversarial-networks-in-simple-words&#34;&gt;Generative Adversarial Networks in Simple Words&lt;/h2&gt;
-&lt;p&gt;Let me explain a simple game first, which you have already played with your friends. &lt;em&gt;Guessing the number&lt;/em&gt;. In this game your friend chooses a number between a range and your job is to guess this number. If you are wrong, your friend can help you by guiding you to go up or down until you reach the number, but keep in mind that your guesses are limited. Now imagine, there is no range specified. Your job is harder now. To ease this, assume there is a list of numbers which you can guess any of them and you will win. But still, this game can get even harder by assuming that the numbers are in continues. There is a infinitesimal chance that you can guess the right number, but you can still get closer to it.&lt;/p&gt;
-&lt;p&gt;Generative adversarial networks in abstract form are really like this game, in its hardest form. The list of numbers are our training data, where they follow a pattern. Your friend is the oracle who knows these numbers but does not know the pattern (or more academic, their distribution). In the context of GANs your friend is called the discriminator. And you are the generator, who is trying to find the pattern of numbers. The guidance that your friend gives you is called the adversarial error back-propagation which helps you to go in the right direction.&lt;/p&gt;
-&lt;p&gt;For now, it is enough for introduction and what GANs really are. In the following we will talk a little bit about machine learning&amp;rsquo;s two different paradigms: supervised learning and unsupervised learning.&lt;/p&gt;
-&lt;p&gt;In supervised learning, our data is in form of $(x, y)$ pair, $x$ is our vector of features and $y$ is the corresponding label. We can learn the relation between $x$ and $y$ by learning a parameterized function like $f(x;\theta) = y$ which map $x$ on to $y$. The $\theta$ parameters are learned using an algorithm called back-propagation that determines which parameter caused the error by what margin. This is fairly simpler than when we have no label to compare our results with. But in todays world, every minute a humongous amount of data are being generated by users of social media. These data is not in the form of $(x, y)$, they are simple $x$ ($x$ is a vector of features) with no label tagged to them. This makes using these data difficult. So we need algorithms that can learn new information from this data without any guidance from us. Here the Generative Adversarial Networks, the goal of this series come in to play.&lt;/p&gt;
-&lt;p&gt;There were some models before which tried to learn the underlying hidden structure of data, some succeeded but some failed to generalize. GANs are often regarded as producing the best samples. We can summarize GANs in a paragraph:&lt;/p&gt;
-&lt;p&gt;GANs are unsupervised model to learn the underlying distribution of training data in order to generate new samples. Today these models have many applications in realistic artwork generation, super resolution, colorization, forecasting in time series, simulation, planning and so on. These models instead of directly learning the distribution of data, they try to learn this distribution in an implicit manner, by running a minimax game between two models. One model try to generate fake data and the other model discriminate these data from the real data, the former model try to maximize the error of the latter and the latter try to minimize its error.&lt;/p&gt;
-&lt;p&gt;I hope this article gave you an insight about how GANs work. In the next article we are going to implement one with &lt;a href=&#34;https://pytorch.org&#34;&gt;PyTorch&lt;/a&gt;.&lt;/p&gt;
 </description>
     </item>
     
