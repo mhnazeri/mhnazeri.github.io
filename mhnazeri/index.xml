@@ -1,12 +1,12 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Mhnazeri on Nazeri&#39;s Blog</title>
-    <link>/mhnazeri/</link>
+    <link>https://mhnazeri.now.sh/mhnazeri/</link>
     <description>Recent content in Mhnazeri on Nazeri&#39;s Blog</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     
-        <atom:link href="/mhnazeri/index.xml" rel="self" type="application/rss+xml" />
+        <atom:link href="https://mhnazeri.now.sh/mhnazeri/index.xml" rel="self" type="application/rss+xml" />
     
     
   </channel>

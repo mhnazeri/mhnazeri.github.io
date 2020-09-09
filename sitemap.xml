@@ -3,59 +3,59 @@
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   
   <url>
-    <loc>/</loc>
+    <loc>https://mhnazeri.now.sh/</loc>
     <lastmod>2020-07-30T01:46:41+04:30</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   
   <url>
-    <loc>/posts/</loc>
+    <loc>https://mhnazeri.now.sh/posts/</loc>
     <lastmod>2020-07-30T01:46:41+04:30</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   
   <url>
-    <loc>/posts/sharingan/</loc>
+    <loc>https://mhnazeri.now.sh/posts/sharingan/</loc>
     <lastmod>2020-07-30T01:46:41+04:30</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   
   <url>
-    <loc>/posts/parameter_management/</loc>
+    <loc>https://mhnazeri.now.sh/posts/parameter_management/</loc>
     <lastmod>2020-05-16T00:45:00+04:30</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   
   <url>
-    <loc>/categories/</loc>
+    <loc>https://mhnazeri.now.sh/categories/</loc>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   
   <url>
-    <loc>/mhnazeri/</loc>
+    <loc>https://mhnazeri.now.sh/mhnazeri/</loc>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   
   <url>
-    <loc>/tags/</loc>
+    <loc>https://mhnazeri.now.sh/tags/</loc>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   
   <url>
-    <loc>/true/</loc>
+    <loc>https://mhnazeri.now.sh/true/</loc>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   
   <url>
-    <loc>/vs/</loc>
+    <loc>https://mhnazeri.now.sh/vs/</loc>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>

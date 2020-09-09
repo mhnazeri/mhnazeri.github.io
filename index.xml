@@ -1,21 +1,21 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Nazeri&#39;s Blog</title>
-    <link>/</link>
+    <link>https://mhnazeri.now.sh/</link>
     <description>Recent content on Nazeri&#39;s Blog</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <lastBuildDate>Thu, 30 Jul 2020 01:46:41 +0430</lastBuildDate>
     
-        <atom:link href="/index.xml" rel="self" type="application/rss+xml" />
+        <atom:link href="https://mhnazeri.now.sh/index.xml" rel="self" type="application/rss+xml" />
     
     
     <item>
       <title>Posts</title>
-      <link>/posts/</link>
+      <link>https://mhnazeri.now.sh/posts/</link>
       <pubDate>Thu, 30 Jul 2020 01:46:41 +0430</pubDate>
       
-      <guid>/posts/</guid>
+      <guid>https://mhnazeri.now.sh/posts/</guid>
       <description></description>
     </item>
     
