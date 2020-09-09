@@ -1,55 +1,78 @@
-<?xml version="1.0" encoding="utf-8"?>
-<urlset xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9 http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd"
-xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-
-<url>
-<loc>https://mhnazeri.now.sh/</loc>
-<lastmod>2020-02-01T02:46:36-00:00</lastmod>
-<changefreq>daily</changefreq>
-<priority>0.5</priority>
-</url>
-
-<url>
-<loc>https://mhnazeri.now.sh/archives.html</loc>
-<lastmod>2020-02-01T02:46:36-00:00</lastmod>
-<changefreq>daily</changefreq>
-<priority>0.5</priority>
-</url>
-
-<url>
-<loc>https://mhnazeri.now.sh/tags.html</loc>
-<lastmod>2020-02-01T02:46:36-00:00</lastmod>
-<changefreq>daily</changefreq>
-<priority>0.5</priority>
-</url>
-
-<url>
-<loc>https://mhnazeri.now.sh/pages/about.html</loc>
-<lastmod>2018-02-14T00:00:00+03:30</lastmod>
-<changefreq>monthly</changefreq>
-<priority>0.5</priority>
-</url>
-
-<url>
-<loc>https://mhnazeri.now.sh/pages/projects.html</loc>
-<lastmod>2018-02-14T00:00:00+03:30</lastmod>
-<changefreq>monthly</changefreq>
-<priority>0.5</priority>
-</url>
-
-<url>
-<loc>https://mhnazeri.now.sh/trajectory-prediction-in-self-driving-vehicles-part-1-introduction.html</loc>
-<lastmod>2019-05-23T00:00:00+04:30</lastmod>
-<changefreq>monthly</changefreq>
-<priority>0.5</priority>
-</url>
-
-<url>
-<loc>https://mhnazeri.now.sh/sane-introduction-to-the-insane-world-of-generative-adversarial-networks-part-1.html</loc>
-<lastmod>2019-01-17T00:00:00+03:30</lastmod>
-<changefreq>monthly</changefreq>
-<priority>0.5</priority>
-</url>
-
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+  xmlns:xhtml="http://www.w3.org/1999/xhtml">
+  
+  <url>
+    <loc>http://mhnazeri.now.sh/</loc>
+    <lastmod>2020-07-30T01:46:41+04:30</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  
+  <url>
+    <loc>http://mhnazeri.now.sh/posts/</loc>
+    <lastmod>2020-07-30T01:46:41+04:30</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  
+  <url>
+    <loc>http://mhnazeri.now.sh/posts/sharingan/</loc>
+    <lastmod>2020-07-30T01:46:41+04:30</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  
+  <url>
+    <loc>http://mhnazeri.now.sh/posts/image_segmentation/</loc>
+    <lastmod>2020-07-30T00:15:46+04:30</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  
+  <url>
+    <loc>http://mhnazeri.now.sh/posts/parameter_management/</loc>
+    <lastmod>2020-05-16T00:45:00+04:30</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  
+  <url>
+    <loc>http://mhnazeri.now.sh/posts/trajectory/</loc>
+    <lastmod>2019-05-23T23:46:50+04:30</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  
+  <url>
+    <loc>http://mhnazeri.now.sh/posts/gans/</loc>
+    <lastmod>2019-01-17T23:29:20+04:30</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  
+  <url>
+    <loc>http://mhnazeri.now.sh/categories/</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  
+  <url>
+    <loc>http://mhnazeri.now.sh/tags/</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  
+  <url>
+    <loc>http://mhnazeri.now.sh/true/</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  
+  <url>
+    <loc>http://mhnazeri.now.sh/vs/</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  
 </urlset>

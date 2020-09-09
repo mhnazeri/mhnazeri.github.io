@@ -1,0 +1,13 @@
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Vs on Nazeri&#39;s Blog</title>
+    <link>http://mhnazeri.now.sh/vs/</link>
+    <description>Recent content in Vs on Nazeri&#39;s Blog</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    
+        <atom:link href="http://mhnazeri.now.sh/vs/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+  </channel>
+</rss>

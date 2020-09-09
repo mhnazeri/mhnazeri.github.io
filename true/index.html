@@ -1,23 +1,23 @@
 <!DOCTYPE html>
-<html lang='en-us'><head itemscope itemtype="http://mhnazeri.now.sh">
+<html prefix="og: http://ogp.me/ns#" lang="en-us"><head itemscope itemtype="http://mhnazeri.now.sh">
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   
   <meta property="og:locale" content="en">
   <meta name="language" content="en">
   
-  <title itemprop="name">Nazeri&#39;s Blog &middot; Nazeri&#39;s Blog</title>
-  <meta property="og:title" content="Nazeri&#39;s Blog &middot; Nazeri&#39;s Blog" />
-  <meta name="twitter:title" content="Nazeri&#39;s Blog &middot; Nazeri&#39;s Blog" />
-  <meta itemprop="name" content="Nazeri&#39;s Blog &middot; Nazeri&#39;s Blog" />
+  <title itemprop="name">True &middot; Nazeri&#39;s Blog</title>
+  <meta property="og:title" content="True &middot; Nazeri&#39;s Blog" />
+  <meta name="twitter:title" content="True &middot; Nazeri&#39;s Blog" />
+  <meta itemprop="name" content="True &middot; Nazeri&#39;s Blog" />
   <meta name="application-name" content="Nazeri&#39;s Blog" />
   <meta property="og:site_name" content="Nazeri&#39;s Blog" />
   
-  <base href="http://mhnazeri.now.sh/">
-  <link rel="canonical" href="http://mhnazeri.now.sh/" itemprop="url" />
-  <meta name="url" content="http://mhnazeri.now.sh/" />
-  <meta name="twitter:url" content="http://mhnazeri.now.sh/" />
-  <meta property="og:url" content="http://mhnazeri.now.sh/" />
+  <base href="http://mhnazeri.now.sh/true/">
+  <link rel="canonical" href="http://mhnazeri.now.sh/true/" itemprop="url" />
+  <meta name="url" content="http://mhnazeri.now.sh/true/" />
+  <meta name="twitter:url" content="http://mhnazeri.now.sh/true/" />
+  <meta property="og:url" content="http://mhnazeri.now.sh/true/" />
   
   
     
@@ -37,7 +37,7 @@
     <meta name="twitter:description" content="Here I write about stuffs that fascinates me" />
   
 
-  <meta property="og:updated_time" content=2020-07-30T01:46:41&#43;0430 />
+  <meta property="og:updated_time" content=0001-01-01T00:00:00Z />
 
   
 
@@ -57,7 +57,7 @@
         <link href="/index.xml" rel="alternate" type="application/rss+xml" title="Nazeri&#39;s Blog" />
     
     
-    <link href=" /index.xml " rel="alternate" type="application/rss+xml" title="Nazeri&#39;s Blog" />
+    <link href=" /true/index.xml " rel="alternate" type="application/rss+xml" title="True &middot; Nazeri&#39;s Blog" />
     
   
 
@@ -65,11 +65,13 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/turbolinks/5.2.0/turbolinks.js"></script>
 </head>
 <body class="bg-gradient flex flex-col min-h-screen">
-  
-    <header id="header" class="header flex w-full m-0 bg-cover bg-top-center" style="background-image: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.55)), url(http://mhnazeri.now.sh/images/header.jpg)">
-  
-    <div class="max-w-7xl mx-auto p-6 flex flex-col items-center w-full relative">
-      <div class="block lg:hidden text-white self-end mx-2">
+  <header id="header" class="w-full m-0 fixed z-10 transition-all duration-300 ease-in-out border-t-4 border-gray-300 py-4 backdrop-filter-blur">
+    <div id="header-container" class="max-w-7xl mx-auto p-6 flex items-center flex-wrap lg:flex-no-wrap relative justify-between">
+      <a href="http://mhnazeri.now.sh/" class="leading-10 text-3xl font-normal text-gray-600 flex flex-shrink-0">
+        Nazeri&#39;s Blog
+      </a>
+
+      <div class="block lg:hidden mx-2">
         <button class="nav-button w-10 h-10 justify-center flex items-center opacity-75 hover:opacity-100 transition duration-300 ease-in-out">
   <svg class="fill-current h-4 w-4" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
     <title>Menu</title>
@@ -85,26 +87,8 @@
 
       </div>
 
-      <div id="nav-menu" class="absolute right-8 top-16 lg:py-6 lg:my-4 lg:right-0 lg:top-0 hidden lg:block self-end text-white rounded-md bg-black shadow lg:bg-transparent lg:shadow-none">
-        <nav class="p-2 lg:p-0">
-          <ul class="w-full flex flex-col lg:flex-row justify-end items-end lg:items-center">
-  
-</ul>
-
-        </nav>
-      </div>
-
-      <div class="flex-grow w-full flex flex-col justify-center items-center">
-        
-          
-            <img alt="Nazeri&#39;s Blog" class="w-24 h-24 lg:w-32 lg:h-32 rounded-full mb-3" src="http://mhnazeri.now.sh/images/me.jpg">
-          
-        
-        <a href="http://mhnazeri.now.sh/" class="text-4xl font-normal flex flex-shrink-0 text-center text-white focus:text-gray-300 opacity-75 hover:opacity-100 transition duration-300 ease-in-out">
-          Nazeri&#39;s Blog
-        </a>
-
-        <nav class="text-white">
+      <div class="absolute right-8 top-16 lg:relative lg:right-0 lg:top-0 flex flex-col lg:flex-row items-center rounded-md bg-white shadow lg:bg-transparent lg:shadow-none">
+        <nav id="nav-social-links" class="p-4 lg:p-0 text-gray-600 hidden lg:block lg:order-last w-full lg:w-auto lg:ml-3">
           <ul class="flex justify-end">
   
     <li>
@@ -179,48 +163,58 @@
 </ul>
 
         </nav>
+
+        <nav id="nav-menu" class="p-4 lg:p-0 hidden lg:block w-full lg:w-auto text-gray-600">
+          <ul class="w-full flex flex-col lg:flex-row justify-end items-end lg:items-center">
+  
+</ul>
+
+        </nav>
       </div>
     </div>
   </header>
 
-<main class="flex-1 mt-12 max-w-3xl mx-auto text-gray-700 w-full">
-      <article class="article">
-        
-  <div class="intro">
-    <h1>Hi, my name is Mohammad</h1>
-    <p>Here I write about stuffs that fascinates me</p>
-  </div>
+<main class="flex-1 mt-12 max-w-3xl mt-32 mx-auto text-gray-700 w-full">
+<div id="reading-progress-bar" role="presentation" class="fixed z-10 top-0 left-0 h-1 bg-gray-700"></div>
 
-
-
-        <div class="flex flex-col md:flex-row border-b border-gray-400">
-  <h2 class="text-3xl font-bold mb-2 md:w-32 flex-shrink-0 flex-grow-0">2020</h2>
   
-  <ol class="md:pt-3 mb-4">
-    <li>
-      <a href="/posts/sharingan/">SharinGAN</a>
-    </li><li>
-      <a href="/posts/image_segmentation/">Image_segmentation</a>
-    </li><li>
-      <a href="/posts/parameter_management/">Hyper-parameter Management in Deep Learning Projects</a>
-    </li>
-  </ol>
-</div>
-
-        <div class="flex flex-col md:flex-row border-b border-gray-400">
-  <h2 class="text-3xl font-bold mb-2 md:w-32 flex-shrink-0 flex-grow-0">2019</h2>
   
-  <ol class="md:pt-3 mb-4">
-    <li>
-      <a href="/posts/trajectory/">Trajectory Forecasting in Autonomous Vehicles - Part 1: Introduction</a>
-    </li><li>
-      <a href="/posts/gans/">Sane Introduction to the Insane World of Generative Adversarial Networks</a>
-    </li>
-  </ol>
-</div>
+    <article class="article border-b border-gray-400">
+      <h1 class="artitle__title"><a href="http://mhnazeri.now.sh/posts/sharingan/">SharinGAN</a></h1>
 
-        
-      </article>
+      Generative models specially with the emerge of Generative Adversarial Networks (GANs) have become the spotlight of Deep Learning in recent years. They have many applications in the wild and sometimes they are just for fun. One fun application that I really liked, was the use of GAN to generate fake Sharingans (to read more about what sharingan is please read this article). Inspired by that video and pytorch's DCGAN tutorial, in this post I'm going to show you how to generate sharingans step by step.
+    </article>
+  
+    <article class="article border-b border-gray-400">
+      <h1 class="artitle__title"><a href="http://mhnazeri.now.sh/posts/image_segmentation/">Image_segmentation</a></h1>
+
+      
+    </article>
+  
+    <article class="article border-b border-gray-400">
+      <h1 class="artitle__title"><a href="http://mhnazeri.now.sh/posts/parameter_management/">Hyper-parameter Management in Deep Learning Projects</a></h1>
+
+      Deep Learning (DL) projects have a plethora of hyper-parameters. Especially in research, they are like knobs that should be adjusted to yields the best results. There are multiple ways one can manage these hyper-parameters in Python. In this article, I&rsquo;m going to discuss 3 common approaches.
+Argument Parser The first approach which is very easy and common is to use Python&rsquo;s built-in argument parser module. All we need to do is to define some parameters preferably with default values or pass/change them during the program execution.
+    </article>
+  
+    <article class="article border-b border-gray-400">
+      <h1 class="artitle__title"><a href="http://mhnazeri.now.sh/posts/trajectory/">Trajectory Forecasting in Autonomous Vehicles - Part 1: Introduction</a></h1>
+
+      Last week, I presented a talk about Trajectory Prediction, Here is the gist of that talk and corresponding slides.
+Every day we hear people getting killed in car accidents in the news. Drivers are too drunk to drive, texting to each other while driving, driving way too fast than should be, distracted by other objects in the scene, can’t see signs in the night, get drowsy or even road conditions like slippery roads in snowy weather can cause accidents.
+    </article>
+  
+    <article class="article border-b border-gray-400">
+      <h1 class="artitle__title"><a href="http://mhnazeri.now.sh/posts/gans/">Sane Introduction to the Insane World of Generative Adversarial Networks</a></h1>
+
+      In these series of articles I&rsquo;m going to explain the idea behind Generative Adversarial Networks (GANs) and how they work. I divided this tutorial into separate parts to not bore the readers. In upcoming articles I&rsquo;m going to explain GANs in detail and how to implement one. Picture below shows some use cases of the GANs. Image coutesy of https://phillipi.github.io
+ &ldquo;The most interesting idea in the last 10 years, in machine learning.
+    </article>
+  
+
+  
+
     </main><footer class="w-full max-w-7xl mx-auto text-center border-t border-gray-200 py-9 px-3 mt-9 pin-b text-sm text-gray-500">
   Made with <a href="https://gohugo.io" class="underline transition duration-300 ease-in-out hover:text-blue-600">Hugo</a> and <a href="https://github.com/leonardofaria/bento" class="underline transition duration-300 ease-in-out hover:text-blue-600">Bento theme</a>. 
   Copyright © 2020 nazeri
@@ -252,11 +246,38 @@
 
 
 <script>
-  window.onscroll = function () {
-    var speed = -3;
+  var initHeader = () => {
+    let scrollPos = window.scrollY;
     var header = document.querySelector('#header');
-    header.style.backgroundPosition = (-window.pageXOffset / speed) + "px " + (-window.pageYOffset / speed) + "px";
+    var headerContainer = document.querySelector("#header-container");
+    var readingProgressBar = document.querySelector("#reading-progress-bar");
+    let scrollTop = 0;
+    let scrollBottom = 0;
+    let scrollPercent = 0;
+
+    var addClassOnScroll = () => {
+      header.classList.add("shadow");
+      header.classList.add("bg-white-90");
+      header.classList.remove("py-4");
+    }
+    var removeClassOnScroll = () => {
+      header.classList.remove("shadow");
+      header.classList.remove("bg-white-90");
+      header.classList.add("py-4");
+    }
+
+    window.onscroll = function () {
+      scrollPos = window.scrollY;
+      scrollTop = document.documentElement["scrollTop"] || document.body["scrollTop"];
+      scrollBottom = (document.documentElement["scrollHeight"] || document.body["scrollHeight"]) - document.documentElement.clientHeight;
+      scrollPercent = scrollTop / scrollBottom * 100;
+      readingProgressBar.style.width = (scrollTop / scrollBottom * 100) + '%';
+
+      if (scrollPos > 0) { addClassOnScroll() }
+      else { removeClassOnScroll() }
+    }
   }
+  document.addEventListener('turbolinks:load', initHeader());
 </script>
 
 

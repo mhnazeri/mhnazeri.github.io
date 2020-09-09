@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html prefix="og: http://ogp.me/ns#" lang="en-us"><head itemscope itemtype="http://mhnazeri.now.sh">
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  
+  <meta property="og:locale" content="en">
+  <meta name="language" content="en">
+  
+  <title itemprop="name">Sane Introduction to the Insane World of Generative Adversarial Networks &middot; Nazeri&#39;s Blog</title>
+  <meta property="og:title" content="Sane Introduction to the Insane World of Generative Adversarial Networks &middot; Nazeri&#39;s Blog" />
+  <meta name="twitter:title" content="Sane Introduction to the Insane World of Generative Adversarial Networks &middot; Nazeri&#39;s Blog" />
+  <meta itemprop="name" content="Sane Introduction to the Insane World of Generative Adversarial Networks &middot; Nazeri&#39;s Blog" />
+  <meta name="application-name" content="Nazeri&#39;s Blog" />
+  <meta property="og:site_name" content="Nazeri&#39;s Blog" />
+  
+  <base href="http://mhnazeri.now.sh/posts/gans/">
+  <link rel="canonical" href="http://mhnazeri.now.sh/posts/gans/" itemprop="url" />
+  <meta name="url" content="http://mhnazeri.now.sh/posts/gans/" />
+  <meta name="twitter:url" content="http://mhnazeri.now.sh/posts/gans/" />
+  <meta property="og:url" content="http://mhnazeri.now.sh/posts/gans/" />
+  
+  
+    
+      <meta itemprop="image" content="http://mhnazeri.now.sh/images/og_image.jpg" />
+      <meta property="og:image" content="http://mhnazeri.now.sh/images/og_image.jpg" />
+      <meta name="twitter:image" content="http://mhnazeri.now.sh/images/og_image.jpg" />
+      <meta name="twitter:image:src" content="http://mhnazeri.now.sh/images/og_image.jpg" />
+    
+  
+  <meta name="twitter:card" content="summary_large_image" />
+  
+  
+    <meta property="og:type" content="article" />
+    <meta itemprop="description" content="In these series of articles I&amp;rsquo;m going to explain the idea behind Generative Adversarial Networks (GANs) and how they work. I divided this tutorial into se" />
+    <meta property="og:description" content="In these series of articles I&amp;rsquo;m going to explain the idea behind Generative Adversarial Networks (GANs) and how they work. I divided this tutorial into se" />
+    <meta name="description" content="In these series of articles I&amp;rsquo;m going to explain the idea behind Generative Adversarial Networks (GANs) and how they work. I divided this tutorial into se" />
+    <meta name="twitter:description" content="In these series of articles I&amp;rsquo;m going to explain the idea behind Generative Adversarial Networks (GANs) and how they work. I divided this tutorial into se" />
+    <meta property="article:published_time" content="2019-01-17T23:29:20&#43;04:30" />
+    <meta name="twitter:label1" value="Reading time" />
+    
+      <meta name="twitter:data1" value="5 minutes" />
+    
+
+    
+  
+
+  <meta property="og:updated_time" content=2019-01-17T23:29:20&#43;0430 />
+
+  
+
+  
+
+  
+
+  <meta name="generator" content="Hugo 0.69.0" />
+
+  
+    
+    <link rel="stylesheet" href="http://mhnazeri.now.sh/css/styles.min.ef433e47a104e30937dfad230e28b6dd329c9b4fe18ff4925850da1f24df3133.css" integrity="sha256-70M&#43;R6EE4wk3360jDii23TKcm0/hj/SSWFDaHyTfMTM=">
+  
+
+  
+    
+        <link href="/index.xml" rel="alternate" type="application/rss+xml" title="Nazeri&#39;s Blog" />
+    
+    
+  
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/turbolinks/5.2.0/turbolinks.js"></script>
+</head>
+<body class="bg-gradient flex flex-col min-h-screen">
+  <header id="header" class="w-full m-0 fixed z-10 transition-all duration-300 ease-in-out border-t-4 border-gray-300 py-4 backdrop-filter-blur">
+    <div id="header-container" class="max-w-7xl mx-auto p-6 flex items-center flex-wrap lg:flex-no-wrap relative justify-between">
+      <a href="http://mhnazeri.now.sh/" class="leading-10 text-3xl font-normal text-gray-600 flex flex-shrink-0">
+        Nazeri&#39;s Blog
+      </a>
+
+      <div class="block lg:hidden mx-2">
+        <button class="nav-button w-10 h-10 justify-center flex items-center opacity-75 hover:opacity-100 transition duration-300 ease-in-out">
+  <svg class="fill-current h-4 w-4" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+    <title>Menu</title>
+    <path d="M0 3h20v2H0V3zm0 6h20v2H0V9zm0 6h20v2H0v-2z" />
+  </svg>
+</button>
+<button class="hidden nav-button w-10 h-10 justify-center flex items-center opacity-75 hover:opacity-100 transition duration-300 ease-in-out">
+  <svg class="fill-current h-4 w-4" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+    <title>Close menu</title>
+    <polygon points="11 9 22 9 22 11 11 11 11 22 9 22 9 11 -2 11 -2 9 9 9 9 -2 11 -2" transform="rotate(45 10 10)" />
+  </svg>
+</button>
+
+      </div>
+
+      <div class="absolute right-8 top-16 lg:relative lg:right-0 lg:top-0 flex flex-col lg:flex-row items-center rounded-md bg-white shadow lg:bg-transparent lg:shadow-none">
+        <nav id="nav-social-links" class="p-4 lg:p-0 text-gray-600 hidden lg:block lg:order-last w-full lg:w-auto lg:ml-3">
+          <ul class="flex justify-end">
+  
+    <li>
+      <a class="block p-2 opacity-75 hover:opacity-100 transition duration-300 ease-in-out" title="Twitter" href="https://www.twitter.com/m.nazeri" rel="me">
+        <svg class="fill-current w-5 h-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
+          <title>Twitter</title>
+          <path d="M6.29 18.25c7.55 0 11.67-6.25 11.67-11.67v-.53c.8-.59 1.49-1.3 2.04-2.13-.75.33-1.54.55-2.36.65a4.12 4.12 0 0 0 1.8-2.27c-.8.48-1.68.81-2.6 1a4.1 4.1 0 0 0-7 3.74 11.65 11.65 0 0 1-8.45-4.3 4.1 4.1 0 0 0 1.27 5.49C2.01 8.2 1.37 8.03.8 7.7v.05a4.1 4.1 0 0 0 3.3 4.03 4.1 4.1 0 0 1-1.86.07 4.1 4.1 0 0 0 3.83 2.85A8.23 8.23 0 0 1 0 16.4a11.62 11.62 0 0 0 6.29 1.84"></path>
+        </svg>
+      </a>
+    </li>
+  
+  
+    <li>
+      <a class="block p-2 opacity-75 hover:opacity-100 transition duration-300 ease-in-out" title="Github" href="https://www.github.com/mhnazeri/" rel="me">
+        <svg class="fill-current w-5 h-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
+          <title>GitHub</title>
+          <path d="M10 0a10 10 0 0 0-3.16 19.49c.5.1.68-.22.68-.48l-.01-1.7c-2.78.6-3.37-1.34-3.37-1.34-.46-1.16-1.11-1.47-1.11-1.47-.9-.62.07-.6.07-.6 1 .07 1.53 1.03 1.53 1.03.9 1.52 2.34 1.08 2.91.83.1-.65.35-1.09.63-1.34-2.22-.25-4.55-1.11-4.55-4.94 0-1.1.39-1.99 1.03-2.69a3.6 3.6 0 0 1 .1-2.64s.84-.27 2.75 1.02a9.58 9.58 0 0 1 5 0c1.91-1.3 2.75-1.02 2.75-1.02.55 1.37.2 2.4.1 2.64.64.7 1.03 1.6 1.03 2.69 0 3.84-2.34 4.68-4.57 4.93.36.31.68.92.68 1.85l-.01 2.75c0 .26.18.58.69.48A10 10 0 0 0 10 0"></path>
+        </svg>
+      </a>
+    </li>
+  
+  
+    <li>
+      <a class="block p-2 opacity-75 hover:opacity-100 transition duration-300 ease-in-out" title="Gitlab" href="https://www.gitlab.com/mhnazeri/" rel="me">
+        <svg class="fill-current w-5 h-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+          <title>Gitlab</title>
+          <path d="M23.238 15.199c0.261-0.17 0.493-0.446 0.635-0.764 0.172-0.385 0.214-0.831 0.075-1.305l-1.266-3.749-2.432-7.484c-0.068-0.229-0.195-0.443-0.397-0.637-0.266-0.242-0.603-0.367-0.941-0.372-0.351-0.005-0.707 0.119-0.976 0.365-0.165 0.147-0.296 0.334-0.378 0.547-0.006 0.015-0.012 0.033-0.018 0.052l-2.217 6.818h-6.647l-2.207-6.773c-0.068-0.229-0.195-0.443-0.397-0.637-0.265-0.242-0.602-0.367-0.94-0.372-0.351-0.006-0.707 0.118-0.976 0.365-0.166 0.146-0.296 0.334-0.379 0.546-0.006 0.016-0.012 0.034-0.018 0.052l-2.441 7.512-1.22 3.78c-0.106 0.329-0.117 0.676-0.038 1.004 0.098 0.407 0.336 0.783 0.702 1.052l10.65 7.74c0.346 0.248 0.818 0.26 1.176 0zM22.003 13.624l-10.003 7.27-9.983-7.255 1.205-3.662 1.886-5.805 1.891 5.808c0.137 0.42 0.525 0.687 0.951 0.69h8.1c0.442 0 0.817-0.287 0.951-0.691l1.886-5.804 1.892 5.824z"></path>
+        </svg>
+      </a>
+    </li>
+  
+  
+    <li>
+      <a class="block p-2 opacity-75 hover:opacity-100 transition duration-300 ease-in-out" title="Linkedin" href="https://www.linkedin.com/in/mohammad-nazeri-49404168/" rel="me">
+        <svg class="fill-current w-5 h-5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+          <title>LinkedIn</title>
+          <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/>
+        </svg>
+      </a>
+    </li>
+  
+  
+    <li>
+      <a class="block p-2 opacity-75 hover:opacity-100 transition duration-300 ease-in-out" title="Academic Page" href="https://iasbs.ac.ir/~m.nazeri/" rel="me">
+        <svg class="fill-current w-5 h-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
+          <title>Academic Page</title>
+          <path d="M30.147 32h-28.293v-1.453h28.293zM29.080 27.76h-26.107v2.013h26.107zM28.773 4.88h-25.973v2.787h25.973zM15.787 0l-13.6 3.187 0.787 0.813h25.64l0.72-0.813zM4.947 26.947c0.024 0 0.053 0.001 0.082 0.001 0.446 0 0.877-0.064 1.284-0.182l-0.032 0.008c0.213-2.32 0.333-6.533 0.333-9.16s-0.12-6.667-0.32-9.013c-0.013-0.096-0.081-0.174-0.172-0.2l-0.002-0c-0.335-0.085-0.721-0.133-1.117-0.133-0.001 0-0.002 0-0.003 0h0c-0.394 0.003-0.775 0.051-1.14 0.14l0.034-0.007c-0.092 0.026-0.16 0.104-0.173 0.199l-0 0.001c-0.213 2.347-0.32 6.427-0.32 9.013s0.12 6.84 0.333 9.16c0.363 0.108 0.78 0.172 1.212 0.173h0.001zM12.027 26.947c0.028 0.001 0.061 0.001 0.094 0.001 0.441 0 0.868-0.064 1.271-0.182l-0.032 0.008c0.213-2.32 0.333-6.533 0.333-9.16s-0.12-6.667-0.32-9.013c-0.013-0.096-0.081-0.174-0.172-0.2l-0.002-0c-0.335-0.085-0.72-0.134-1.117-0.134-0.029 0-0.058 0-0.087 0.001l0.004-0c-0.399 0.003-0.784 0.051-1.154 0.14l0.034-0.007c-0.092 0.026-0.16 0.104-0.173 0.199l-0 0.001c-0.2 2.347-0.32 6.427-0.32 9.013s0.12 6.84 0.333 9.16c0.37 0.11 0.796 0.174 1.236 0.174 0.025 0 0.050-0 0.074-0.001l-0.004 0zM20.227 26.947c0.028 0.001 0.061 0.001 0.094 0.001 0.442 0 0.868-0.064 1.271-0.182l-0.032 0.008c0.213-2.32 0.333-6.533 0.333-9.16s-0.107-6.667-0.32-9.013c-0.014-0.113-0.109-0.2-0.225-0.2-0.005 0-0.010 0-0.016 0.001l0.001-0c-0.332-0.084-0.714-0.133-1.106-0.133h-0c-0.393 0.002-0.775 0.050-1.14 0.14l0.033-0.007c-0.098 0.022-0.172 0.1-0.186 0.199l-0 0.001c-0.2 2.347-0.32 6.427-0.32 9.013s0.12 6.84 0.347 9.16c0.365 0.11 0.785 0.174 1.22 0.174 0.016 0 0.033-0 0.049-0l-0.003 0zM27.133 26.947c0.009 0 0.020 0 0.030 0 0.44 0 0.866-0.063 1.268-0.181l-0.032 0.008c0.213-2.32 0.333-6.533 0.333-9.16s-0.107-6.667-0.32-9.013c-0.013-0.096-0.081-0.174-0.172-0.2l-0.002-0c-0.332-0.084-0.714-0.133-1.106-0.133h-0c-0.399 0.003-0.784 0.051-1.154 0.14l0.034-0.007c-0.092 0.026-0.16 0.104-0.173 0.199l-0 0.001c-0.2 2.347-0.32 6.427-0.32 9.013s0.12 6.84 0.333 9.16c0.37 0.11 0.795 0.174 1.235 0.174 0.016 0 0.032-0 0.047-0l-0.002 0z"></path>
+        </svg>
+      </a>
+    </li>
+  
+  
+    <li>
+      <a class="block p-2 opacity-75 hover:opacity-100 transition duration-300 ease-in-out" title="Email" href="mailto:mohammad.h.nazeri@gmail.com">
+        <svg class="fill-current w-5 h-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+          <path d="M502.3 190.8c3.9-3.1 9.7-.2 9.7 4.7V400c0 26.5-21.5 48-48 48H48c-26.5 0-48-21.5-48-48V195.6c0-5 5.7-7.8 9.7-4.7 22.4 17.4 52.1 39.5 154.1 113.6 21.1 15.4 56.7 47.8 92.2 47.6 35.7.3 72-32.8 92.3-47.6 102-74.1 131.6-96.3 154-113.7zM256 320c23.2.4 56.6-29.2 73.4-41.4 132.7-96.3 142.8-104.7 173.4-128.7 5.8-4.5 9.2-11.5 9.2-18.9v-19c0-26.5-21.5-48-48-48H48C21.5 64 0 85.5 0 112v19c0 7.4 3.4 14.3 9.2 18.9 30.6 23.9 40.7 32.4 173.4 128.7 16.8 12.2 50.2 41.8 73.4 41.4z"></path>
+        </svg>
+      </a>
+    </li>
+  
+  
+    <li>
+      <a class="block p-2 opacity-75 hover:opacity-100 transition duration-300 ease-in-out" title="Feed" href="/index.xml">
+        <svg class="fill-current w-5 h-5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+          <title>RSS</title>
+          <path
+            d="M19.199 24C19.199 13.467 10.533 4.8 0 4.8V0c13.165 0 24 10.835 24 24h-4.801zM3.291 17.415c1.814 0 3.293 1.479 3.293 3.295 0 1.813-1.485 3.29-3.301 3.29C1.47 24 0 22.526 0 20.71s1.475-3.294 3.291-3.295zM15.909 24h-4.665c0-6.169-5.075-11.245-11.244-11.245V8.09c8.727 0 15.909 7.184 15.909 15.91z" />
+        </svg>
+      </a>
+    </li>
+  
+</ul>
+
+        </nav>
+
+        <nav id="nav-menu" class="p-4 lg:p-0 hidden lg:block w-full lg:w-auto text-gray-600">
+          <ul class="w-full flex flex-col lg:flex-row justify-end items-end lg:items-center">
+  
+</ul>
+
+        </nav>
+      </div>
+    </div>
+  </header>
+
+<main class="flex-1 mt-12 max-w-3xl mt-32 mx-auto text-gray-700 w-full">
+<div id="reading-progress-bar" role="presentation" class="fixed z-10 top-0 left-0 h-1 bg-gray-700"></div>
+
+<article class="article">
+    <h1 class="artitle__title"><a href="http://mhnazeri.now.sh/posts/gans/">Sane Introduction to the Insane World of Generative Adversarial Networks</a></h1>
+
+    
+      <header class="article__header">
+        
+        <span class="">
+          Read in 5 minutes &middot;
+          <time datetime="2019-01-17T23:29:20&#43;04:30">
+            17 Jan, 2019
+          </time>
+        </span>
+      </header>
+    
+
+    <div class="py-5">
+      <p>In these series of articles I&rsquo;m going to explain the idea behind Generative Adversarial Networks (GANs) and how they work. I divided this tutorial into separate parts to not bore the readers. In upcoming articles I&rsquo;m going to explain GANs in detail and how to implement one. Picture below shows some use cases of the GANs.
+<img src="/images/pix2pix.jpg" alt="GAN applications">
+Image coutesy of <a href="https://phillipi.github.io/pix2pix/">https://phillipi.github.io</a></p>
+<blockquote>
+<p>&ldquo;The most interesting idea in the last 10 years, in machine learning.&rdquo; (Yann Lecun)</p>
+</blockquote>
+<p>This saying from <a href="http://yann.lecun.com/">Yann Lecun</a> shows the beauty behind GANs and their impact on future research.
+Before going in to the details of GANs, first we need some foundation. I&rsquo;m starting simple and as the series grows the content of each article will get more complicated, but I&rsquo;m
+hoping with knowledge that we obtain in each article, we can understand future articles better.</p>
+<h2 id="what-is-a-random-variable">What is a Random Variable?</h2>
+<p>In probability theory a random variable (RV) is an outcome of any random event such as tossing a coin, in this example a random variable is either head or tail. RV can be an outcome of any distribution, now you may ask what is a distribution? A probability distribution is a mathematical function that can produce probability of occurrence of any different outcome. In simple words, a distribution is a description of a random phenomenon in terms of probabilities. There are many different probability distributions but to name a few, we have <a href="https://en.wikipedia.org/wiki/Normal_distribution">Normal Distribution or Gaussian Distribution</a>, <a href="https://en.wikipedia.org/wiki/Uniform_distribution_(continuous)">Uniform Distribution</a> and etc. . Drawing a real number from a distribution is called sampling, which is the probability of occurring a random variable.
+We will need these definitions as we go forward. So, try not to forget them.</p>
+<h2 id="use-case-generating-images">Use Case: Generating Images</h2>
+<p>A picture is collection of numbers called matrix, if we use RGB color space, we have three matrices for an image, each representing the Red, Blue, Green of the image, their combination form the final image. So, each image stored as three matrices.</p>
+<p>Now imagine you have a folder full of pictures of cats. Each number from the matrix of each image is drawn from a distribution, as long as they are cats, their distribution is the same, if we draw some numbers from this hypothetical distribution, we can generate a picture of a cat, but we don&rsquo;t have access to this distribution, it is very complex distribution in a very high dimensional space. The core problem in generative models is to learn this underlying structure of data (learning data distribution), if we can learn this distribution, by sampling random variables from this distribution we can generate new data like real ones. This is the goal in Generative Models and specially Generative Adversarial Networks.</p>
+<h2 id="generative-adversarial-networks-in-simple-words">Generative Adversarial Networks in Simple Words</h2>
+<p>Let me explain a simple game first, which you have already played with your friends. <em>Guessing the number</em>. In this game your friend chooses a number between a range and your job is to guess this number. If you are wrong, your friend can help you by guiding you to go up or down until you reach the number, but keep in mind that your guesses are limited. Now imagine, there is no range specified. Your job is harder now. To ease this, assume there is a list of numbers which you can guess any of them and you will win. But still, this game can get even harder by assuming that the numbers are in continues. There is a infinitesimal chance that you can guess the right number, but you can still get closer to it.</p>
+<p>Generative adversarial networks in abstract form are really like this game, in its hardest form. The list of numbers are our training data, where they follow a pattern. Your friend is the oracle who knows these numbers but does not know the pattern (or more academic, their distribution). In the context of GANs your friend is called the discriminator. And you are the generator, who is trying to find the pattern of numbers. The guidance that your friend gives you is called the adversarial error back-propagation which helps you to go in the right direction.</p>
+<p>For now, it is enough for introduction and what GANs really are. In the following we will talk a little bit about machine learning&rsquo;s two different paradigms: supervised learning and unsupervised learning.</p>
+<p>In supervised learning, our data is in form of $(x, y)$ pair, $x$ is our vector of features and $y$ is the corresponding label. We can learn the relation between $x$ and $y$ by learning a parameterized function like $f(x;\theta) = y$ which map $x$ on to $y$. The $\theta$ parameters are learned using an algorithm called back-propagation that determines which parameter caused the error by what margin. This is fairly simpler than when we have no label to compare our results with. But in todays world, every minute a humongous amount of data are being generated by users of social media. These data is not in the form of $(x, y)$, they are simple $x$ ($x$ is a vector of features) with no label tagged to them. This makes using these data difficult. So we need algorithms that can learn new information from this data without any guidance from us. Here the Generative Adversarial Networks, the goal of this series come in to play.</p>
+<p>There were some models before which tried to learn the underlying hidden structure of data, some succeeded but some failed to generalize. GANs are often regarded as producing the best samples. We can summarize GANs in a paragraph:</p>
+<p>GANs are unsupervised model to learn the underlying distribution of training data in order to generate new samples. Today these models have many applications in realistic artwork generation, super resolution, colorization, forecasting in time series, simulation, planning and so on. These models instead of directly learning the distribution of data, they try to learn this distribution in an implicit manner, by running a minimax game between two models. One model try to generate fake data and the other model discriminate these data from the real data, the former model try to maximize the error of the latter and the latter try to minimize its error.</p>
+<p>I hope this article gave you an insight about how GANs work. In the next article we are going to implement one with <a href="https://pytorch.org">PyTorch</a>.</p>
+
+    </div>
+
+    
+      <section class="author">
+        
+          <img alt="Avatar photo" class="author__avatar" src="/images/me.jpg">
+        
+
+        <span class="author__bio">Mohammad is currently M.S. student of Computer Science at (IASBS). Follow him on <a href='https://twitter.com/m.nazeri'>Twitter</a></span>
+
+        
+        
+        
+        <a href="http://twitter.com/share?url=http%3a%2f%2fmhnazeri.now.sh%2fposts%2fgans%2f&text=Sane%20Introduction%20to%20the%20Insane%20World%20of%20Generative%20Adversarial%20Networks&via=m.nazeri" class="author__share bg-twitter hover:color-white hover:opacity-75">
+          <svg class="fill-current w-4 h-4 mr-2" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
+            <title>Twitter</title>
+            <path d="M6.29 18.25c7.55 0 11.67-6.25 11.67-11.67v-.53c.8-.59 1.49-1.3 2.04-2.13-.75.33-1.54.55-2.36.65a4.12 4.12 0 0 0 1.8-2.27c-.8.48-1.68.81-2.6 1a4.1 4.1 0 0 0-7 3.74 11.65 11.65 0 0 1-8.45-4.3 4.1 4.1 0 0 0 1.27 5.49C2.01 8.2 1.37 8.03.8 7.7v.05a4.1 4.1 0 0 0 3.3 4.03 4.1 4.1 0 0 1-1.86.07 4.1 4.1 0 0 0 3.83 2.85A8.23 8.23 0 0 1 0 16.4a11.62 11.62 0 0 0 6.29 1.84"></path>
+          </svg>
+
+          Tweet
+        </a>
+      </section>
+    
+
+    
+      <section class="comments ">
+        <h2>Comments</h2>
+        
+      </section>
+    
+</article>
+
+
+  <aside class="flex">
+  
+    <a class="w-full md:w-1/2 flex flex-col items-center py-7 px-3 no-underline rounded-md hover:bg-white transition duration-300 ease-in-out" href="/posts/trajectory/">
+      <span class="border border-gray-6 text-xs rounded-md mb-2 uppercase font-bold py-2 px-3">Read this next</span>
+      <span class="text-center">Trajectory Forecasting in Autonomous Vehicles - Part 1: Introduction</span>
+    </a>
+  
+  
+</aside>
+
+
+
+    </main><footer class="w-full max-w-7xl mx-auto text-center border-t border-gray-200 py-9 px-3 mt-9 pin-b text-sm text-gray-500">
+  Made with <a href="https://gohugo.io" class="underline transition duration-300 ease-in-out hover:text-blue-600">Hugo</a> and <a href="https://github.com/leonardofaria/bento" class="underline transition duration-300 ease-in-out hover:text-blue-600">Bento theme</a>. 
+  Copyright © 2020 nazeri
+</footer>
+
+<script>
+  var initMenu = () => {
+    var navButtons = document.querySelectorAll('.nav-button');
+    var navMenu = document.querySelector('#nav-menu');
+    var navSocialLinks = document.querySelector('#nav-social-links');
+
+    for (var button of navButtons) {
+      button.addEventListener('click', () => {
+        console.log('click')
+        navMenu.classList.toggle("hidden");
+
+        if (navSocialLinks) {
+          navSocialLinks.classList.toggle("hidden");
+        }
+
+        for (var navButton of navButtons) {
+          navButton.classList.toggle("hidden");
+        };
+      });
+    }
+  }
+  document.addEventListener('turbolinks:load', initMenu());
+</script>
+
+
+<script>
+  var initHeader = () => {
+    let scrollPos = window.scrollY;
+    var header = document.querySelector('#header');
+    var headerContainer = document.querySelector("#header-container");
+    var readingProgressBar = document.querySelector("#reading-progress-bar");
+    let scrollTop = 0;
+    let scrollBottom = 0;
+    let scrollPercent = 0;
+
+    var addClassOnScroll = () => {
+      header.classList.add("shadow");
+      header.classList.add("bg-white-90");
+      header.classList.remove("py-4");
+    }
+    var removeClassOnScroll = () => {
+      header.classList.remove("shadow");
+      header.classList.remove("bg-white-90");
+      header.classList.add("py-4");
+    }
+
+    window.onscroll = function () {
+      scrollPos = window.scrollY;
+      scrollTop = document.documentElement["scrollTop"] || document.body["scrollTop"];
+      scrollBottom = (document.documentElement["scrollHeight"] || document.body["scrollHeight"]) - document.documentElement.clientHeight;
+      scrollPercent = scrollTop / scrollBottom * 100;
+      readingProgressBar.style.width = (scrollTop / scrollBottom * 100) + '%';
+
+      if (scrollPos > 0) { addClassOnScroll() }
+      else { removeClassOnScroll() }
+    }
+  }
+  document.addEventListener('turbolinks:load', initHeader());
+</script>
+
+
+</body>
+</html>

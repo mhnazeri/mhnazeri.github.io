@@ -1,0 +1,747 @@
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Posts on Nazeri&#39;s Blog</title>
+    <link>http://mhnazeri.now.sh/posts/</link>
+    <description>Recent content in Posts on Nazeri&#39;s Blog</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Thu, 30 Jul 2020 01:46:41 +0430</lastBuildDate>
+    
+        <atom:link href="http://mhnazeri.now.sh/posts/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>SharinGAN</title>
+      <link>http://mhnazeri.now.sh/posts/sharingan/</link>
+      <pubDate>Thu, 30 Jul 2020 01:46:41 +0430</pubDate>
+      
+      <guid>http://mhnazeri.now.sh/posts/sharingan/</guid>
+      <description>&lt;p&gt;Generative models specially with the emerge of &lt;a href=&#34;https://papers.nips.cc/paper/5423-generative-adversarial-nets.pdf&#34;&gt;Generative Adversarial Networks (GANs)&lt;/a&gt; have become the spotlight of Deep Learning in recent years. They have &lt;a href=&#34;https://github.com/nashory/gans-awesome-applications&#34;&gt;many applications in the wild&lt;/a&gt; and sometimes they are just for &lt;a href=&#34;https://theaisummer.com/deepfakes/&#34;&gt;fun&lt;/a&gt;.
+One fun application that I really liked, was the use of GAN to generate &lt;a href=&#34;https://www.youtube.com/watch?v=8fnynVsR53k&#34;&gt;fake Sharingans&lt;/a&gt; (to read more about what sharingan is please read &lt;a href=&#34;https://naruto.fandom.com/wiki/Sharingan&#34;&gt;this article&lt;/a&gt;). Inspired by that video and pytorch&#39;s &lt;a href=&#34;https://pytorch.org/tutorials/beginner/dcgan_faces_tutorial.html&#34;&gt;DCGAN tutorial&lt;/a&gt;, in this post I&#39;m going to show you how to generate sharingans step by step. You can download the PyTorch source code from &lt;a href=&#34;https://github.com/mhnazeri/sharingan&#34;&gt;here&lt;/a&gt;. I highly recommend to download the full source code because here I only explain important steps in writing DL model, things such as config files are not discussed here. To read more about project configuration see my &lt;a href=&#34;https://mhnazeri.now.sh/posts/parameter_management/&#34;&gt;Hyper-parameter Management&lt;/a&gt; article.&lt;/p&gt;
+
+&lt;p&gt;To train a model, you have to address three stages:&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;Gathering and loading data&lt;/li&gt;
+&lt;li&gt;Designing the architecture&lt;/li&gt;
+&lt;li&gt;Loss function and train loop&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;I structured my project directory as follows (if you like the structure, I created a template &lt;a href=&#34;https://github.com/mhnazeri/ml_template&#34;&gt;here&lt;/a&gt;):&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt; └── sharinGAN/ 
+ │  └──── conf/ 
+ │  │  └──── optimizer/ 
+ │  │  │  └──── adam.yaml  
+ │  │  ├──── config.yaml  
+ │  │  ├──── dirs.yaml  
+ │  │  ├──── models.yaml  
+ │  │  └──── train.yaml  
+ │  └──── model/ 
+ │  │  ├──── data_loader.py  
+ │  │  ├──── __init__.py  
+ │  │  └──── net.py  
+ │  └──── sharingan_pics/ 
+ │  │  ├──── 0.jpeg  
+ │  │  ├──── 10.jpeg  
+ │  │  ├──── ...
+ │  ├──── train.py  
+ │  └──── utils.py   
+ ├── README.md  
+ └── requirements.txt&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;h1 id=&#34;gathering-and-loading-data&#34;&gt;Gathering and Loading Data&lt;/h1&gt;
+
+&lt;p&gt;First thing that we need, in every problem that we are going to solve with deep learning, is &lt;em&gt;data&lt;/em&gt;. I gathered some sharingan pictures from google image search. It is a fairly easy task, you just need to search for keyword &lt;code&gt;sharingan&lt;/code&gt; and save the pictures in a folder. I named mine &lt;code&gt;sharing_pics&lt;/code&gt;. So now, we have to write the &lt;code&gt;data_loader&lt;/code&gt;.&lt;/p&gt;
+
+&lt;p&gt;To do so, first we need to import required libraries. We need &lt;code&gt;pathlib&lt;/code&gt; to read image directories, &lt;code&gt;PIL&lt;/code&gt;, Python imaging library (hence the name) to read images from the disk, pytorch&#39;s abstract &lt;code&gt;Dataset&lt;/code&gt; module to write a class which handles concurrent reading and preprocessing for us, and finally for loading the config files we use a custom function that resides in &lt;code&gt;utils.py&lt;/code&gt; file:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-python&#34; data-lang=&#34;python&#34;&gt;&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;from&lt;/span&gt; &lt;span style=&#34;color:#555&#34;&gt;omegaconf&lt;/span&gt; &lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;import&lt;/span&gt; OmegaConf
+
+
+&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;def&lt;/span&gt; &lt;span style=&#34;color:#900;font-weight:bold&#34;&gt;get_conf&lt;/span&gt;(name: &lt;span style=&#34;color:#0086b3&#34;&gt;str&lt;/span&gt;):
+    cfg &lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;=&lt;/span&gt; OmegaConf&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;.&lt;/span&gt;load(f&lt;span style=&#34;color:#d14&#34;&gt;&amp;#34;{name}.yaml&amp;#34;&lt;/span&gt;)
+    &lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;return&lt;/span&gt; cfg&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-python&#34; data-lang=&#34;python&#34;&gt;&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;from&lt;/span&gt; &lt;span style=&#34;color:#555&#34;&gt;pathlib&lt;/span&gt; &lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;import&lt;/span&gt; Path
+&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;from&lt;/span&gt; &lt;span style=&#34;color:#555&#34;&gt;PIL&lt;/span&gt; &lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;import&lt;/span&gt; Image
+
+&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;import&lt;/span&gt; &lt;span style=&#34;color:#555&#34;&gt;torch&lt;/span&gt;
+&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;from&lt;/span&gt; &lt;span style=&#34;color:#555&#34;&gt;torch.utils.data&lt;/span&gt; &lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;import&lt;/span&gt; Dataset
+
+&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;from&lt;/span&gt; &lt;span style=&#34;color:#555&#34;&gt;utils&lt;/span&gt; &lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;import&lt;/span&gt; get_conf
+
+
+&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;class&lt;/span&gt; &lt;span style=&#34;color:#458;font-weight:bold&#34;&gt;SharinganDataset&lt;/span&gt;(Dataset):
+    &lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;def&lt;/span&gt; __init__(&lt;span style=&#34;color:#999&#34;&gt;self&lt;/span&gt;, transform) &lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;-&amp;gt;&lt;/span&gt; &lt;span style=&#34;color:#999&#34;&gt;None&lt;/span&gt;:
+        &lt;span style=&#34;color:#998;font-style:italic&#34;&gt;# get data directory&lt;/span&gt;
+        data_dir &lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;=&lt;/span&gt; get_conf(&lt;span style=&#34;color:#d14&#34;&gt;&amp;#34;conf/dirs&amp;#34;&lt;/span&gt;)&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;.&lt;/span&gt;train_data
+        &lt;span style=&#34;color:#998;font-style:italic&#34;&gt;# store filenames&lt;/span&gt;
+        &lt;span style=&#34;color:#998;font-style:italic&#34;&gt;# Path().iterdir() returns a generator, convert it to list&lt;/span&gt;
+        &lt;span style=&#34;color:#999&#34;&gt;self&lt;/span&gt;&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;.&lt;/span&gt;filenames &lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color:#0086b3&#34;&gt;list&lt;/span&gt;(Path(data_dir)&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;.&lt;/span&gt;iterdir())
+        &lt;span style=&#34;color:#999&#34;&gt;self&lt;/span&gt;&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;.&lt;/span&gt;transform &lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;=&lt;/span&gt; transform
+
+    &lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;def&lt;/span&gt; __len__(&lt;span style=&#34;color:#999&#34;&gt;self&lt;/span&gt;) &lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;-&amp;gt;&lt;/span&gt; &lt;span style=&#34;color:#0086b3&#34;&gt;int&lt;/span&gt;:
+        &lt;span style=&#34;color:#d14&#34;&gt;&amp;#34;&amp;#34;&amp;#34;return size of dataset&amp;#34;&amp;#34;&amp;#34;&lt;/span&gt;
+        &lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;return&lt;/span&gt; &lt;span style=&#34;color:#0086b3&#34;&gt;len&lt;/span&gt;(&lt;span style=&#34;color:#999&#34;&gt;self&lt;/span&gt;&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;.&lt;/span&gt;filenames)
+
+    &lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;def&lt;/span&gt; __getitem__(&lt;span style=&#34;color:#999&#34;&gt;self&lt;/span&gt;, idx) &lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;-&amp;gt;&lt;/span&gt; torch&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;.&lt;/span&gt;tensor:
+        &lt;span style=&#34;color:#998;font-style:italic&#34;&gt;# load the image&lt;/span&gt;
+        image &lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;=&lt;/span&gt; Image&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;.&lt;/span&gt;open(&lt;span style=&#34;color:#999&#34;&gt;self&lt;/span&gt;&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;.&lt;/span&gt;filenames[idx])
+        &lt;span style=&#34;color:#998;font-style:italic&#34;&gt;# apply transformers on it and return it&lt;/span&gt;
+        image &lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color:#999&#34;&gt;self&lt;/span&gt;&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;.&lt;/span&gt;transform(image)
+        &lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;return&lt;/span&gt; image&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;In &lt;code&gt;SharinganDataset&lt;/code&gt; we read image addresses and store them in &lt;code&gt;self.filenames&lt;/code&gt;. Our dataset size is the length of &lt;code&gt;self.filenames&lt;/code&gt;, which in our case is &lt;code&gt;100&lt;/code&gt;. Every image that we want to read, it&#39;s address is in &lt;code&gt;self.filenames&lt;/code&gt;, we read the image with the help of &lt;code&gt;PIL&lt;/code&gt; and then apply image transformations on it. Finally the image is in the form that we want. In train loop section we will discuss these transformations. And that&#39;s it for loading data.&lt;/p&gt;
+
+&lt;h1 id=&#34;designing-the-architecture&#34;&gt;Designing the Architecture&lt;/h1&gt;
+
+&lt;p&gt;For the generator and discriminator architecture, we follow the &lt;a href=&#34;https://arxiv.org/pdf/1511.06434.pdf&#34;&gt;DCGAN&lt;/a&gt; architecture and implement it as described in &lt;a href=&#34;https://pytorch.org/tutorials/beginner/dcgan_faces_tutorial.html&#34;&gt;pytorch tutorial&lt;/a&gt; with one exception that &lt;code&gt;BatchNorm2d&lt;/code&gt; is applied after the activation function. The code for model architectures resides in &lt;code&gt;model/net.py&lt;/code&gt;. The noticeable network components here are:&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;https://pytorch.org/docs/stable/generated/torch.nn.ConvTranspose2d.html&#34;&gt;&lt;code&gt;ConvTranspose2d(in_channels, out_channels, kernel_size, stride, padding, bias)&lt;/code&gt;&lt;/a&gt;: sometimes called &lt;em&gt;deconvolution&lt;/em&gt; operator. But they are actually not the same. &lt;code&gt;ConvTranspose&lt;/code&gt; applies filter on the spaced out (with zeros) input. The end result would be an upsampled of the input with learned weights.  You can read more about it &lt;a href=&#34;https://arxiv.org/abs/1603.07285&#34;&gt;here&lt;/a&gt; with corresponding &lt;a href=&#34;https://github.com/vdumoulin/conv_arithmetic&#34;&gt;repo&lt;/a&gt;. The output height can be calculated with: &lt;span  class=&#34;math&#34;&gt;\(H_{out} =(H_{in} −1) \times stride[0]−2\times padding[0]+dilation[0]\times (kernel_size[0]−1)+output_padding[0]+1\)&lt;/span&gt; and for the width: &lt;span  class=&#34;math&#34;&gt;\(W_{out} =(W_{in}−1) \times stride[1]−2\times padding[1]+dilation[1]\times (kernel_size[1]−1)+output_padding[1]+1\)&lt;/span&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://pytorch.org/docs/stable/generated/torch.nn.ReLU.html&#34;&gt;&lt;code&gt;ReLU(inplace)&lt;/code&gt;&lt;/a&gt;: as the activation function which is &lt;span  class=&#34;math&#34;&gt;\(max(0, x)\)&lt;/span&gt;, and &lt;code&gt;inplace&lt;/code&gt; is for doing the operation in-place in the output without using extra memory.&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://pytorch.org/docs/stable/generated/torch.nn.BatchNorm2d.html&#34;&gt;&lt;code&gt;BatchNorm2d(num_features)&lt;/code&gt;&lt;/a&gt;:  which applies batch normalization on the input feature maps. You can read more about it &lt;a href=&#34;https://arxiv.org/abs/1502.03167&#34;&gt;here&lt;/a&gt;.&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://pytorch.org/docs/stable/generated/torch.nn.Conv2d.html&#34;&gt;&lt;code&gt;Conv2d(in_channels, out_channels, kernel_size, stride, padding, bias)&lt;/code&gt;&lt;/a&gt;: is the convolution module.&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://pytorch.org/docs/stable/generated/torch.nn.LeakyReLU.html&#34;&gt;&lt;code&gt;LeakyRelU(negative_slope, inplace)&lt;/code&gt;&lt;/a&gt;: is a derivative of &lt;code&gt;ReLU&lt;/code&gt; which is not strictly hard on negative values. &lt;code&gt;negative_slope&lt;/code&gt; is responsible for this softness.&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://pytorch.org/docs/stable/generated/torch.nn.Sigmoid.html&#34;&gt;&lt;code&gt;Sigmoid()&lt;/code&gt;&lt;/a&gt;: an activation function which squashed the output to be between &lt;span  class=&#34;math&#34;&gt;\([0, 1]\)&lt;/span&gt; just like a probability.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-python&#34; data-lang=&#34;python&#34;&gt;&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;import&lt;/span&gt; &lt;span style=&#34;color:#555&#34;&gt;torch.nn&lt;/span&gt; &lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;as&lt;/span&gt; &lt;span style=&#34;color:#555&#34;&gt;nn&lt;/span&gt;
+
+&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;from&lt;/span&gt; &lt;span style=&#34;color:#555&#34;&gt;utils&lt;/span&gt; &lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;import&lt;/span&gt; get_conf
+
+
+&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;class&lt;/span&gt; &lt;span style=&#34;color:#458;font-weight:bold&#34;&gt;Generator&lt;/span&gt;(nn&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;.&lt;/span&gt;Module):
+    &lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;def&lt;/span&gt; __init__(&lt;span style=&#34;color:#999&#34;&gt;self&lt;/span&gt;):
+        &lt;span style=&#34;color:#0086b3&#34;&gt;super&lt;/span&gt;(Generator, &lt;span style=&#34;color:#999&#34;&gt;self&lt;/span&gt;)&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;.&lt;/span&gt;__init__()
+        &lt;span style=&#34;color:#999&#34;&gt;self&lt;/span&gt;&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;.&lt;/span&gt;cfg &lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;=&lt;/span&gt; get_conf(&lt;span style=&#34;color:#d14&#34;&gt;&amp;#34;conf/model/generator&amp;#34;&lt;/span&gt;)
+
+        &lt;span style=&#34;color:#999&#34;&gt;self&lt;/span&gt;&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;.&lt;/span&gt;gen &lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;=&lt;/span&gt; nn&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;.&lt;/span&gt;Sequential(
+            &lt;span style=&#34;color:#998;font-style:italic&#34;&gt;# input is Z, going into a convolution&lt;/span&gt;
+            nn&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;.&lt;/span&gt;ConvTranspose2d(
+                &lt;span style=&#34;color:#999&#34;&gt;self&lt;/span&gt;&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;.&lt;/span&gt;cfg&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;.&lt;/span&gt;nz, &lt;span style=&#34;color:#999&#34;&gt;self&lt;/span&gt;&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;.&lt;/span&gt;cfg&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;.&lt;/span&gt;ngf &lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;*&lt;/span&gt; &lt;span style=&#34;color:#099&#34;&gt;8&lt;/span&gt;, &lt;span style=&#34;color:#099&#34;&gt;4&lt;/span&gt;, &lt;span style=&#34;color:#099&#34;&gt;1&lt;/span&gt;, &lt;span style=&#34;color:#099&#34;&gt;0&lt;/span&gt;, 
+                bias&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#999&#34;&gt;False&lt;/span&gt;),
+            nn&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;.&lt;/span&gt;ReLU(&lt;span style=&#34;color:#999&#34;&gt;True&lt;/span&gt;),
+            nn&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;.&lt;/span&gt;BatchNorm2d(&lt;span style=&#34;color:#999&#34;&gt;self&lt;/span&gt;&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;.&lt;/span&gt;cfg&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;.&lt;/span&gt;ngf &lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;*&lt;/span&gt; &lt;span style=&#34;color:#099&#34;&gt;8&lt;/span&gt;),
+            &lt;span style=&#34;color:#998;font-style:italic&#34;&gt;# state size. (ngf*8) x 4 x 4&lt;/span&gt;
+            nn&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;.&lt;/span&gt;ConvTranspose2d(
+                &lt;span style=&#34;color:#999&#34;&gt;self&lt;/span&gt;&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;.&lt;/span&gt;cfg&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;.&lt;/span&gt;ngf &lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;*&lt;/span&gt; &lt;span style=&#34;color:#099&#34;&gt;8&lt;/span&gt;, &lt;span style=&#34;color:#999&#34;&gt;self&lt;/span&gt;&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;.&lt;/span&gt;cfg&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;.&lt;/span&gt;ngf &lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;*&lt;/span&gt; &lt;span style=&#34;color:#099&#34;&gt;4&lt;/span&gt;, &lt;span style=&#34;color:#099&#34;&gt;4&lt;/span&gt;, &lt;span style=&#34;color:#099&#34;&gt;2&lt;/span&gt;, &lt;span style=&#34;color:#099&#34;&gt;1&lt;/span&gt;, 
+                bias&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#999&#34;&gt;False&lt;/span&gt;),
+            nn&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;.&lt;/span&gt;ReLU(&lt;span style=&#34;color:#999&#34;&gt;True&lt;/span&gt;),
+            nn&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;.&lt;/span&gt;BatchNorm2d(&lt;span style=&#34;color:#999&#34;&gt;self&lt;/span&gt;&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;.&lt;/span&gt;cfg&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;.&lt;/span&gt;ngf &lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;*&lt;/span&gt; &lt;span style=&#34;color:#099&#34;&gt;4&lt;/span&gt;),
+            &lt;span style=&#34;color:#998;font-style:italic&#34;&gt;# state size. (ngf*4) x 8 x 8&lt;/span&gt;
+            nn&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;.&lt;/span&gt;ConvTranspose2d(
+                &lt;span style=&#34;color:#999&#34;&gt;self&lt;/span&gt;&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;.&lt;/span&gt;cfg&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;.&lt;/span&gt;ngf &lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;*&lt;/span&gt; &lt;span style=&#34;color:#099&#34;&gt;4&lt;/span&gt;, &lt;span style=&#34;color:#999&#34;&gt;self&lt;/span&gt;&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;.&lt;/span&gt;cfg&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;.&lt;/span&gt;ngf &lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;*&lt;/span&gt; &lt;span style=&#34;color:#099&#34;&gt;2&lt;/span&gt;, &lt;span style=&#34;color:#099&#34;&gt;4&lt;/span&gt;, &lt;span style=&#34;color:#099&#34;&gt;2&lt;/span&gt;, &lt;span style=&#34;color:#099&#34;&gt;1&lt;/span&gt;, 
+                bias&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#999&#34;&gt;False&lt;/span&gt;),
+            nn&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;.&lt;/span&gt;ReLU(&lt;span style=&#34;color:#999&#34;&gt;True&lt;/span&gt;),
+            nn&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;.&lt;/span&gt;BatchNorm2d(&lt;span style=&#34;color:#999&#34;&gt;self&lt;/span&gt;&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;.&lt;/span&gt;cfg&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;.&lt;/span&gt;ngf &lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;*&lt;/span&gt; &lt;span style=&#34;color:#099&#34;&gt;2&lt;/span&gt;),
+            &lt;span style=&#34;color:#998;font-style:italic&#34;&gt;# state size. (ngf*2) x 16 x 16&lt;/span&gt;
+            nn&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;.&lt;/span&gt;ConvTranspose2d(
+                &lt;span style=&#34;color:#999&#34;&gt;self&lt;/span&gt;&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;.&lt;/span&gt;cfg&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;.&lt;/span&gt;ngf &lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;*&lt;/span&gt; &lt;span style=&#34;color:#099&#34;&gt;2&lt;/span&gt;, &lt;span style=&#34;color:#999&#34;&gt;self&lt;/span&gt;&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;.&lt;/span&gt;cfg&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;.&lt;/span&gt;ngf, &lt;span style=&#34;color:#099&#34;&gt;4&lt;/span&gt;, &lt;span style=&#34;color:#099&#34;&gt;2&lt;/span&gt;, &lt;span style=&#34;color:#099&#34;&gt;1&lt;/span&gt;, 
+                bias&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#999&#34;&gt;False&lt;/span&gt;),
+            nn&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;.&lt;/span&gt;ReLU(&lt;span style=&#34;color:#999&#34;&gt;True&lt;/span&gt;),
+            nn&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;.&lt;/span&gt;BatchNorm2d(&lt;span style=&#34;color:#999&#34;&gt;self&lt;/span&gt;&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;.&lt;/span&gt;cfg&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;.&lt;/span&gt;ngf),
+            &lt;span style=&#34;color:#998;font-style:italic&#34;&gt;# state size. (ngf) x 32 x 32&lt;/span&gt;
+            nn&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;.&lt;/span&gt;ConvTranspose2d(
+                &lt;span style=&#34;color:#999&#34;&gt;self&lt;/span&gt;&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;.&lt;/span&gt;cfg&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;.&lt;/span&gt;ngf, &lt;span style=&#34;color:#999&#34;&gt;self&lt;/span&gt;&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;.&lt;/span&gt;cfg&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;.&lt;/span&gt;nc, &lt;span style=&#34;color:#099&#34;&gt;4&lt;/span&gt;, &lt;span style=&#34;color:#099&#34;&gt;2&lt;/span&gt;, &lt;span style=&#34;color:#099&#34;&gt;1&lt;/span&gt;, 
+                bias&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#999&#34;&gt;False&lt;/span&gt;),
+            nn&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;.&lt;/span&gt;Tanh()
+            &lt;span style=&#34;color:#998;font-style:italic&#34;&gt;# state size. (nc) x 64 x 64&lt;/span&gt;
+        )
+
+    &lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;def&lt;/span&gt; &lt;span style=&#34;color:#900;font-weight:bold&#34;&gt;forward&lt;/span&gt;(&lt;span style=&#34;color:#999&#34;&gt;self&lt;/span&gt;, &lt;span style=&#34;color:#0086b3&#34;&gt;input&lt;/span&gt;):
+        &lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;return&lt;/span&gt; &lt;span style=&#34;color:#999&#34;&gt;self&lt;/span&gt;&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;.&lt;/span&gt;gen(&lt;span style=&#34;color:#0086b3&#34;&gt;input&lt;/span&gt;)
+
+
+&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;class&lt;/span&gt; &lt;span style=&#34;color:#458;font-weight:bold&#34;&gt;Discriminator&lt;/span&gt;(nn&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;.&lt;/span&gt;Module):
+    &lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;def&lt;/span&gt; __init__(&lt;span style=&#34;color:#999&#34;&gt;self&lt;/span&gt;):
+        &lt;span style=&#34;color:#0086b3&#34;&gt;super&lt;/span&gt;(Discriminator, &lt;span style=&#34;color:#999&#34;&gt;self&lt;/span&gt;)&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;.&lt;/span&gt;__init__()
+        &lt;span style=&#34;color:#999&#34;&gt;self&lt;/span&gt;&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;.&lt;/span&gt;cfg &lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;=&lt;/span&gt; get_conf(&lt;span style=&#34;color:#d14&#34;&gt;&amp;#34;conf/model/discriminator&amp;#34;&lt;/span&gt;)
+
+        &lt;span style=&#34;color:#999&#34;&gt;self&lt;/span&gt;&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;.&lt;/span&gt;dis &lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;=&lt;/span&gt; nn&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;.&lt;/span&gt;Sequential(
+            &lt;span style=&#34;color:#998;font-style:italic&#34;&gt;# input is (nc) x 64 x 64&lt;/span&gt;
+            nn&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;.&lt;/span&gt;Conv2d(
+                &lt;span style=&#34;color:#999&#34;&gt;self&lt;/span&gt;&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;.&lt;/span&gt;cfg&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;.&lt;/span&gt;nc, &lt;span style=&#34;color:#999&#34;&gt;self&lt;/span&gt;&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;.&lt;/span&gt;cfg&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;.&lt;/span&gt;ndf, &lt;span style=&#34;color:#099&#34;&gt;4&lt;/span&gt;, &lt;span style=&#34;color:#099&#34;&gt;2&lt;/span&gt;, &lt;span style=&#34;color:#099&#34;&gt;1&lt;/span&gt;, 
+                bias&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#999&#34;&gt;False&lt;/span&gt;),
+            nn&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;.&lt;/span&gt;LeakyReLU(&lt;span style=&#34;color:#099&#34;&gt;0.2&lt;/span&gt;, inplace&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#999&#34;&gt;True&lt;/span&gt;),
+            &lt;span style=&#34;color:#998;font-style:italic&#34;&gt;# state size. (ndf) x 32 x 32&lt;/span&gt;
+            nn&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;.&lt;/span&gt;Conv2d(
+                &lt;span style=&#34;color:#999&#34;&gt;self&lt;/span&gt;&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;.&lt;/span&gt;cfg&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;.&lt;/span&gt;ndf, &lt;span style=&#34;color:#999&#34;&gt;self&lt;/span&gt;&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;.&lt;/span&gt;cfg&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;.&lt;/span&gt;ndf &lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;*&lt;/span&gt; &lt;span style=&#34;color:#099&#34;&gt;2&lt;/span&gt;, &lt;span style=&#34;color:#099&#34;&gt;4&lt;/span&gt;, &lt;span style=&#34;color:#099&#34;&gt;2&lt;/span&gt;, &lt;span style=&#34;color:#099&#34;&gt;1&lt;/span&gt;, 
+                bias&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#999&#34;&gt;False&lt;/span&gt;),
+            nn&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;.&lt;/span&gt;LeakyReLU(&lt;span style=&#34;color:#099&#34;&gt;0.2&lt;/span&gt;, inplace&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#999&#34;&gt;True&lt;/span&gt;),
+            nn&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;.&lt;/span&gt;BatchNorm2d(&lt;span style=&#34;color:#999&#34;&gt;self&lt;/span&gt;&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;.&lt;/span&gt;cfg&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;.&lt;/span&gt;ndf &lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;*&lt;/span&gt; &lt;span style=&#34;color:#099&#34;&gt;2&lt;/span&gt;),
+            &lt;span style=&#34;color:#998;font-style:italic&#34;&gt;# state size. (ndf*2) x 16 x 16&lt;/span&gt;
+            nn&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;.&lt;/span&gt;Conv2d(
+                &lt;span style=&#34;color:#999&#34;&gt;self&lt;/span&gt;&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;.&lt;/span&gt;cfg&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;.&lt;/span&gt;ndf &lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;*&lt;/span&gt; &lt;span style=&#34;color:#099&#34;&gt;2&lt;/span&gt;, &lt;span style=&#34;color:#999&#34;&gt;self&lt;/span&gt;&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;.&lt;/span&gt;cfg&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;.&lt;/span&gt;ndf &lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;*&lt;/span&gt; &lt;span style=&#34;color:#099&#34;&gt;4&lt;/span&gt;, &lt;span style=&#34;color:#099&#34;&gt;4&lt;/span&gt;, &lt;span style=&#34;color:#099&#34;&gt;2&lt;/span&gt;, &lt;span style=&#34;color:#099&#34;&gt;1&lt;/span&gt;, 
+                bias&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#999&#34;&gt;False&lt;/span&gt;),
+            nn&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;.&lt;/span&gt;LeakyReLU(&lt;span style=&#34;color:#099&#34;&gt;0.2&lt;/span&gt;, inplace&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#999&#34;&gt;True&lt;/span&gt;),
+            nn&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;.&lt;/span&gt;BatchNorm2d(&lt;span style=&#34;color:#999&#34;&gt;self&lt;/span&gt;&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;.&lt;/span&gt;cfg&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;.&lt;/span&gt;ndf &lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;*&lt;/span&gt; &lt;span style=&#34;color:#099&#34;&gt;4&lt;/span&gt;),
+            &lt;span style=&#34;color:#998;font-style:italic&#34;&gt;# state size. (ndf*4) x 8 x 8&lt;/span&gt;
+            nn&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;.&lt;/span&gt;Conv2d(
+                &lt;span style=&#34;color:#999&#34;&gt;self&lt;/span&gt;&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;.&lt;/span&gt;cfg&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;.&lt;/span&gt;ndf &lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;*&lt;/span&gt; &lt;span style=&#34;color:#099&#34;&gt;4&lt;/span&gt;, &lt;span style=&#34;color:#999&#34;&gt;self&lt;/span&gt;&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;.&lt;/span&gt;cfg&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;.&lt;/span&gt;ndf &lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;*&lt;/span&gt; &lt;span style=&#34;color:#099&#34;&gt;8&lt;/span&gt;, &lt;span style=&#34;color:#099&#34;&gt;4&lt;/span&gt;, &lt;span style=&#34;color:#099&#34;&gt;2&lt;/span&gt;, &lt;span style=&#34;color:#099&#34;&gt;1&lt;/span&gt;, 
+                bias&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#999&#34;&gt;False&lt;/span&gt;),
+            nn&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;.&lt;/span&gt;LeakyReLU(&lt;span style=&#34;color:#099&#34;&gt;0.2&lt;/span&gt;, inplace&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#999&#34;&gt;True&lt;/span&gt;),
+            nn&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;.&lt;/span&gt;BatchNorm2d(&lt;span style=&#34;color:#999&#34;&gt;self&lt;/span&gt;&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;.&lt;/span&gt;cfg&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;.&lt;/span&gt;ndf &lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;*&lt;/span&gt; &lt;span style=&#34;color:#099&#34;&gt;8&lt;/span&gt;),
+            &lt;span style=&#34;color:#998;font-style:italic&#34;&gt;# state size. (ndf*8) x 4 x 4&lt;/span&gt;
+            nn&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;.&lt;/span&gt;Conv2d(
+                &lt;span style=&#34;color:#999&#34;&gt;self&lt;/span&gt;&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;.&lt;/span&gt;cfg&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;.&lt;/span&gt;ndf &lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;*&lt;/span&gt; &lt;span style=&#34;color:#099&#34;&gt;8&lt;/span&gt;, &lt;span style=&#34;color:#099&#34;&gt;1&lt;/span&gt;, &lt;span style=&#34;color:#099&#34;&gt;4&lt;/span&gt;, &lt;span style=&#34;color:#099&#34;&gt;1&lt;/span&gt;, &lt;span style=&#34;color:#099&#34;&gt;0&lt;/span&gt;, 
+                bias&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#999&#34;&gt;False&lt;/span&gt;),
+            nn&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;.&lt;/span&gt;Sigmoid()
+        )
+
+    &lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;def&lt;/span&gt; &lt;span style=&#34;color:#900;font-weight:bold&#34;&gt;forward&lt;/span&gt;(&lt;span style=&#34;color:#999&#34;&gt;self&lt;/span&gt;, &lt;span style=&#34;color:#0086b3&#34;&gt;input&lt;/span&gt;):
+        &lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;return&lt;/span&gt; &lt;span style=&#34;color:#999&#34;&gt;self&lt;/span&gt;&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;.&lt;/span&gt;dis(&lt;span style=&#34;color:#0086b3&#34;&gt;input&lt;/span&gt;)&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;The generator (from now on we call it &lt;em&gt;G&lt;/em&gt;) is responsible for generating images like real sharingans. Therefore, it&#39;s output must be an image with the same size as the real images ((3, 64, 64) tensors). On the other side, the discriminator (&lt;em&gt;D&lt;/em&gt;) is responsible to decide the authenticity of input images, it outputs &lt;code&gt;1&lt;/code&gt; where the image is &lt;em&gt;real&lt;/em&gt; and &lt;code&gt;0&lt;/code&gt; where it is &lt;em&gt;fake&lt;/em&gt;. Actually the discriminator is not that accurate, it outputs the probability of the image being authentic. Where close to &lt;code&gt;1&lt;/code&gt; means the discriminator is somewhat sure that the image is real and close to &lt;code&gt;0&lt;/code&gt; means vice versa. That&#39;s why we need a &lt;code&gt;Sigmoid()&lt;/code&gt; function at the end of discriminator. This takes us to the last part of this project which is defining the &lt;em&gt;loss function&lt;/em&gt; and &lt;em&gt;training loop&lt;/em&gt;.&lt;/p&gt;
+
+&lt;h1 id=&#34;loss-function-and-train-loop&#34;&gt;Loss function and Train loop&lt;/h1&gt;
+
+&lt;p&gt;GANs trains a little different from normal networks. It is a zero-sum game between two networks where one tries to fool another to accept it&#39;s outputs as authentic. The loss function, defined to do so, is called adversarial loss: &lt;span  class=&#34;math&#34;&gt;\(min_G max_D log(D(x))+log(1−D(G(z)))\)&lt;/span&gt;. You can read more about it in the &lt;a href=&#34;https://papers.nips.cc/paper/5423-generative-adversarial-nets.pdf&#34;&gt;original paper&lt;/a&gt;:&lt;/p&gt;
+
+&lt;p&gt;This is very similar to binary cross entropy where we have: &lt;span  class=&#34;math&#34;&gt;\(ylog(x)+(1-y)log(1−x)\)&lt;/span&gt;. Training GANs is very tricky, I suggest reading &lt;a href=&#34;https://github.com/soumith/ganhacks&#34;&gt;GAN hacks&lt;/a&gt; page which contains useful information regarding training GANs. We split training into two parts, one for discriminator and one for generator.&lt;/p&gt;
+
+&lt;h2 id=&#34;training-discriminator&#34;&gt;Training Discriminator&lt;/h2&gt;
+
+&lt;p&gt;The sole purpose of discriminator is to classify real and fake images with high probability. Which means we want to maximize &lt;span  class=&#34;math&#34;&gt;\(log(D(x))+log(1−D(G(z)))\)&lt;/span&gt;. According to GAN hacks, we use two batches, one batch for true images and one for fake images. After forward pass of real images we label of &lt;code&gt;1&lt;/code&gt;, we perform one &lt;code&gt;backward()&lt;/code&gt; pass to calculate derivatives, then we pass fake (generated) images to &lt;em&gt;D&lt;/em&gt; with label of &lt;code&gt;0&lt;/code&gt; and perform another &lt;code&gt;backward()&lt;/code&gt; pass to accumulate gradients and then update the weights.&lt;/p&gt;
+
+&lt;h2 id=&#34;training-generator&#34;&gt;Training Generator&lt;/h2&gt;
+
+&lt;p&gt;According to original paper &lt;em&gt;G&lt;/em&gt; wants to minimize &lt;span  class=&#34;math&#34;&gt;\(log(1−D(G(z)))\)&lt;/span&gt;. Minimizing this means fooling &lt;em&gt;D&lt;/em&gt; to output high probability (&lt;code&gt;1&lt;/code&gt; means they are real) therefor this part will descend to &lt;code&gt;0&lt;/code&gt;. But in the early stages of training this is very unlikely that the &lt;em&gt;D&lt;/em&gt; discriminates well, as a result of this, &lt;em&gt;G&lt;/em&gt; won&#39;t get better. But instead maximizing &lt;span  class=&#34;math&#34;&gt;\(log(D(G(z)))\)&lt;/span&gt; would solve this issue. To only use &lt;span  class=&#34;math&#34;&gt;\(log(D(G(z)))\)&lt;/span&gt; part of binary cross entropy we need to pass the label &lt;code&gt;1&lt;/code&gt; with &lt;em&gt;G&lt;/em&gt; outputs to the discriminator.&lt;/p&gt;
+
+&lt;p&gt;That&#39;s it. There are just little modifications left in order to start the training. According to GAN hacks, initializing weights with normal distribution yield better results. To do so, we need a function to do this for us:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-python&#34; data-lang=&#34;python&#34;&gt;&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;def&lt;/span&gt; &lt;span style=&#34;color:#900;font-weight:bold&#34;&gt;init_weights&lt;/span&gt;(m):
+    &lt;span style=&#34;color:#998;font-style:italic&#34;&gt;# get the module name&lt;/span&gt;
+    classname &lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;=&lt;/span&gt; m&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;.&lt;/span&gt;__class__&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;.&lt;/span&gt;__name__
+    &lt;span style=&#34;color:#998;font-style:italic&#34;&gt;# if it is in [&amp;#39;Conv&amp;#39;, &amp;#39;BatchNorm&amp;#39;, &amp;#39;Linear&amp;#39;], apply normal initialization&lt;/span&gt;
+    &lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;if&lt;/span&gt; classname&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;.&lt;/span&gt;find(&lt;span style=&#34;color:#d14&#34;&gt;&amp;#39;Conv&amp;#39;&lt;/span&gt;) &lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;!=&lt;/span&gt; &lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;-&lt;/span&gt;&lt;span style=&#34;color:#099&#34;&gt;1&lt;/span&gt;:
+        nn&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;.&lt;/span&gt;init&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;.&lt;/span&gt;normal_(m&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;.&lt;/span&gt;weight&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;.&lt;/span&gt;data, &lt;span style=&#34;color:#099&#34;&gt;0.0&lt;/span&gt;, &lt;span style=&#34;color:#099&#34;&gt;0.02&lt;/span&gt;)
+    &lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;elif&lt;/span&gt; classname&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;.&lt;/span&gt;find(&lt;span style=&#34;color:#d14&#34;&gt;&amp;#39;BatchNorm&amp;#39;&lt;/span&gt;) &lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;!=&lt;/span&gt; &lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;-&lt;/span&gt;&lt;span style=&#34;color:#099&#34;&gt;1&lt;/span&gt;:
+        nn&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;.&lt;/span&gt;init&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;.&lt;/span&gt;normal_(m&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;.&lt;/span&gt;weight&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;.&lt;/span&gt;data, &lt;span style=&#34;color:#099&#34;&gt;1.0&lt;/span&gt;, &lt;span style=&#34;color:#099&#34;&gt;0.02&lt;/span&gt;)
+        nn&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;.&lt;/span&gt;init&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;.&lt;/span&gt;constant_(m&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;.&lt;/span&gt;bias&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;.&lt;/span&gt;data, &lt;span style=&#34;color:#099&#34;&gt;0&lt;/span&gt;)
+    &lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;elif&lt;/span&gt; classname&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;.&lt;/span&gt;find(&lt;span style=&#34;color:#d14&#34;&gt;&amp;#39;Linear&amp;#39;&lt;/span&gt;) &lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;!=&lt;/span&gt; &lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;-&lt;/span&gt;&lt;span style=&#34;color:#099&#34;&gt;1&lt;/span&gt;:
+        nn&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;.&lt;/span&gt;init&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;.&lt;/span&gt;normal_(m&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;.&lt;/span&gt;weight&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;.&lt;/span&gt;data, &lt;span style=&#34;color:#099&#34;&gt;1.0&lt;/span&gt;, &lt;span style=&#34;color:#099&#34;&gt;0.02&lt;/span&gt;)
+        nn&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;.&lt;/span&gt;init&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;.&lt;/span&gt;constant_(m&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;.&lt;/span&gt;bias&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;.&lt;/span&gt;data, &lt;span style=&#34;color:#099&#34;&gt;0&lt;/span&gt;)&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;And here is the training loop, some functions are imported from &lt;code&gt;utils.py&lt;/code&gt; that you can find in the source code:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-python&#34; data-lang=&#34;python&#34;&gt;&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;import&lt;/span&gt; &lt;span style=&#34;color:#555&#34;&gt;numpy&lt;/span&gt; &lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;as&lt;/span&gt; &lt;span style=&#34;color:#555&#34;&gt;np&lt;/span&gt;
+&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;import&lt;/span&gt; &lt;span style=&#34;color:#555&#34;&gt;torch&lt;/span&gt;
+&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;from&lt;/span&gt; &lt;span style=&#34;color:#555&#34;&gt;torchvision&lt;/span&gt; &lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;import&lt;/span&gt; transforms
+&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;import&lt;/span&gt; &lt;span style=&#34;color:#555&#34;&gt;torchvision.utils&lt;/span&gt; &lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;as&lt;/span&gt; &lt;span style=&#34;color:#555&#34;&gt;vutils&lt;/span&gt;
+&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;from&lt;/span&gt; &lt;span style=&#34;color:#555&#34;&gt;torch.utils.data&lt;/span&gt; &lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;import&lt;/span&gt; DataLoader
+&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;import&lt;/span&gt; &lt;span style=&#34;color:#555&#34;&gt;torch.nn&lt;/span&gt; &lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;as&lt;/span&gt; &lt;span style=&#34;color:#555&#34;&gt;nn&lt;/span&gt;
+&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;import&lt;/span&gt; &lt;span style=&#34;color:#555&#34;&gt;torch.optim&lt;/span&gt; &lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;as&lt;/span&gt; &lt;span style=&#34;color:#555&#34;&gt;optim&lt;/span&gt;
+&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;import&lt;/span&gt; &lt;span style=&#34;color:#555&#34;&gt;matplotlib.pyplot&lt;/span&gt; &lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;as&lt;/span&gt; &lt;span style=&#34;color:#555&#34;&gt;plt&lt;/span&gt;
+
+&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;from&lt;/span&gt; &lt;span style=&#34;color:#555&#34;&gt;utils&lt;/span&gt; &lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;import&lt;/span&gt; get_device, plot_images, weights_init, get_conf
+&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;from&lt;/span&gt; &lt;span style=&#34;color:#555&#34;&gt;model.data_loader&lt;/span&gt; &lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;import&lt;/span&gt; SharinganDataset
+&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;from&lt;/span&gt; &lt;span style=&#34;color:#555&#34;&gt;model.net&lt;/span&gt; &lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;import&lt;/span&gt; Discriminator, Generator
+
+
+&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;def&lt;/span&gt; &lt;span style=&#34;color:#900;font-weight:bold&#34;&gt;main&lt;/span&gt;():
+    cfg &lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;=&lt;/span&gt; get_conf(&lt;span style=&#34;color:#d14&#34;&gt;&amp;#34;conf/train&amp;#34;&lt;/span&gt;)
+    device &lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;=&lt;/span&gt; get_device()
+    &lt;span style=&#34;color:#998;font-style:italic&#34;&gt;# Create the generator&lt;/span&gt;
+    netG &lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;=&lt;/span&gt; Generator()&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;.&lt;/span&gt;to(device)
+
+    &lt;span style=&#34;color:#998;font-style:italic&#34;&gt;# Handle multi-gpu&lt;/span&gt;
+    &lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;if&lt;/span&gt; (device&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;.&lt;/span&gt;type &lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;==&lt;/span&gt; &lt;span style=&#34;color:#d14&#34;&gt;&amp;#39;cuda&amp;#39;&lt;/span&gt;) &lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;and&lt;/span&gt; (cfg&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;.&lt;/span&gt;ngpu &lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;&amp;gt;&lt;/span&gt; &lt;span style=&#34;color:#099&#34;&gt;1&lt;/span&gt;):
+        netG &lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;=&lt;/span&gt; nn&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;.&lt;/span&gt;DataParallel(netG, &lt;span style=&#34;color:#0086b3&#34;&gt;list&lt;/span&gt;(&lt;span style=&#34;color:#0086b3&#34;&gt;range&lt;/span&gt;(cfg&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;.&lt;/span&gt;ngpu)))
+
+    &lt;span style=&#34;color:#998;font-style:italic&#34;&gt;# Apply the weights_init function to randomly&lt;/span&gt;
+    &lt;span style=&#34;color:#998;font-style:italic&#34;&gt;# initialize all weights to mean=0, stdev=0.2.&lt;/span&gt;
+    netG&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;.&lt;/span&gt;apply(init_weights)
+    &lt;span style=&#34;color:#998;font-style:italic&#34;&gt;# Create the Discriminator&lt;/span&gt;
+    netD &lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;=&lt;/span&gt; Discriminator()&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;.&lt;/span&gt;to(device)
+
+    &lt;span style=&#34;color:#998;font-style:italic&#34;&gt;# Handle multi-gpu if desired&lt;/span&gt;
+    &lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;if&lt;/span&gt; (device&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;.&lt;/span&gt;type &lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;==&lt;/span&gt; &lt;span style=&#34;color:#d14&#34;&gt;&amp;#39;cuda&amp;#39;&lt;/span&gt;) &lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;and&lt;/span&gt; (cfg&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;.&lt;/span&gt;ngpu &lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;&amp;gt;&lt;/span&gt; &lt;span style=&#34;color:#099&#34;&gt;1&lt;/span&gt;):
+        netD &lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;=&lt;/span&gt; nn&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;.&lt;/span&gt;DataParallel(netD, &lt;span style=&#34;color:#0086b3&#34;&gt;list&lt;/span&gt;(&lt;span style=&#34;color:#0086b3&#34;&gt;range&lt;/span&gt;(cfg&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;.&lt;/span&gt;ngpu)))
+
+    &lt;span style=&#34;color:#998;font-style:italic&#34;&gt;# Apply the weights_init function to randomly&lt;/span&gt;
+    &lt;span style=&#34;color:#998;font-style:italic&#34;&gt;# initialize all weights to mean=0, stdev=0.2.&lt;/span&gt;
+    netD&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;.&lt;/span&gt;apply(init_weights)
+    &lt;span style=&#34;color:#998;font-style:italic&#34;&gt;# transform images: &lt;/span&gt;
+    &lt;span style=&#34;color:#998;font-style:italic&#34;&gt;# Resize to 64x64 -&amp;gt; Center crop -&amp;gt; Convert to tensor-&amp;gt; normalize&lt;/span&gt;
+    transform &lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;=&lt;/span&gt; transforms&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;.&lt;/span&gt;Compose([
+        transforms&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;.&lt;/span&gt;Resize(cfg&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;.&lt;/span&gt;image_size),
+        transforms&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;.&lt;/span&gt;CenterCrop(cfg&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;.&lt;/span&gt;image_size),
+        transforms&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;.&lt;/span&gt;ToTensor(),
+        transforms&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;.&lt;/span&gt;Normalize((&lt;span style=&#34;color:#099&#34;&gt;0.5&lt;/span&gt;, &lt;span style=&#34;color:#099&#34;&gt;0.5&lt;/span&gt;, &lt;span style=&#34;color:#099&#34;&gt;0.5&lt;/span&gt;), (&lt;span style=&#34;color:#099&#34;&gt;0.5&lt;/span&gt;, &lt;span style=&#34;color:#099&#34;&gt;0.5&lt;/span&gt;, &lt;span style=&#34;color:#099&#34;&gt;0.5&lt;/span&gt;)),
+    ])
+
+    dataset &lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;=&lt;/span&gt; SharinganDataset(transform)
+    dataloader &lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;=&lt;/span&gt; DataLoader(dataset, 
+                            batch_size&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;=&lt;/span&gt;cfg&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;.&lt;/span&gt;batch_size,
+                            shuffle&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#999&#34;&gt;True&lt;/span&gt;, 
+                            num_workers&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;=&lt;/span&gt;cfg&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;.&lt;/span&gt;workers)
+
+    &lt;span style=&#34;color:#998;font-style:italic&#34;&gt;# Initialize BCELoss function&lt;/span&gt;
+    criterion &lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;=&lt;/span&gt; nn&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;.&lt;/span&gt;BCELoss()
+
+    &lt;span style=&#34;color:#998;font-style:italic&#34;&gt;# Establish convention for real and fake labels during training&lt;/span&gt;
+    fixed_noise &lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;=&lt;/span&gt; torch&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;.&lt;/span&gt;randn(cfg&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;.&lt;/span&gt;batch_size, 
+                              cfg&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;.&lt;/span&gt;nz, &lt;span style=&#34;color:#099&#34;&gt;1&lt;/span&gt;, &lt;span style=&#34;color:#099&#34;&gt;1&lt;/span&gt;, device&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;=&lt;/span&gt;device)
+    real_label &lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color:#099&#34;&gt;1.&lt;/span&gt;
+    fake_label &lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color:#099&#34;&gt;0.&lt;/span&gt;
+    &lt;span style=&#34;color:#998;font-style:italic&#34;&gt;# load adam optimizer&amp;#39;s config&lt;/span&gt;
+    cfg_adam &lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;=&lt;/span&gt; get_conf(&lt;span style=&#34;color:#d14&#34;&gt;&amp;#34;conf/optimizer/adam&amp;#34;&lt;/span&gt;)
+    &lt;span style=&#34;color:#998;font-style:italic&#34;&gt;# Setup Adam optimizers for both G and D&lt;/span&gt;
+    optimizerD &lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;=&lt;/span&gt; optim&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;.&lt;/span&gt;Adam(netD&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;.&lt;/span&gt;parameters(), 
+                            lr&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;=&lt;/span&gt;cfg_adam&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;.&lt;/span&gt;lr, 
+                            betas&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;=&lt;/span&gt;(cfg_adam&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;.&lt;/span&gt;beta1, &lt;span style=&#34;color:#099&#34;&gt;0.999&lt;/span&gt;))
+    optimizerG &lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;=&lt;/span&gt; optim&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;.&lt;/span&gt;Adam(netG&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;.&lt;/span&gt;parameters(), 
+                            lr&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;=&lt;/span&gt;cfg_adam&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;.&lt;/span&gt;lr, 
+                            betas&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;=&lt;/span&gt;(cfg_adam&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;.&lt;/span&gt;beta1, &lt;span style=&#34;color:#099&#34;&gt;0.999&lt;/span&gt;))
+    &lt;span style=&#34;color:#998;font-style:italic&#34;&gt;# Training Loop&lt;/span&gt;
+
+    &lt;span style=&#34;color:#998;font-style:italic&#34;&gt;# Lists to keep track of progress&lt;/span&gt;
+    img_list &lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;=&lt;/span&gt; []
+    G_losses &lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;=&lt;/span&gt; []
+    D_losses &lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;=&lt;/span&gt; []
+    iters &lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color:#099&#34;&gt;0&lt;/span&gt;
+
+    &lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;print&lt;/span&gt;(&lt;span style=&#34;color:#d14&#34;&gt;&amp;#34;Starting Training Loop...&amp;#34;&lt;/span&gt;)
+    &lt;span style=&#34;color:#998;font-style:italic&#34;&gt;# For each epoch&lt;/span&gt;
+    &lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;for&lt;/span&gt; epoch &lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;in&lt;/span&gt; &lt;span style=&#34;color:#0086b3&#34;&gt;range&lt;/span&gt;(cfg&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;.&lt;/span&gt;num_epochs):
+        &lt;span style=&#34;color:#998;font-style:italic&#34;&gt;# For each batch in the dataloader&lt;/span&gt;
+        &lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;for&lt;/span&gt; i, data &lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;in&lt;/span&gt; &lt;span style=&#34;color:#0086b3&#34;&gt;enumerate&lt;/span&gt;(dataloader, &lt;span style=&#34;color:#099&#34;&gt;0&lt;/span&gt;):
+
+            &lt;span style=&#34;color:#998;font-style:italic&#34;&gt;############################&lt;/span&gt;
+            &lt;span style=&#34;color:#998;font-style:italic&#34;&gt;# (1) Update D network: &lt;/span&gt;
+            &lt;span style=&#34;color:#998;font-style:italic&#34;&gt;# maximize log(D(x)) + log(1 - D(G(z)))&lt;/span&gt;
+            &lt;span style=&#34;color:#998;font-style:italic&#34;&gt;###########################&lt;/span&gt;
+            &lt;span style=&#34;color:#998;font-style:italic&#34;&gt;## Train with all-real batch&lt;/span&gt;
+            netD&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;.&lt;/span&gt;zero_grad()
+            &lt;span style=&#34;color:#998;font-style:italic&#34;&gt;# send data batch to the device&lt;/span&gt;
+            real_cpu &lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;=&lt;/span&gt; data&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;.&lt;/span&gt;to(device)
+            &lt;span style=&#34;color:#998;font-style:italic&#34;&gt;# get batch size&lt;/span&gt;
+            b_size &lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;=&lt;/span&gt; real_cpu&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;.&lt;/span&gt;size(&lt;span style=&#34;color:#099&#34;&gt;0&lt;/span&gt;)
+            &lt;span style=&#34;color:#998;font-style:italic&#34;&gt;# create labels for real images, &lt;/span&gt;
+            &lt;span style=&#34;color:#998;font-style:italic&#34;&gt;# we need labels for each image in the batch&lt;/span&gt;
+            label &lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;=&lt;/span&gt; torch&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;.&lt;/span&gt;full((b_size,), 
+                               real_label, 
+                               dtype&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;=&lt;/span&gt;torch&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;.&lt;/span&gt;float, 
+                               device&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;=&lt;/span&gt;device)
+            &lt;span style=&#34;color:#998;font-style:italic&#34;&gt;# Forward pass real batch through D&lt;/span&gt;
+            output &lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;=&lt;/span&gt; netD(real_cpu)&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;.&lt;/span&gt;view(&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;-&lt;/span&gt;&lt;span style=&#34;color:#099&#34;&gt;1&lt;/span&gt;)
+            &lt;span style=&#34;color:#998;font-style:italic&#34;&gt;# Calculate loss on all-real batch&lt;/span&gt;
+            errD_real &lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;=&lt;/span&gt; criterion(output, label)
+            &lt;span style=&#34;color:#998;font-style:italic&#34;&gt;# Calculate gradients of real batch for D in backward pass&lt;/span&gt;
+            errD_real&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;.&lt;/span&gt;backward()
+            D_x &lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;=&lt;/span&gt; output&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;.&lt;/span&gt;mean()&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;.&lt;/span&gt;item()
+
+            &lt;span style=&#34;color:#998;font-style:italic&#34;&gt;## Train with all-fake batch&lt;/span&gt;
+            &lt;span style=&#34;color:#998;font-style:italic&#34;&gt;# Generate batch of latent vectors&lt;/span&gt;
+            noise &lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;=&lt;/span&gt; torch&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;.&lt;/span&gt;randn(b_size, 
+                                cfg&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;.&lt;/span&gt;nz, &lt;span style=&#34;color:#099&#34;&gt;1&lt;/span&gt;, &lt;span style=&#34;color:#099&#34;&gt;1&lt;/span&gt;, device&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;=&lt;/span&gt;device)
+            &lt;span style=&#34;color:#998;font-style:italic&#34;&gt;# Generate fake image batch with G&lt;/span&gt;
+            fake &lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;=&lt;/span&gt; netG(noise)
+            label&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;.&lt;/span&gt;fill_(fake_label)
+            &lt;span style=&#34;color:#998;font-style:italic&#34;&gt;# Classify all fake batch with D&lt;/span&gt;
+            &lt;span style=&#34;color:#998;font-style:italic&#34;&gt;# we need to detch the computation graph here&lt;/span&gt;
+            &lt;span style=&#34;color:#998;font-style:italic&#34;&gt;# because we don&amp;#39;t want update G here&lt;/span&gt;
+            output &lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;=&lt;/span&gt; netD(fake&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;.&lt;/span&gt;detach())&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;.&lt;/span&gt;view(&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;-&lt;/span&gt;&lt;span style=&#34;color:#099&#34;&gt;1&lt;/span&gt;)
+            &lt;span style=&#34;color:#998;font-style:italic&#34;&gt;# Calculate D&amp;#39;s loss on the all-fake batch&lt;/span&gt;
+            errD_fake &lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;=&lt;/span&gt; criterion(output, label)
+            &lt;span style=&#34;color:#998;font-style:italic&#34;&gt;# Calculate the gradients of fake batch&lt;/span&gt;
+            &lt;span style=&#34;color:#998;font-style:italic&#34;&gt;# for this batch (this gets accumulated)&lt;/span&gt;
+            errD_fake&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;.&lt;/span&gt;backward()
+            D_G_z1 &lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;=&lt;/span&gt; output&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;.&lt;/span&gt;mean()&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;.&lt;/span&gt;item()
+            &lt;span style=&#34;color:#998;font-style:italic&#34;&gt;# Add the gradients from the all-real and&lt;/span&gt;
+            &lt;span style=&#34;color:#998;font-style:italic&#34;&gt;# all-fake batches (just for visualization)&lt;/span&gt;
+            errD &lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;=&lt;/span&gt; errD_real &lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;+&lt;/span&gt; errD_fake
+            &lt;span style=&#34;color:#998;font-style:italic&#34;&gt;# Update D&lt;/span&gt;
+            optimizerD&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;.&lt;/span&gt;step()
+
+            &lt;span style=&#34;color:#998;font-style:italic&#34;&gt;############################&lt;/span&gt;
+            &lt;span style=&#34;color:#998;font-style:italic&#34;&gt;# (2) Update G network: maximize log(D(G(z)))&lt;/span&gt;
+            &lt;span style=&#34;color:#998;font-style:italic&#34;&gt;###########################&lt;/span&gt;
+            netG&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;.&lt;/span&gt;zero_grad()
+            label&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;.&lt;/span&gt;fill_(real_label)  &lt;span style=&#34;color:#998;font-style:italic&#34;&gt;# fake labels are real for generator cost&lt;/span&gt;
+            &lt;span style=&#34;color:#998;font-style:italic&#34;&gt;# Since we just updated D, perform another&lt;/span&gt;
+            &lt;span style=&#34;color:#998;font-style:italic&#34;&gt;# forward pass of all-fake batch through D&lt;/span&gt;
+            output &lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;=&lt;/span&gt; netD(fake)&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;.&lt;/span&gt;view(&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;-&lt;/span&gt;&lt;span style=&#34;color:#099&#34;&gt;1&lt;/span&gt;)
+            &lt;span style=&#34;color:#998;font-style:italic&#34;&gt;# Calculate G&amp;#39;s loss based on this output&lt;/span&gt;
+            errG &lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;=&lt;/span&gt; criterion(output, label)
+            &lt;span style=&#34;color:#998;font-style:italic&#34;&gt;# Calculate gradients for G&lt;/span&gt;
+            errG&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;.&lt;/span&gt;backward()
+            D_G_z2 &lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;=&lt;/span&gt; output&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;.&lt;/span&gt;mean()&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;.&lt;/span&gt;item()
+            &lt;span style=&#34;color:#998;font-style:italic&#34;&gt;# Update G&lt;/span&gt;
+            optimizerG&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;.&lt;/span&gt;step()
+
+            &lt;span style=&#34;color:#998;font-style:italic&#34;&gt;# Output training stats&lt;/span&gt;
+            &lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;if&lt;/span&gt; i &lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;%&lt;/span&gt; &lt;span style=&#34;color:#099&#34;&gt;25&lt;/span&gt; &lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;==&lt;/span&gt; &lt;span style=&#34;color:#099&#34;&gt;0&lt;/span&gt;:
+                &lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;print&lt;/span&gt;(&lt;span style=&#34;color:#d14&#34;&gt;&amp;#39;[&lt;/span&gt;&lt;span style=&#34;color:#d14&#34;&gt;%d&lt;/span&gt;&lt;span style=&#34;color:#d14&#34;&gt;/&lt;/span&gt;&lt;span style=&#34;color:#d14&#34;&gt;%d&lt;/span&gt;&lt;span style=&#34;color:#d14&#34;&gt;][&lt;/span&gt;&lt;span style=&#34;color:#d14&#34;&gt;%d&lt;/span&gt;&lt;span style=&#34;color:#d14&#34;&gt;/&lt;/span&gt;&lt;span style=&#34;color:#d14&#34;&gt;%d&lt;/span&gt;&lt;span style=&#34;color:#d14&#34;&gt;]&lt;/span&gt;&lt;span style=&#34;color:#d14&#34;&gt;\t&lt;/span&gt;&lt;span style=&#34;color:#d14&#34;&gt;Loss_D: &lt;/span&gt;&lt;span style=&#34;color:#d14&#34;&gt;%.4f&lt;/span&gt;&lt;span style=&#34;color:#d14&#34;&gt;\t&lt;/span&gt;&lt;span style=&#34;color:#d14&#34;&gt;Loss_G: &lt;/span&gt;&lt;span style=&#34;color:#d14&#34;&gt;%.4f&lt;/span&gt;&lt;span style=&#34;color:#d14&#34;&gt;\t&lt;/span&gt;&lt;span style=&#34;color:#d14&#34;&gt;D(x): &lt;/span&gt;&lt;span style=&#34;color:#d14&#34;&gt;%.4f&lt;/span&gt;&lt;span style=&#34;color:#d14&#34;&gt;\t&lt;/span&gt;&lt;span style=&#34;color:#d14&#34;&gt;D(G(z)): &lt;/span&gt;&lt;span style=&#34;color:#d14&#34;&gt;%.4f&lt;/span&gt;&lt;span style=&#34;color:#d14&#34;&gt; / &lt;/span&gt;&lt;span style=&#34;color:#d14&#34;&gt;%.4f&lt;/span&gt;&lt;span style=&#34;color:#d14&#34;&gt;&amp;#39;&lt;/span&gt;
+                      &lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;%&lt;/span&gt; (epoch, cfg&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;.&lt;/span&gt;num_epochs, i, &lt;span style=&#34;color:#0086b3&#34;&gt;len&lt;/span&gt;(dataloader),
+                         errD&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;.&lt;/span&gt;item(), errG&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;.&lt;/span&gt;item(), D_x, D_G_z1, D_G_z2))
+
+            &lt;span style=&#34;color:#998;font-style:italic&#34;&gt;# Save Losses for plotting later&lt;/span&gt;
+            G_losses&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;.&lt;/span&gt;append(errG&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;.&lt;/span&gt;item())
+            D_losses&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;.&lt;/span&gt;append(errD&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;.&lt;/span&gt;item())
+
+            &lt;span style=&#34;color:#998;font-style:italic&#34;&gt;# Check how the generator is doing by&lt;/span&gt;
+            &lt;span style=&#34;color:#998;font-style:italic&#34;&gt;# saving G&amp;#39;s output on fixed_noise&lt;/span&gt;
+            &lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;if&lt;/span&gt; (iters &lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;%&lt;/span&gt; &lt;span style=&#34;color:#099&#34;&gt;100&lt;/span&gt; &lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;==&lt;/span&gt; &lt;span style=&#34;color:#099&#34;&gt;0&lt;/span&gt;) &lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;or&lt;/span&gt; ((epoch &lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;==&lt;/span&gt; cfg&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;.&lt;/span&gt;num_epochs &lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;-&lt;/span&gt; &lt;span style=&#34;color:#099&#34;&gt;1&lt;/span&gt;) &lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;and&lt;/span&gt; (i &lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;==&lt;/span&gt; &lt;span style=&#34;color:#0086b3&#34;&gt;len&lt;/span&gt;(dataloader) &lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;-&lt;/span&gt; &lt;span style=&#34;color:#099&#34;&gt;1&lt;/span&gt;)):
+                &lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;with&lt;/span&gt; torch&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;.&lt;/span&gt;no_grad():
+                    fake &lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;=&lt;/span&gt; netG(fixed_noise)&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;.&lt;/span&gt;detach()&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;.&lt;/span&gt;cpu()
+                img_list&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;.&lt;/span&gt;append(vutils&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;.&lt;/span&gt;make_grid(fake, padding&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#099&#34;&gt;2&lt;/span&gt;, normalize&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#999&#34;&gt;True&lt;/span&gt;))
+
+            iters &lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;+=&lt;/span&gt; &lt;span style=&#34;color:#099&#34;&gt;1&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;This is like normal training but with a little adjustment where we need to train both &lt;em&gt;D&lt;/em&gt; and &lt;em&gt;G&lt;/em&gt;.&lt;/p&gt;
+
+&lt;h1 id=&#34;results&#34;&gt;Results&lt;/h1&gt;
+
+&lt;p&gt;After 200 epochs the results are like this:
+&lt;figure&gt;&lt;img src=&#34;http://mhnazeri.now.sh/images/sharingan_200.png&#34; alt=&#34;Result&#34;&gt;&lt;/figure&gt;&lt;/p&gt;
+
+&lt;p&gt;As you can see, the generator learns some pattern from the data. Of course if you train it for more epochs, it gets better and better. One improvement (again according to GAN hacks) that we can add is to train &lt;em&gt;D&lt;/em&gt; more than &lt;em&gt;G&lt;/em&gt;. The notion behind it is that if &lt;em&gt;D&lt;/em&gt; do its job perfectly, then &lt;em&gt;G&lt;/em&gt; challenged and need to can change more to keep up.&lt;/p&gt;
+
+&lt;p&gt;I perform another modification on &lt;em&gt;D&lt;/em&gt;&#39;s loss. As the output of &lt;em&gt;D&lt;/em&gt; is a probability, its gradients are small, as a result, the changes in weights will be minor. To make gradients bigger for bigger changes, I add squared distance of real images with fake images to the &lt;em&gt;D&lt;/em&gt;&#39;s loss with some weight &lt;span  class=&#34;math&#34;&gt;\(\beta\)&lt;/span&gt; (here &lt;span  class=&#34;math&#34;&gt;\(\beta=0.01\)&lt;/span&gt;). So, the &lt;em&gt;D&lt;/em&gt;&#39;s loss becomes this:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-python&#34; data-lang=&#34;python&#34;&gt;errD_fake &lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;=&lt;/span&gt; criterion(output, label) &lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;+&lt;/span&gt; (beta &lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;*&lt;/span&gt; (fake&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;.&lt;/span&gt;detach() &lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;-&lt;/span&gt; real_cpu)&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;.&lt;/span&gt;pow(&lt;span style=&#34;color:#099&#34;&gt;2&lt;/span&gt;)&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;.&lt;/span&gt;mean(&lt;span style=&#34;color:#099&#34;&gt;0&lt;/span&gt;)&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;.&lt;/span&gt;sum())&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;Although we should keep this in mind, the gradients should not get too big. In the next section I will discuss how to prevent this. But for now, this modification yield this result for &lt;code&gt;1000&lt;/code&gt; epochs:
+&lt;figure&gt;&lt;img src=&#34;http://mhnazeri.now.sh/images/sharingan_modified_collapsed.gif&#34; alt=&#34;Result&#34;&gt;&lt;/figure&gt;&lt;/p&gt;
+
+&lt;p&gt;As you can see here, the images getting better and better until they hit a wall and reset, and at the end, &lt;em&gt;G&lt;/em&gt; only generate one sharingan, that is because this pattern was able to fool &lt;em&gt;D&lt;/em&gt; and &lt;em&gt;G&lt;/em&gt; does not bother itself to generate another sharingan. This situation is called &lt;em&gt;mode collapse&lt;/em&gt; in GAN literature.
+&lt;figure&gt;&lt;img src=&#34;http://mhnazeri.now.sh/images/sharingan_mod_loss.png&#34; alt=&#34;Result&#34;&gt;&lt;/figure&gt;&lt;/p&gt;
+
+&lt;p&gt;If we take a look at the loss functions of &lt;em&gt;D&lt;/em&gt; and &lt;em&gt;G&lt;/em&gt;, we can see two spikes in &lt;em&gt;D&lt;/em&gt;&#39;s loss. Those spikes are exactly where we see that generated images falling apart. &lt;em&gt;G&lt;/em&gt; generates garbage and &lt;em&gt;D&lt;/em&gt; can&#39;t decide.&lt;/p&gt;
+
+&lt;p&gt;Back to where we need to prevent gradients from exploding. To prevent this, we can add gradient clipping in order to prevent the gradients going higher than a threshold. One option is to use gradient clipping (here &lt;code&gt;clipping_threshold_d = 5&lt;/code&gt;) which should be added just before updating weights:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-python&#34; data-lang=&#34;python&#34;&gt;&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;if&lt;/span&gt; clipping_threshold_d &lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;&amp;gt;&lt;/span&gt; &lt;span style=&#34;color:#099&#34;&gt;0&lt;/span&gt;:
+                    nn&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;.&lt;/span&gt;utils&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;.&lt;/span&gt;clip_grad_norm_(netD&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;.&lt;/span&gt;parameters(),
+                                     clipping_threshold_d)
+&lt;span style=&#34;color:#998;font-style:italic&#34;&gt;# Update D&lt;/span&gt;
+optimizerD&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;.&lt;/span&gt;step()&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;Another option is to add &lt;a href=&#34;https://arxiv.org/abs/1802.05957&#34;&gt;spectral normalization&lt;/a&gt; to &lt;em&gt;D&lt;/em&gt; to stabilize its training. I also added it to the &lt;em&gt;G&lt;/em&gt; as well. To add this in code, when defining &lt;em&gt;G&lt;/em&gt; and &lt;em&gt;D&lt;/em&gt; components, instead of &lt;code&gt;ConvTranspose2d&lt;/code&gt; and &lt;code&gt;Conv2d&lt;/code&gt; add these:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-python&#34; data-lang=&#34;python&#34;&gt;nn&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;.&lt;/span&gt;utils&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;.&lt;/span&gt;spectral_norm(nn&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;.&lt;/span&gt;ConvTranspose2d(&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;...&lt;/span&gt;))
+nn&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;.&lt;/span&gt;utils&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;.&lt;/span&gt;spectral_norm(nn&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;.&lt;/span&gt;Conv2d(&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;...&lt;/span&gt;))&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;With these optimizations and without modified &lt;em&gt;D&lt;/em&gt;&#39;s loss, after 200 epochs we get:&lt;/p&gt;
+
+&lt;p&gt;&lt;figure&gt;&lt;img src=&#34;http://mhnazeri.now.sh/images/sharingan_mod_sn.gif&#34; alt=&#34;Result&#34;&gt;&lt;/figure&gt;
+&lt;figure&gt;&lt;img src=&#34;http://mhnazeri.now.sh/images/sharingan_200_mod.png&#34; alt=&#34;Result&#34;&gt;&lt;/figure&gt;&lt;/p&gt;
+
+&lt;p&gt;Comparing the first run with the optimized version , we can see that in the latter, &lt;em&gt;G&lt;/em&gt; does its best to generate sharingans with different patterns. After 800 more epochs:&lt;/p&gt;
+
+&lt;p&gt;&lt;figure&gt;&lt;img src=&#34;http://mhnazeri.now.sh/images/sharingan_1000_mod.gif&#34; alt=&#34;Result&#34;&gt;&lt;/figure&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;figure&gt;&lt;img src=&#34;http://mhnazeri.now.sh/images/sharingan_800.png&#34; alt=&#34;Result&#34;&gt;&lt;/figure&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;em&gt;G&lt;/em&gt; collapsed again but this time it has more variety.&lt;/p&gt;
+
+&lt;p&gt;&lt;figure&gt;&lt;img src=&#34;http://mhnazeri.now.sh/images/sharingan_loss_800.png&#34; alt=&#34;Result&#34;&gt;&lt;/figure&gt;&lt;/p&gt;
+
+&lt;p&gt;Taking a look at the loss function we can see this time we&#39;ve managed to prevent spikes in &lt;em&gt;D&lt;/em&gt;&#39;s loss. If we train the model with less epochs the collapse would not occur. So 1000 epochs is overkill for this small dataset as in early epochs we can see good results and we should stop the training there (early stopping).&lt;/p&gt;
+
+&lt;p&gt;And here is the result with optimizations and modified &lt;em&gt;D&lt;/em&gt; loss function after 300 epochs (I didn&#39;t trained it more because as we saw above, it is likely would collapse):&lt;/p&gt;
+
+&lt;p&gt;&lt;figure&gt;&lt;img src=&#34;http://mhnazeri.now.sh/images/sharingan_mod_300.gif&#34; alt=&#34;Result&#34;&gt;&lt;/figure&gt;
+&lt;figure&gt;&lt;img src=&#34;http://mhnazeri.now.sh/images/sharingan_mod_300.png&#34; alt=&#34;Result&#34;&gt;&lt;/figure&gt;&lt;/p&gt;
+
+&lt;p&gt;And for the loss:&lt;/p&gt;
+
+&lt;p&gt;&lt;figure&gt;&lt;img src=&#34;http://mhnazeri.now.sh/images/sharingan_loss_mod_300.png&#34; alt=&#34;Result&#34;&gt;&lt;/figure&gt;&lt;/p&gt;
+
+&lt;p&gt;The loss is much better and more stable.&lt;/p&gt;
+
+&lt;p&gt;To be honest with these low res images finding subtle patterns is difficult and &lt;em&gt;G&lt;/em&gt; is doing a great job. For generating crystal clear sharingan images we need improved derivatives of GAN. Hopefully, in future posts, I will talk about implementing them. And that&#39;s it, I hope you enjoyed this post.&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>Image_segmentation</title>
+      <link>http://mhnazeri.now.sh/posts/image_segmentation/</link>
+      <pubDate>Thu, 30 Jul 2020 00:15:46 +0430</pubDate>
+      
+      <guid>http://mhnazeri.now.sh/posts/image_segmentation/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>Hyper-parameter Management in Deep Learning Projects</title>
+      <link>http://mhnazeri.now.sh/posts/parameter_management/</link>
+      <pubDate>Sat, 16 May 2020 00:45:00 +0430</pubDate>
+      
+      <guid>http://mhnazeri.now.sh/posts/parameter_management/</guid>
+      <description>&lt;p&gt;Deep Learning (DL) projects have a plethora of hyper-parameters. Especially in research, they are like knobs that should be adjusted to yields the best results. There are multiple ways one can manage these hyper-parameters in Python. In this article, I&amp;rsquo;m going to discuss 3 common approaches.&lt;/p&gt;
+&lt;h1 id=&#34;argument-parser&#34;&gt;Argument Parser&lt;/h1&gt;
+&lt;p&gt;The first approach which is very easy and common is to use Python&amp;rsquo;s built-in argument parser module. All we need to do is to define some parameters preferably with default values or pass/change them during the program execution. Let&amp;rsquo;s create a simple script called &lt;code&gt;main.py&lt;/code&gt;:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-python&#34; data-lang=&#34;python&#34;&gt;&lt;span style=&#34;color:#998;font-style:italic&#34;&gt;# import the module&lt;/span&gt;
+&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;import&lt;/span&gt; &lt;span style=&#34;color:#555&#34;&gt;argparse&lt;/span&gt;
+
+
+&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;if&lt;/span&gt; __name__ &lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;==&lt;/span&gt; &lt;span style=&#34;color:#d14&#34;&gt;&amp;#34;__main__&amp;#34;&lt;/span&gt;:
+    &lt;span style=&#34;color:#998;font-style:italic&#34;&gt;# create a parser object&lt;/span&gt;
+    parser &lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;=&lt;/span&gt; argparse&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;.&lt;/span&gt;ArgumentParser()
+    &lt;span style=&#34;color:#998;font-style:italic&#34;&gt;# define some arguments&lt;/span&gt;
+    parser&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;.&lt;/span&gt;add_argument(&lt;span style=&#34;color:#d14&#34;&gt;&amp;#39;--batch_size&amp;#39;&lt;/span&gt;, default&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#099&#34;&gt;64&lt;/span&gt;, &lt;span style=&#34;color:#0086b3&#34;&gt;type&lt;/span&gt;&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#0086b3&#34;&gt;int&lt;/span&gt;)
+    parser&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;.&lt;/span&gt;add_argument(&lt;span style=&#34;color:#d14&#34;&gt;&amp;#39;--num_epochs&amp;#39;&lt;/span&gt;, default&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#099&#34;&gt;200&lt;/span&gt;, &lt;span style=&#34;color:#0086b3&#34;&gt;type&lt;/span&gt;&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#0086b3&#34;&gt;int&lt;/span&gt;)
+
+    &lt;span style=&#34;color:#998;font-style:italic&#34;&gt;# access the define arguments in project&lt;/span&gt;
+    args &lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;=&lt;/span&gt; parser&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;.&lt;/span&gt;parse_args()
+    &lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;print&lt;/span&gt;(args&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;.&lt;/span&gt;batch_size)
+    &lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;print&lt;/span&gt;(args&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;.&lt;/span&gt;num_epochs)
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;When experimenting with different values for hyper-parameters, we can change the value of each argument when running the script:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;python main.py --batch_size &lt;span style=&#34;color:#099&#34;&gt;32&lt;/span&gt; --num_epochs &lt;span style=&#34;color:#099&#34;&gt;100&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Arguments that have a double dash (&lt;code&gt;--&lt;/code&gt;) at the beginning of their name are optional. If you don&amp;rsquo;t put &lt;code&gt;--&lt;/code&gt; at the beginning of the argument name, it means that the argument is positional and should be provided when executing the script. You can read more about &lt;code&gt;argparse&lt;/code&gt; module at &lt;a href=&#34;https://docs.python.org/3/library/argparse.html&#34;&gt;official docs&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;This approach is effortless to implement and can be easily changed in experiments with different values. But, it has some downsides too. If the project has a lot of hyper-parameters to handle, which in research, it is usually the case, this list can become extensive. One way to circumvent this issue is to create a separate python file to hold and parse these parameters. Then, the only thing that needs to be done, is to change the default value when you want to experiment with other  values.&lt;/p&gt;
+&lt;h1 id=&#34;using-auxiliary-file-formats&#34;&gt;Using Auxiliary File Formats&lt;/h1&gt;
+&lt;p&gt;We can also use an extra file (with different extension) to manage the hyper-parameters. Here, I&amp;rsquo;m going to introduce 3 different common files to store hyper-parameters.&lt;/p&gt;
+&lt;h2 id=&#34;ini-file&#34;&gt;&lt;code&gt;.ini&lt;/code&gt; File&lt;/h2&gt;
+&lt;p&gt;Python has a built-in module to parse &lt;code&gt;.ini&lt;/code&gt; files, therefore using &lt;code&gt;.ini.&lt;/code&gt; file to store parameters in Python is easy. Also, in &lt;code&gt;.ini&lt;/code&gt; files we can group hyper-parameters based on their usage. Let&amp;rsquo;s create a &lt;code&gt;config.ini&lt;/code&gt; file:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-ini&#34; data-lang=&#34;ini&#34;&gt;&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;[TRAINING]&lt;/span&gt;
+&lt;span style=&#34;color:#008080&#34;&gt;epochs&lt;/span&gt; &lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color:#d14&#34;&gt;200&lt;/span&gt;
+&lt;span style=&#34;color:#008080&#34;&gt;learning_rate&lt;/span&gt; &lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color:#d14&#34;&gt;1e-4&lt;/span&gt;
+
+&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;[DIRECTORIES]&lt;/span&gt;
+&lt;span style=&#34;color:#008080&#34;&gt;root&lt;/span&gt; &lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color:#d14&#34;&gt;./&lt;/span&gt;
+&lt;span style=&#34;color:#008080&#34;&gt;save_model&lt;/span&gt; &lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color:#d14&#34;&gt;./save&lt;/span&gt;
+&lt;span style=&#34;color:#008080&#34;&gt;log&lt;/span&gt; &lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color:#d14&#34;&gt;./logs&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Here, we separated the parameters into two groups, one is related to training the model, and the other is related to managing directories. We need a helper function to help us parse the &lt;code&gt;config.ini&lt;/code&gt; file.&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-python&#34; data-lang=&#34;python&#34;&gt;&lt;span style=&#34;color:#998;font-style:italic&#34;&gt;# import the required module&lt;/span&gt;
+&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;import&lt;/span&gt; &lt;span style=&#34;color:#555&#34;&gt;configparser&lt;/span&gt;
+
+
+&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;def&lt;/span&gt; &lt;span style=&#34;color:#900;font-weight:bold&#34;&gt;config_parser&lt;/span&gt;(module_name: &lt;span style=&#34;color:#0086b3&#34;&gt;str&lt;/span&gt;&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#999&#34;&gt;None&lt;/span&gt;) &lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;-&amp;gt;&lt;/span&gt; Dict[&lt;span style=&#34;color:#0086b3&#34;&gt;str&lt;/span&gt;, &lt;span style=&#34;color:#0086b3&#34;&gt;str&lt;/span&gt;]:
+    &lt;span style=&#34;color:#d14&#34;&gt;&amp;#34;&amp;#34;&amp;#34;A helper function which receive the config category name,
+&lt;/span&gt;&lt;span style=&#34;color:#d14&#34;&gt;       and returns a dictionary containing the values of 
+&lt;/span&gt;&lt;span style=&#34;color:#d14&#34;&gt;       hyper-parameters of the specific category
+&lt;/span&gt;&lt;span style=&#34;color:#d14&#34;&gt;    &amp;#34;&amp;#34;&amp;#34;&lt;/span&gt;
+    &lt;span style=&#34;color:#998;font-style:italic&#34;&gt;# create a config parser object&lt;/span&gt;
+    config &lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;=&lt;/span&gt; configparser&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;.&lt;/span&gt;ConfigParser()
+    &lt;span style=&#34;color:#998;font-style:italic&#34;&gt;# pass it the absolute address of config.ini file&lt;/span&gt;
+    config&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;.&lt;/span&gt;read(&lt;span style=&#34;color:#d14&#34;&gt;&amp;#34;config.ini&amp;#34;&lt;/span&gt;)
+    &lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;try&lt;/span&gt;:
+        &lt;span style=&#34;color:#998;font-style:italic&#34;&gt;# if the key present in the config file, return it&lt;/span&gt;
+        &lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;return&lt;/span&gt; config[module_name]
+    &lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;except&lt;/span&gt; &lt;span style=&#34;color:#900;font-weight:bold&#34;&gt;KeyError&lt;/span&gt; &lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;as&lt;/span&gt; err:
+        &lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;print&lt;/span&gt;(f&lt;span style=&#34;color:#d14&#34;&gt;&amp;#34;Module name should be one of the:&lt;/span&gt;&lt;span style=&#34;color:#d14&#34;&gt;\n&lt;/span&gt;&lt;span style=&#34;color:#d14&#34;&gt; &amp;#34;&lt;/span&gt;
+              f&lt;span style=&#34;color:#d14&#34;&gt;&amp;#34;{config.sections()} not {err}&amp;#34;&lt;/span&gt;)
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Now that we have a helper function to parse the config file, we can use it wherever we want in the main script to obtain required hyper-parameters:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-python&#34; data-lang=&#34;python&#34;&gt;&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;if&lt;/span&gt; __name__ &lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;==&lt;/span&gt; &lt;span style=&#34;color:#d14&#34;&gt;&amp;#34;__main__&amp;#34;&lt;/span&gt;:
+    DIRECTORIES &lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;=&lt;/span&gt; config_parser(&lt;span style=&#34;color:#d14&#34;&gt;&amp;#34;DIRECTORIES&amp;#34;&lt;/span&gt;)
+    TRAINING &lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;=&lt;/span&gt; config_parser(&lt;span style=&#34;color:#d14&#34;&gt;&amp;#34;TRAINING&amp;#34;&lt;/span&gt;)
+
+    &lt;span style=&#34;color:#998;font-style:italic&#34;&gt;# treat the files like dictionary&lt;/span&gt;
+    &lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;print&lt;/span&gt;(DIRECTORIES[&lt;span style=&#34;color:#d14&#34;&gt;&amp;#34;root&amp;#34;&lt;/span&gt;])
+    &lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;print&lt;/span&gt;(DIRECTORIES[&lt;span style=&#34;color:#d14&#34;&gt;&amp;#34;log&amp;#34;&lt;/span&gt;])
+    &lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;print&lt;/span&gt;(&lt;span style=&#34;color:#0086b3&#34;&gt;int&lt;/span&gt;(TRAINING[&lt;span style=&#34;color:#d14&#34;&gt;&amp;#34;epochs&amp;#34;&lt;/span&gt;]))
+    &lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;print&lt;/span&gt;(&lt;span style=&#34;color:#0086b3&#34;&gt;float&lt;/span&gt;(TRAINING[&lt;span style=&#34;color:#d14&#34;&gt;&amp;#34;learning_rate&amp;#34;&lt;/span&gt;]))
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;One thing that should be noted here is that the config parser treats each value as a string, therefore, we need to convert it to the desired data type. And it only supports one level deep hierarchy. But the bright side is that it keeps your main script cleaner and shorter.&lt;/p&gt;
+&lt;h2 id=&#34;python-script-as-a-config-manager&#34;&gt;Python Script as a Config Manager&lt;/h2&gt;
+&lt;p&gt;We can also use an auxiliary python file to hold hyper-parameters. Create a file called &lt;code&gt;configs.py&lt;/code&gt; containing only a dictionary:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-python&#34; data-lang=&#34;python&#34;&gt;config &lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;=&lt;/span&gt; {
+    &lt;span style=&#34;color:#d14&#34;&gt;&amp;#34;epoch&amp;#34;&lt;/span&gt;: &lt;span style=&#34;color:#099&#34;&gt;200&lt;/span&gt;,
+    &lt;span style=&#34;color:#d14&#34;&gt;&amp;#34;learning_rate&amp;#34;&lt;/span&gt;: &lt;span style=&#34;color:#099&#34;&gt;1e-4&lt;/span&gt;,
+    &lt;span style=&#34;color:#d14&#34;&gt;&amp;#34;root&amp;#34;&lt;/span&gt;: &lt;span style=&#34;color:#d14&#34;&gt;&amp;#34;./&amp;#34;&lt;/span&gt;
+}
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;We can add all model hyper-parameters as a dictionary. For different parts of the model we can create different dictionaries and use them as follows:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-python&#34; data-lang=&#34;python&#34;&gt;&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;from&lt;/span&gt; &lt;span style=&#34;color:#555&#34;&gt;configs&lt;/span&gt; &lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;import&lt;/span&gt; config
+
+
+&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;if&lt;/span&gt; __name__ &lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;==&lt;/span&gt; &lt;span style=&#34;color:#d14&#34;&gt;&amp;#34;__main__&amp;#34;&lt;/span&gt;:
+    &lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;print&lt;/span&gt;(config[&lt;span style=&#34;color:#d14&#34;&gt;&amp;#34;epoch&amp;#34;&lt;/span&gt;], &lt;span style=&#34;color:#0086b3&#34;&gt;type&lt;/span&gt;(config[&lt;span style=&#34;color:#d14&#34;&gt;&amp;#34;epoch&amp;#34;&lt;/span&gt;]))
+    &lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;print&lt;/span&gt;(config[&lt;span style=&#34;color:#d14&#34;&gt;&amp;#34;root&amp;#34;&lt;/span&gt;], &lt;span style=&#34;color:#0086b3&#34;&gt;type&lt;/span&gt;(config[&lt;span style=&#34;color:#d14&#34;&gt;&amp;#34;root&amp;#34;&lt;/span&gt;]))
+    &lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;print&lt;/span&gt;(config[&lt;span style=&#34;color:#d14&#34;&gt;&amp;#34;learning_rate&amp;#34;&lt;/span&gt;], &lt;span style=&#34;color:#0086b3&#34;&gt;type&lt;/span&gt;(config[&lt;span style=&#34;color:#d14&#34;&gt;&amp;#34;learning_rate&amp;#34;&lt;/span&gt;]))
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;In contrast to &lt;code&gt;.ini&lt;/code&gt; file, the data types are reserved and there is no need for conversion. As easy as this approach is, but it is not very common. The reason for this is that it is not language agnostic.&lt;/p&gt;
+&lt;h2 id=&#34;yaml-files&#34;&gt;YAML Files&lt;/h2&gt;
+&lt;p&gt;YAML file format is increasingly becoming more popular due to readability and conciseness. There are multiple third-party libraries to handle YAML files in Python. Create &lt;code&gt;config.yaml&lt;/code&gt; file:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-yaml&#34; data-lang=&#34;yaml&#34;&gt;&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;Datasets&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;  &lt;/span&gt;&lt;span style=&#34;color:#998;font-style:italic&#34;&gt;# flip dataset consists of 256 images&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;  &lt;/span&gt;&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;flip-dataset&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;    &lt;/span&gt;&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;batch&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt; &lt;/span&gt;&lt;span style=&#34;color:#099&#34;&gt;32&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;    &lt;/span&gt;&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;shuffle&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt; &lt;/span&gt;True&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;  &lt;/span&gt;&lt;span style=&#34;color:#998;font-style:italic&#34;&gt;# flot dataset consists of 1024 images&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;  &lt;/span&gt;&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;flop-dataset&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;    &lt;/span&gt;&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;batch&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt; &lt;/span&gt;&lt;span style=&#34;color:#099&#34;&gt;64&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;    &lt;/span&gt;&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;shuffle&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt; &lt;/span&gt;False&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;    
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;&lt;/span&gt;&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;Directories&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;  &lt;/span&gt;&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;root&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt; &lt;/span&gt;&lt;span style=&#34;color:#d14&#34;&gt;&amp;#34;./&amp;#34;&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;  &lt;/span&gt;&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;logs&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt; &lt;/span&gt;&lt;span style=&#34;color:#d14&#34;&gt;&amp;#34;logs/&amp;#34;&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;As we can see, it supports multi-level hierarchy configs and even comments! In the above case, we have two different datasets, &lt;code&gt;flip-dataset&lt;/code&gt; and &lt;code&gt;flop-dataset&lt;/code&gt; with different configurations. To parse this file, we need a third-party library such as &lt;a href=&#34;https://omegaconf.readthedocs.io/en/latest/index.html&#34;&gt;&lt;em&gt;OmegaConf&lt;/em&gt;&lt;/a&gt;, &lt;a href=&#34;https://pyyaml.org&#34;&gt;&lt;em&gt;PyYAML&lt;/em&gt;&lt;/a&gt; or &lt;a href=&#34;https://confuse.readthedocs.io/en/latest/&#34;&gt;&lt;em&gt;Confuse&lt;/em&gt;&lt;/a&gt;. Here, I&amp;rsquo;m going to use PyYAML. Install it using your favorite Python package manager:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;pip install --user pyyaml
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;We can use it in our project as follow:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-python&#34; data-lang=&#34;python&#34;&gt;&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;import&lt;/span&gt; &lt;span style=&#34;color:#555&#34;&gt;yaml&lt;/span&gt;
+
+
+&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;if&lt;/span&gt; __name__ &lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;==&lt;/span&gt; &lt;span style=&#34;color:#d14&#34;&gt;&amp;#34;__main__&amp;#34;&lt;/span&gt;:
+    &lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;with&lt;/span&gt; &lt;span style=&#34;color:#0086b3&#34;&gt;open&lt;/span&gt;(&lt;span style=&#34;color:#d14&#34;&gt;&amp;#34;config.yaml&amp;#34;&lt;/span&gt;) &lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;as&lt;/span&gt; f:
+        config &lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;=&lt;/span&gt; yaml&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;.&lt;/span&gt;load(f, Loader&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;=&lt;/span&gt;yaml&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;.&lt;/span&gt;FullLoader)
+
+    &lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;print&lt;/span&gt;(config[&lt;span style=&#34;color:#d14&#34;&gt;&amp;#34;Datasets&amp;#34;&lt;/span&gt;][&lt;span style=&#34;color:#d14&#34;&gt;&amp;#34;flip-dataset&amp;#34;&lt;/span&gt;][&lt;span style=&#34;color:#d14&#34;&gt;&amp;#34;batch&amp;#34;&lt;/span&gt;])
+    &lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;print&lt;/span&gt;(config[&lt;span style=&#34;color:#d14&#34;&gt;&amp;#34;Datasets&amp;#34;&lt;/span&gt;][&lt;span style=&#34;color:#d14&#34;&gt;&amp;#34;flip-dataset&amp;#34;&lt;/span&gt;][&lt;span style=&#34;color:#d14&#34;&gt;&amp;#34;shuffle&amp;#34;&lt;/span&gt;])
+    &lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;print&lt;/span&gt;(config[&lt;span style=&#34;color:#d14&#34;&gt;&amp;#34;Datasets&amp;#34;&lt;/span&gt;][&lt;span style=&#34;color:#d14&#34;&gt;&amp;#34;flop-dataset&amp;#34;&lt;/span&gt;][&lt;span style=&#34;color:#d14&#34;&gt;&amp;#34;batch&amp;#34;&lt;/span&gt;])
+    &lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;print&lt;/span&gt;(config[&lt;span style=&#34;color:#d14&#34;&gt;&amp;#34;Directories&amp;#34;&lt;/span&gt;][&lt;span style=&#34;color:#d14&#34;&gt;&amp;#34;logs&amp;#34;&lt;/span&gt;])
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;The good thing is that it also reserves data types and is language agnostic. One benefit of &lt;a href=&#34;https://omegaconf.readthedocs.io/en/latest/index.html&#34;&gt;&lt;em&gt;OmegaConf&lt;/em&gt;&lt;/a&gt; with respect to other libraries is that the parameters are treated as attributes and we can call them like attributes of a class by using &lt;code&gt;.&lt;/code&gt; notation. One think that should be kept in mind is that, if we want using attribute calling notation, we should be careful with our naming. For example in the config above, name &lt;code&gt;flip-dataset&lt;/code&gt; is not a valid python variable name (why?). Instead use underscores like &lt;code&gt;flip_dataset&lt;/code&gt;.&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-python&#34; data-lang=&#34;python&#34;&gt;&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;from&lt;/span&gt; &lt;span style=&#34;color:#555&#34;&gt;omegaconf&lt;/span&gt; &lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;import&lt;/span&gt; OmegaConf
+
+
+&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;if&lt;/span&gt; __name__ &lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;==&lt;/span&gt; &lt;span style=&#34;color:#d14&#34;&gt;&amp;#34;__main__&amp;#34;&lt;/span&gt;:
+    config &lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;=&lt;/span&gt; OmegaConf&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;.&lt;/span&gt;load(&lt;span style=&#34;color:#d14&#34;&gt;&amp;#34;config.yaml&amp;#34;&lt;/span&gt;)
+
+    &lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;print&lt;/span&gt;(config&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;.&lt;/span&gt;Datasets)
+    &lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;print&lt;/span&gt;(config&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;.&lt;/span&gt;Directories&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;.&lt;/span&gt;logs)
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;You can use different file formats of your choice such as &lt;code&gt;JSON&lt;/code&gt; and &lt;code&gt;XML&lt;/code&gt; to declutter the project codebase. But managing nested configs with such formats is exasperating.&lt;/p&gt;
+&lt;h1 id=&#34;hydra&#34;&gt;Hydra&lt;/h1&gt;
+&lt;p&gt;In situations where we have a huge project with a plethora of hyper-parameters, multiple datasets, multiple optimizer and we want to experiment with different values but we are short on time, &lt;a href=&#34;https://hydra.cc&#34;&gt;&lt;strong&gt;Hydra&lt;/strong&gt;&lt;/a&gt; is the hero we want. It is &amp;ldquo;a framework for elegantly configuring complex applications&amp;rdquo; developed at Facebook. It uses YAML, therefore inherent its advantages. It also gives us the ability to run multiple experiments in parallel with different configurations. We can put all our configuration files in a separate directory such as &lt;code&gt;configs&lt;/code&gt;. We can also create different folders to hold different configurations (called &lt;code&gt;config group&lt;/code&gt;) for different parts of the project to prevent extensive config files and easily alternate between them. Another cool feature of &lt;em&gt;hydra&lt;/em&gt; is that you can treat YAML keys as arguments and change them when executing the program like &lt;code&gt;argparse&lt;/code&gt; module. If you see the need to use &lt;em&gt;hydra&lt;/em&gt; in your project, its &lt;a href=&#34;https://hydra.cc/docs/tutorial/simple_cli/&#34;&gt;tutorial page&lt;/a&gt; is comprehensive. It is a feature-packed framework and writing a tutorial about it is out of scope of this short article.&lt;/p&gt;
+&lt;h1 id=&#34;wrapping-up&#34;&gt;Wrapping up&lt;/h1&gt;
+&lt;p&gt;Although it seems that the approaches above are incrementally get better and better, but actually, it is not the case. All of these approaches have their own pros and cons. Choosing one is highly correlated to your project&amp;rsquo;s size and needs. I hope by showing simple examples I could give you an insight on how to choose an approach. So, which one is your favorite approach?&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>Trajectory Forecasting in Autonomous Vehicles - Part 1: Introduction</title>
+      <link>http://mhnazeri.now.sh/posts/trajectory/</link>
+      <pubDate>Thu, 23 May 2019 23:46:50 +0430</pubDate>
+      
+      <guid>http://mhnazeri.now.sh/posts/trajectory/</guid>
+      <description>&lt;p&gt;Last week, I presented a talk about &lt;strong&gt;Trajectory Prediction&lt;/strong&gt;, Here is the gist of that talk and corresponding &lt;a href=&#34;https://drive.google.com/open?id=1ZdzWG33fL6_muutrgriXhll-z8smsg71&#34;&gt;slides&lt;/a&gt;.&lt;/p&gt;
+
+&lt;p&gt;Every day we hear people getting killed in car accidents in the news. Drivers
+are too drunk to drive, texting to each other while driving, driving way too fast
+than should be, distracted by other objects in the scene, can’t see signs in the
+night, get drowsy or even road conditions like slippery roads in snowy weather
+can cause accidents. These are just a few examples of reasons behind accidents.
+According to National Highway Traffic Safety Administration (NHTSA) a mere
+2 percent caused by environment, another 2 percent caused by fault in car’s
+engines, 2 percent caused by unknown reasons and a full 94 percent of accidents
+caused by human errors. In 2016, more than 37000 people lost their lives in
+crashes on U.S. highways.
+To eliminate the human error, the concept of self-driving vehicles (also known
+as autonomous vehicles or driverless vehicles) were introduced. This new technology will spare thousands of lives yearly, in addition, hundreds of thousands of injuries would be avoided. In self-driving vehicles, vehicles use different kinds of sensors like cameras, ultrasonic, LIDAR and ... in order to take control of vehicle. These vehicles won’t get drowsy, drunk, distracted and ... .&lt;/p&gt;
+
+&lt;h1 id=&#34;history&#34;&gt;History&lt;/h1&gt;
+
+&lt;p&gt;In order to advance the development of self-driving vehicles, DARPA held 3 competitions. The first one called DARPA Grand Challenge held in 2004, required vehicles to navigate through a course of 142 miles long throughout Mojave desert within 10 hours time limit. But, all cars failed during the first few miles.&lt;/p&gt;
+
+&lt;p&gt;Next year, in 2005, DARPA  held the competition again. This time it required
+vehicles to navigate 132 miles long route through flats, dry lake beds and mountain passes including 3 narrow tunnels and more than 10 sharp right/left turns.
+This competition had 23 finalists, among them four vehicles could complete the
+track within the allotted time limit. The Stanford University’s vehicle, ”Stanley” claimed first place and Carnegie Mellon University’s car ”Sandstorm” and ”Highlander” finished in second and third places.&lt;/p&gt;
+
+&lt;p&gt;The third competition known as DARPA Urban Challenge was held at the former George Air Force base, California, USA in 2007 and required driverless vehicles to navigate a 60 miles long route throughout a simulated urban environment together with other self-driving vehicles and human driven vehicles within a 6 hours time limit. The vehicles had to obey the California traffic rules. This competition had 11 finalists and 6 cars completed the route within the allotted time. Carnegie Mellon University’s vehicle, ”Boss” claimed the first place, the Stanford University’s vehicle ”Junior” finished in second and Virginia Tech’s vehicle ”Odin” came in third place.&lt;/p&gt;
+
+&lt;p&gt;In order to measure the level of autonomy of self-driving vehicles SAE International (Society
+of Automotive Engineers) has defined 5 levels of automation based on the human intervention
+and attentiveness. Each level describes the extend in which the vehicle takes
+over the task and responsibilities from the driver and how the vehicle and driver
+would be interact with each other.
+&lt;figure&gt;&lt;img src=&#34;http://mhnazeri.now.sh/images/automation_levels.png&#34; alt=&#34;Levels of Automation&#34;&gt;&lt;/figure&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;em&gt;Image Courtesy of &lt;a href=&#34;https://www.nhtsa.gov/technology-innovation/automated-vehicles-safety&#34;&gt;www.nhtsa.gov&lt;/a&gt;&lt;/em&gt;&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;Level 0 - No Automation:
+”No Automation is where the driver controls the car without any support from a driver assistance system.”&lt;/li&gt;
+&lt;li&gt;Level 1 - Driver Assistance:
+Vehicle is controlled by the driver, but some driving assist features may be included in the vehicle design. Examples of this include the Active Cruise Control with Stop&amp;amp;Go function, which independently adjust the distance to the car in front of you. Collision and Pedestrian Warning with City Brake Activation which prevents collision via automatic braking.&lt;/li&gt;
+&lt;li&gt;Level 2 - Partial Automation:
+Vehicle has combined automated functions, like Steering and Lane Control Assistant including Traffic Jam
+Assistant, but the driver must remain engaged with the driving task.&lt;/li&gt;
+&lt;li&gt;Level 3 - Conditional Automation:
+Driver is a necessity but is not required to monitor the environment. The driver must be ready to take control of the vehicle at all times with notice. Example of conditional automation systems is, the car will be able to drive autonomously over long distances in certain traffic situations, such as motorways. The driver, however, must be able to take over control within a few seconds, such as at road construction sites.&lt;/li&gt;
+&lt;li&gt;Level 4 - High Automation: The vehicle is capable of performing all driving functions under certain conditions. The driver have the option to control the vehicle and the vehicle still has a cockpit. In level 4 the vehicle can do majority of driving tasks independently.&lt;/li&gt;
+&lt;li&gt;Level 5 - Full Automation:
+The vehicle is capable of performing all driving functions under all conditions. In level 5 the true autonomous driving becomes a reality. Drivers don’t need to be fit to drive and don’t even need to have license. There isn’t even a cockpit therefore, every person in the vehicle becomes a passenger, opening new mobility possibilities for disabled people.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;Level 3, Level 4 and Level 5 are still in the testing phase. The driving assistance systems in Level 1 are very common now a days and some cars even offer driving Level 2 which extends the autonomous driving capabilities to steering, lane keeping as well as remote controlled parking. There are many challenges to achieve fully autonomous vehicles, one of them is, they share a common environment with us, therefore they need to predict human motions and behaviors in addition of predicting trajectories of other vehicles in the environment in order to prevent collisions.&lt;/p&gt;
+
+&lt;h1 id=&#34;architecture-of-selfdriving-vehicles&#34;&gt;Architecture of Self-Driving Vehicles&lt;/h1&gt;
+
+&lt;p&gt;The typical architecture of self-driving vehicles consists of Perception System and Decision Making System, each of them include different subsystems. In the following section we are going to discuss these systems and their subsystems.&lt;/p&gt;
+
+&lt;h2 id=&#34;perception-system&#34;&gt;Perception System&lt;/h2&gt;
+
+&lt;p&gt;The perception system is responsible for estimating the state of the vehicle and creating an internal representation of the environment surrounding the vehicle. It creates this representation based on inputs it receives from sensors like Light Detection and Ranging (LIDAR), Radio Detection and Ranging (RADAR), camera, Global Positioning System (GPS), Inertia Measurement Unit (IMU), odometer, etc. This systems contains different parts such as Localizer, Mapper, Moving Objects Tracking, Traffic Signalization  detection.
+&lt;figure&gt;&lt;img src=&#34;http://mhnazeri.now.sh/images/architecture.png&#34; alt=&#34;Architecture&#34;&gt;&lt;/figure&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;em&gt;[Badue et al., 2019]&lt;/em&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;em&gt;Localization)&lt;/em&gt; Localizer is responsible for estimating the current state of the car and creating an internal representation of the environment around the ego-vehicle [Badue et al., 2019].&lt;/p&gt;
+
+&lt;p&gt;&lt;em&gt;Mapper)&lt;/em&gt; Is responsible for merging the offline maps like Google Maps or OpenStreetMap with internal representation of the environment created by the Localizer and creating online map [Badue et al., 2019].&lt;/p&gt;
+
+&lt;p&gt;&lt;em&gt;Moving Objects Tracking)&lt;/em&gt; Is responsible for recognizing, and tracking of the moving objects in the scene [Badue et al., 2019].&lt;/p&gt;
+
+&lt;p&gt;&lt;em&gt;Traffic Signalization Detection)&lt;/em&gt; Is responsible for recognition and detection of the traffic signs alongside the streets [Badue et al., 2019].&lt;/p&gt;
+
+&lt;h2 id=&#34;decision-making-system&#34;&gt;Decision Making System&lt;/h2&gt;
+
+&lt;p&gt;The decision making system is responsible for navigating the vehicle from its initial position to the final goal defined by the user according to the vehicle’s state and internal representation of the environment as well as traffic rules. This system like perception system is composed of different modules such as
+Route Planning, Path Planning, Behaviour Selector, Motion Planner, Obstacle Avoider and Controller [Badue et al., 2019].&lt;/p&gt;
+
+&lt;p&gt;&lt;em&gt;Route Planning)&lt;/em&gt; Is responsible for receiving user input and find a route &lt;span  class=&#34;math&#34;&gt;\(W\)&lt;/span&gt;
+in offline map from current location to the destination. Route &lt;span  class=&#34;math&#34;&gt;\(W\)&lt;/span&gt; is consist of a sequence of way points, i.e. &lt;span  class=&#34;math&#34;&gt;\(W = \{w_1 , w_2 , w_3 , ..., w_{|W|} \}\)&lt;/span&gt;. Each way point &lt;span  class=&#34;math&#34;&gt;\(w_i\)&lt;/span&gt; is a coordinate pair of &lt;span  class=&#34;math&#34;&gt;\((x_i , y_i )\)&lt;/span&gt; in the offline map [Badue et al., 2019].&lt;/p&gt;
+
+&lt;p&gt;&lt;em&gt;Path Planning)&lt;/em&gt; Extends way points to consist vehicle state, internal representation of the environment as well as traffic rules. We call the new sequence the sequence
+of Paths i.e. &lt;span  class=&#34;math&#34;&gt;\(P = \{P_1 , P_2 , ..., P_c , ..., P_{|P|} \}\)&lt;/span&gt;. Each Path is a sequence of poses, i.e. &lt;span  class=&#34;math&#34;&gt;\(P_i = \{p_1 , p_2 , ..., p_{|P |}\}\)&lt;/span&gt; where each pose &lt;span  class=&#34;math&#34;&gt;\(p_i\)&lt;/span&gt; is a coordinate pair in th offline map and the ego-vehicle’s orientation at this position, i.e. &lt;span  class=&#34;math&#34;&gt;\(p_i = (x_i , y_i , \theta_i )\)&lt;/span&gt;  [Badue et al., 2019] .&lt;/p&gt;
+
+&lt;p&gt;&lt;em&gt;Behaviour Selector)&lt;/em&gt; Is responsible for selecting the current car behavior such as object avoidance, intersection handling, and lane keeping. It does so by choosing desired velocity and a pose for a few seconds (about 5s) ahead of the current state. The pair pose in &lt;span  class=&#34;math&#34;&gt;\(P_g\)&lt;/span&gt; and the current velocity is called
+Goal. A Goal is &lt;span  class=&#34;math&#34;&gt;\(Goal_g = (x_g , y_g , θ_g , v_g )\)&lt;/span&gt;. The Behavior Selector is responsible for choosing this Goal [Badue et al., 2019].&lt;/p&gt;
+
+&lt;p&gt;&lt;em&gt;Motion Planner)&lt;/em&gt; Is responsible for computing a Trajectory, &lt;span  class=&#34;math&#34;&gt;\(T\)&lt;/span&gt; , from current state to the current Goal defined by the Behavior Selector. A Trajectory &lt;span  class=&#34;math&#34;&gt;\(T = \{c_1 , c_2 , ..., c_{|T|} \}\)&lt;/span&gt; is sequence of commands,
+&lt;span  class=&#34;math&#34;&gt;\(c_k = (v_k , φ_k , t_k )\)&lt;/span&gt;, where &lt;span  class=&#34;math&#34;&gt;\(v_k\)&lt;/span&gt; is velocity at time &lt;span  class=&#34;math&#34;&gt;\(k\)&lt;/span&gt;, &lt;span  class=&#34;math&#34;&gt;\(φ_k\)&lt;/span&gt; is steering angle at time &lt;span  class=&#34;math&#34;&gt;\(k\)&lt;/span&gt;, and &lt;span  class=&#34;math&#34;&gt;\(t_k\)&lt;/span&gt; is the duration of &lt;span  class=&#34;math&#34;&gt;\(c_k\)&lt;/span&gt; . (The focus of my work is currently Trajectory Prediction which is part of Motion Planner. We will discuss this in more details in future artciles.)&lt;/p&gt;
+
+&lt;p&gt;&lt;em&gt;Obstacle Avoider)&lt;/em&gt; Receives the Trajectory computed by the Motion Planner module and modify it to avoid collisions with obstacles in the environment. This modification is usually consist of reducing the velocity of the vehicle.&lt;/p&gt;
+
+&lt;h2 id=&#34;controller&#34;&gt;Controller&lt;/h2&gt;
+
+&lt;p&gt;Finally the Controller module convert the received modified trajectory in to commands and send it to the actuators of the steering wheel, throttle and brake in order to make the vehicle move in the real environment.&lt;/p&gt;
+
+&lt;h1 id=&#34;motion-planning&#34;&gt;Motion Planning&lt;/h1&gt;
+
+&lt;p&gt;The task of Motion Planning has been studied extensively in the last decade. Most authors in this field have been divided the problem in to local and global planning. A great amount of navigation techniques have been taken from mobile robotics and modified to face the challenges of road networks and driving
+rules [González et al., 2016]. These planning techniques have been classified in to four groups according to their implementation: graph search, sampling, interpolating and numerical optimization [González et al., 2016].&lt;/p&gt;
+
+&lt;p&gt;Avoiding dangerous situation that may happen during the driving is the current focus of the field of Motion Planning [González et al., 2016]. To give and example of this situation, imagine that you want to enter a highway, a vehicle is driving on the right lane, you don’t know if that car would be gentle and allow you to pass, or it will accelerate and go first, or it will change lane or so on ... . Predicting the path of other vehicle’s in a multi agent (pedestrians, bicycles, vehicles, ...) setting is a very important task in order to prevent collisions and plan safe paths. Autonomous robots are getting prevalent and they live in the same society as we do, it is very important for them to acquire abilities like humans’ ability for manoeuvering in crowded spaces. It is also important to know what trajectories are acceptable. Here acceptable means valid paths (arriving at destination without trespassing the traffic laws and avoiding collisions.) that the vehicle can take without crashing in to obstacles.&lt;/p&gt;
+
+&lt;p&gt;In this artcile we learned how autonomous vehicles work and what is motion planning and where does trajectory prediction belong in the anatomy of autonomous vehicles architecture. In upcoming arcticles I&#39;m going to elaborate more on the trajectoy prediction task.&lt;/p&gt;
+
+&lt;h3 id=&#34;sources&#34;&gt;Sources&lt;/h3&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;Badue, C., Guidolini, R., Carneiro, R. V., Azevedo, P.,
+Cardoso, V. B., Forechi, A., Jesus, L. F. R., Berriel, R. F., Paixão, T. M.,
+Mutz, F. W., Oliveira-Santos, T., and de Souza, A. F. (2019). Self-driving
+cars: A survey. CoRR, abs/1901.04407.&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;González, D., Pérez, J., Milanés, V., and Nashashibi, F.
+(2016). A review of motion planning techniques for automated vehicles. IEEE
+Transactions on Intelligent Transportation Systems, 17(4):1135–1145.&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;&lt;a href=&#34;https://www.ayersandwhitlow.com/blog/2018/01/nhtsa-nearly-all-car-crashes-are-due-to-human-error.shtml&#34;&gt;National Highway Traffic Safety Administration &lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;&lt;a href=&#34;https://www.bmw.com/en/automotive-life/autonomous-driving.html&#34;&gt;www.bmw.com&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;&lt;a href=&#34;https://www.nhtsa.gov/technology-innovation/automated-vehicles-safety&#34;&gt;www.nhtsa.gov&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;/ul&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>Sane Introduction to the Insane World of Generative Adversarial Networks</title>
+      <link>http://mhnazeri.now.sh/posts/gans/</link>
+      <pubDate>Thu, 17 Jan 2019 23:29:20 +0430</pubDate>
+      
+      <guid>http://mhnazeri.now.sh/posts/gans/</guid>
+      <description>&lt;p&gt;In these series of articles I&amp;rsquo;m going to explain the idea behind Generative Adversarial Networks (GANs) and how they work. I divided this tutorial into separate parts to not bore the readers. In upcoming articles I&amp;rsquo;m going to explain GANs in detail and how to implement one. Picture below shows some use cases of the GANs.
+&lt;img src=&#34;http://mhnazeri.now.sh/images/pix2pix.jpg&#34; alt=&#34;GAN applications&#34;&gt;
+Image coutesy of &lt;a href=&#34;https://phillipi.github.io/pix2pix/&#34;&gt;https://phillipi.github.io&lt;/a&gt;&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;&amp;ldquo;The most interesting idea in the last 10 years, in machine learning.&amp;rdquo; (Yann Lecun)&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;This saying from &lt;a href=&#34;http://yann.lecun.com/&#34;&gt;Yann Lecun&lt;/a&gt; shows the beauty behind GANs and their impact on future research.
+Before going in to the details of GANs, first we need some foundation. I&amp;rsquo;m starting simple and as the series grows the content of each article will get more complicated, but I&amp;rsquo;m
+hoping with knowledge that we obtain in each article, we can understand future articles better.&lt;/p&gt;
+&lt;h2 id=&#34;what-is-a-random-variable&#34;&gt;What is a Random Variable?&lt;/h2&gt;
+&lt;p&gt;In probability theory a random variable (RV) is an outcome of any random event such as tossing a coin, in this example a random variable is either head or tail. RV can be an outcome of any distribution, now you may ask what is a distribution? A probability distribution is a mathematical function that can produce probability of occurrence of any different outcome. In simple words, a distribution is a description of a random phenomenon in terms of probabilities. There are many different probability distributions but to name a few, we have &lt;a href=&#34;https://en.wikipedia.org/wiki/Normal_distribution&#34;&gt;Normal Distribution or Gaussian Distribution&lt;/a&gt;, &lt;a href=&#34;https://en.wikipedia.org/wiki/Uniform_distribution_(continuous)&#34;&gt;Uniform Distribution&lt;/a&gt; and etc. . Drawing a real number from a distribution is called sampling, which is the probability of occurring a random variable.
+We will need these definitions as we go forward. So, try not to forget them.&lt;/p&gt;
+&lt;h2 id=&#34;use-case-generating-images&#34;&gt;Use Case: Generating Images&lt;/h2&gt;
+&lt;p&gt;A picture is collection of numbers called matrix, if we use RGB color space, we have three matrices for an image, each representing the Red, Blue, Green of the image, their combination form the final image. So, each image stored as three matrices.&lt;/p&gt;
+&lt;p&gt;Now imagine you have a folder full of pictures of cats. Each number from the matrix of each image is drawn from a distribution, as long as they are cats, their distribution is the same, if we draw some numbers from this hypothetical distribution, we can generate a picture of a cat, but we don&amp;rsquo;t have access to this distribution, it is very complex distribution in a very high dimensional space. The core problem in generative models is to learn this underlying structure of data (learning data distribution), if we can learn this distribution, by sampling random variables from this distribution we can generate new data like real ones. This is the goal in Generative Models and specially Generative Adversarial Networks.&lt;/p&gt;
+&lt;h2 id=&#34;generative-adversarial-networks-in-simple-words&#34;&gt;Generative Adversarial Networks in Simple Words&lt;/h2&gt;
+&lt;p&gt;Let me explain a simple game first, which you have already played with your friends. &lt;em&gt;Guessing the number&lt;/em&gt;. In this game your friend chooses a number between a range and your job is to guess this number. If you are wrong, your friend can help you by guiding you to go up or down until you reach the number, but keep in mind that your guesses are limited. Now imagine, there is no range specified. Your job is harder now. To ease this, assume there is a list of numbers which you can guess any of them and you will win. But still, this game can get even harder by assuming that the numbers are in continues. There is a infinitesimal chance that you can guess the right number, but you can still get closer to it.&lt;/p&gt;
+&lt;p&gt;Generative adversarial networks in abstract form are really like this game, in its hardest form. The list of numbers are our training data, where they follow a pattern. Your friend is the oracle who knows these numbers but does not know the pattern (or more academic, their distribution). In the context of GANs your friend is called the discriminator. And you are the generator, who is trying to find the pattern of numbers. The guidance that your friend gives you is called the adversarial error back-propagation which helps you to go in the right direction.&lt;/p&gt;
+&lt;p&gt;For now, it is enough for introduction and what GANs really are. In the following we will talk a little bit about machine learning&amp;rsquo;s two different paradigms: supervised learning and unsupervised learning.&lt;/p&gt;
+&lt;p&gt;In supervised learning, our data is in form of $(x, y)$ pair, $x$ is our vector of features and $y$ is the corresponding label. We can learn the relation between $x$ and $y$ by learning a parameterized function like $f(x;\theta) = y$ which map $x$ on to $y$. The $\theta$ parameters are learned using an algorithm called back-propagation that determines which parameter caused the error by what margin. This is fairly simpler than when we have no label to compare our results with. But in todays world, every minute a humongous amount of data are being generated by users of social media. These data is not in the form of $(x, y)$, they are simple $x$ ($x$ is a vector of features) with no label tagged to them. This makes using these data difficult. So we need algorithms that can learn new information from this data without any guidance from us. Here the Generative Adversarial Networks, the goal of this series come in to play.&lt;/p&gt;
+&lt;p&gt;There were some models before which tried to learn the underlying hidden structure of data, some succeeded but some failed to generalize. GANs are often regarded as producing the best samples. We can summarize GANs in a paragraph:&lt;/p&gt;
+&lt;p&gt;GANs are unsupervised model to learn the underlying distribution of training data in order to generate new samples. Today these models have many applications in realistic artwork generation, super resolution, colorization, forecasting in time series, simulation, planning and so on. These models instead of directly learning the distribution of data, they try to learn this distribution in an implicit manner, by running a minimax game between two models. One model try to generate fake data and the other model discriminate these data from the real data, the former model try to maximize the error of the latter and the latter try to minimize its error.&lt;/p&gt;
+&lt;p&gt;I hope this article gave you an insight about how GANs work. In the next article we are going to implement one with &lt;a href=&#34;https://pytorch.org&#34;&gt;PyTorch&lt;/a&gt;.&lt;/p&gt;
+</description>
+    </item>
+    
+  </channel>
+</rss>

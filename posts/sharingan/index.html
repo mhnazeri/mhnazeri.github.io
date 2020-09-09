@@ -1,0 +1,738 @@
+<!DOCTYPE html>
+<html prefix="og: http://ogp.me/ns#" lang="en-us"><head itemscope itemtype="http://mhnazeri.now.sh">
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  
+  <meta property="og:locale" content="en">
+  <meta name="language" content="en">
+  
+  <title itemprop="name">SharinGAN &middot; Nazeri&#39;s Blog</title>
+  <meta property="og:title" content="SharinGAN &middot; Nazeri&#39;s Blog" />
+  <meta name="twitter:title" content="SharinGAN &middot; Nazeri&#39;s Blog" />
+  <meta itemprop="name" content="SharinGAN &middot; Nazeri&#39;s Blog" />
+  <meta name="application-name" content="Nazeri&#39;s Blog" />
+  <meta property="og:site_name" content="Nazeri&#39;s Blog" />
+  
+  <base href="http://mhnazeri.now.sh/posts/sharingan/">
+  <link rel="canonical" href="http://mhnazeri.now.sh/posts/sharingan/" itemprop="url" />
+  <meta name="url" content="http://mhnazeri.now.sh/posts/sharingan/" />
+  <meta name="twitter:url" content="http://mhnazeri.now.sh/posts/sharingan/" />
+  <meta property="og:url" content="http://mhnazeri.now.sh/posts/sharingan/" />
+  
+  
+    
+      <meta itemprop="image" content="http://mhnazeri.now.sh/images/og_image.jpg" />
+      <meta property="og:image" content="http://mhnazeri.now.sh/images/og_image.jpg" />
+      <meta name="twitter:image" content="http://mhnazeri.now.sh/images/og_image.jpg" />
+      <meta name="twitter:image:src" content="http://mhnazeri.now.sh/images/og_image.jpg" />
+    
+  
+  <meta name="twitter:card" content="summary_large_image" />
+  
+  
+    <meta property="og:type" content="article" />
+    <meta itemprop="description" content="Generative models specially with the emerge of Generative Adversarial Networks (GANs) have become the spotlight of Deep Learning in recent years. They have many" />
+    <meta property="og:description" content="Generative models specially with the emerge of Generative Adversarial Networks (GANs) have become the spotlight of Deep Learning in recent years. They have many" />
+    <meta name="description" content="Generative models specially with the emerge of Generative Adversarial Networks (GANs) have become the spotlight of Deep Learning in recent years. They have many" />
+    <meta name="twitter:description" content="Generative models specially with the emerge of Generative Adversarial Networks (GANs) have become the spotlight of Deep Learning in recent years. They have many" />
+    <meta property="article:published_time" content="2020-07-30T01:46:41&#43;04:30" />
+    <meta name="twitter:label1" value="Reading time" />
+    
+      <meta name="twitter:data1" value="13 minutes" />
+    
+
+    
+  
+
+  <meta property="og:updated_time" content=2020-07-30T01:46:41&#43;0430 />
+
+  
+
+  
+
+  
+
+  <meta name="generator" content="Hugo 0.69.0" />
+
+  
+    
+    <link rel="stylesheet" href="http://mhnazeri.now.sh/css/styles.min.ef433e47a104e30937dfad230e28b6dd329c9b4fe18ff4925850da1f24df3133.css" integrity="sha256-70M&#43;R6EE4wk3360jDii23TKcm0/hj/SSWFDaHyTfMTM=">
+  
+
+  
+    
+        <link href="/index.xml" rel="alternate" type="application/rss+xml" title="Nazeri&#39;s Blog" />
+    
+    
+  
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/turbolinks/5.2.0/turbolinks.js"></script>
+</head>
+<body class="bg-gradient flex flex-col min-h-screen">
+  <header id="header" class="w-full m-0 fixed z-10 transition-all duration-300 ease-in-out border-t-4 border-gray-300 py-4 backdrop-filter-blur">
+    <div id="header-container" class="max-w-7xl mx-auto p-6 flex items-center flex-wrap lg:flex-no-wrap relative justify-between">
+      <a href="http://mhnazeri.now.sh/" class="leading-10 text-3xl font-normal text-gray-600 flex flex-shrink-0">
+        Nazeri&#39;s Blog
+      </a>
+
+      <div class="block lg:hidden mx-2">
+        <button class="nav-button w-10 h-10 justify-center flex items-center opacity-75 hover:opacity-100 transition duration-300 ease-in-out">
+  <svg class="fill-current h-4 w-4" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+    <title>Menu</title>
+    <path d="M0 3h20v2H0V3zm0 6h20v2H0V9zm0 6h20v2H0v-2z" />
+  </svg>
+</button>
+<button class="hidden nav-button w-10 h-10 justify-center flex items-center opacity-75 hover:opacity-100 transition duration-300 ease-in-out">
+  <svg class="fill-current h-4 w-4" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+    <title>Close menu</title>
+    <polygon points="11 9 22 9 22 11 11 11 11 22 9 22 9 11 -2 11 -2 9 9 9 9 -2 11 -2" transform="rotate(45 10 10)" />
+  </svg>
+</button>
+
+      </div>
+
+      <div class="absolute right-8 top-16 lg:relative lg:right-0 lg:top-0 flex flex-col lg:flex-row items-center rounded-md bg-white shadow lg:bg-transparent lg:shadow-none">
+        <nav id="nav-social-links" class="p-4 lg:p-0 text-gray-600 hidden lg:block lg:order-last w-full lg:w-auto lg:ml-3">
+          <ul class="flex justify-end">
+  
+    <li>
+      <a class="block p-2 opacity-75 hover:opacity-100 transition duration-300 ease-in-out" title="Twitter" href="https://www.twitter.com/m.nazeri" rel="me">
+        <svg class="fill-current w-5 h-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
+          <title>Twitter</title>
+          <path d="M6.29 18.25c7.55 0 11.67-6.25 11.67-11.67v-.53c.8-.59 1.49-1.3 2.04-2.13-.75.33-1.54.55-2.36.65a4.12 4.12 0 0 0 1.8-2.27c-.8.48-1.68.81-2.6 1a4.1 4.1 0 0 0-7 3.74 11.65 11.65 0 0 1-8.45-4.3 4.1 4.1 0 0 0 1.27 5.49C2.01 8.2 1.37 8.03.8 7.7v.05a4.1 4.1 0 0 0 3.3 4.03 4.1 4.1 0 0 1-1.86.07 4.1 4.1 0 0 0 3.83 2.85A8.23 8.23 0 0 1 0 16.4a11.62 11.62 0 0 0 6.29 1.84"></path>
+        </svg>
+      </a>
+    </li>
+  
+  
+    <li>
+      <a class="block p-2 opacity-75 hover:opacity-100 transition duration-300 ease-in-out" title="Github" href="https://www.github.com/mhnazeri/" rel="me">
+        <svg class="fill-current w-5 h-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
+          <title>GitHub</title>
+          <path d="M10 0a10 10 0 0 0-3.16 19.49c.5.1.68-.22.68-.48l-.01-1.7c-2.78.6-3.37-1.34-3.37-1.34-.46-1.16-1.11-1.47-1.11-1.47-.9-.62.07-.6.07-.6 1 .07 1.53 1.03 1.53 1.03.9 1.52 2.34 1.08 2.91.83.1-.65.35-1.09.63-1.34-2.22-.25-4.55-1.11-4.55-4.94 0-1.1.39-1.99 1.03-2.69a3.6 3.6 0 0 1 .1-2.64s.84-.27 2.75 1.02a9.58 9.58 0 0 1 5 0c1.91-1.3 2.75-1.02 2.75-1.02.55 1.37.2 2.4.1 2.64.64.7 1.03 1.6 1.03 2.69 0 3.84-2.34 4.68-4.57 4.93.36.31.68.92.68 1.85l-.01 2.75c0 .26.18.58.69.48A10 10 0 0 0 10 0"></path>
+        </svg>
+      </a>
+    </li>
+  
+  
+    <li>
+      <a class="block p-2 opacity-75 hover:opacity-100 transition duration-300 ease-in-out" title="Gitlab" href="https://www.gitlab.com/mhnazeri/" rel="me">
+        <svg class="fill-current w-5 h-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+          <title>Gitlab</title>
+          <path d="M23.238 15.199c0.261-0.17 0.493-0.446 0.635-0.764 0.172-0.385 0.214-0.831 0.075-1.305l-1.266-3.749-2.432-7.484c-0.068-0.229-0.195-0.443-0.397-0.637-0.266-0.242-0.603-0.367-0.941-0.372-0.351-0.005-0.707 0.119-0.976 0.365-0.165 0.147-0.296 0.334-0.378 0.547-0.006 0.015-0.012 0.033-0.018 0.052l-2.217 6.818h-6.647l-2.207-6.773c-0.068-0.229-0.195-0.443-0.397-0.637-0.265-0.242-0.602-0.367-0.94-0.372-0.351-0.006-0.707 0.118-0.976 0.365-0.166 0.146-0.296 0.334-0.379 0.546-0.006 0.016-0.012 0.034-0.018 0.052l-2.441 7.512-1.22 3.78c-0.106 0.329-0.117 0.676-0.038 1.004 0.098 0.407 0.336 0.783 0.702 1.052l10.65 7.74c0.346 0.248 0.818 0.26 1.176 0zM22.003 13.624l-10.003 7.27-9.983-7.255 1.205-3.662 1.886-5.805 1.891 5.808c0.137 0.42 0.525 0.687 0.951 0.69h8.1c0.442 0 0.817-0.287 0.951-0.691l1.886-5.804 1.892 5.824z"></path>
+        </svg>
+      </a>
+    </li>
+  
+  
+    <li>
+      <a class="block p-2 opacity-75 hover:opacity-100 transition duration-300 ease-in-out" title="Linkedin" href="https://www.linkedin.com/in/mohammad-nazeri-49404168/" rel="me">
+        <svg class="fill-current w-5 h-5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+          <title>LinkedIn</title>
+          <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/>
+        </svg>
+      </a>
+    </li>
+  
+  
+    <li>
+      <a class="block p-2 opacity-75 hover:opacity-100 transition duration-300 ease-in-out" title="Academic Page" href="https://iasbs.ac.ir/~m.nazeri/" rel="me">
+        <svg class="fill-current w-5 h-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
+          <title>Academic Page</title>
+          <path d="M30.147 32h-28.293v-1.453h28.293zM29.080 27.76h-26.107v2.013h26.107zM28.773 4.88h-25.973v2.787h25.973zM15.787 0l-13.6 3.187 0.787 0.813h25.64l0.72-0.813zM4.947 26.947c0.024 0 0.053 0.001 0.082 0.001 0.446 0 0.877-0.064 1.284-0.182l-0.032 0.008c0.213-2.32 0.333-6.533 0.333-9.16s-0.12-6.667-0.32-9.013c-0.013-0.096-0.081-0.174-0.172-0.2l-0.002-0c-0.335-0.085-0.721-0.133-1.117-0.133-0.001 0-0.002 0-0.003 0h0c-0.394 0.003-0.775 0.051-1.14 0.14l0.034-0.007c-0.092 0.026-0.16 0.104-0.173 0.199l-0 0.001c-0.213 2.347-0.32 6.427-0.32 9.013s0.12 6.84 0.333 9.16c0.363 0.108 0.78 0.172 1.212 0.173h0.001zM12.027 26.947c0.028 0.001 0.061 0.001 0.094 0.001 0.441 0 0.868-0.064 1.271-0.182l-0.032 0.008c0.213-2.32 0.333-6.533 0.333-9.16s-0.12-6.667-0.32-9.013c-0.013-0.096-0.081-0.174-0.172-0.2l-0.002-0c-0.335-0.085-0.72-0.134-1.117-0.134-0.029 0-0.058 0-0.087 0.001l0.004-0c-0.399 0.003-0.784 0.051-1.154 0.14l0.034-0.007c-0.092 0.026-0.16 0.104-0.173 0.199l-0 0.001c-0.2 2.347-0.32 6.427-0.32 9.013s0.12 6.84 0.333 9.16c0.37 0.11 0.796 0.174 1.236 0.174 0.025 0 0.050-0 0.074-0.001l-0.004 0zM20.227 26.947c0.028 0.001 0.061 0.001 0.094 0.001 0.442 0 0.868-0.064 1.271-0.182l-0.032 0.008c0.213-2.32 0.333-6.533 0.333-9.16s-0.107-6.667-0.32-9.013c-0.014-0.113-0.109-0.2-0.225-0.2-0.005 0-0.010 0-0.016 0.001l0.001-0c-0.332-0.084-0.714-0.133-1.106-0.133h-0c-0.393 0.002-0.775 0.050-1.14 0.14l0.033-0.007c-0.098 0.022-0.172 0.1-0.186 0.199l-0 0.001c-0.2 2.347-0.32 6.427-0.32 9.013s0.12 6.84 0.347 9.16c0.365 0.11 0.785 0.174 1.22 0.174 0.016 0 0.033-0 0.049-0l-0.003 0zM27.133 26.947c0.009 0 0.020 0 0.030 0 0.44 0 0.866-0.063 1.268-0.181l-0.032 0.008c0.213-2.32 0.333-6.533 0.333-9.16s-0.107-6.667-0.32-9.013c-0.013-0.096-0.081-0.174-0.172-0.2l-0.002-0c-0.332-0.084-0.714-0.133-1.106-0.133h-0c-0.399 0.003-0.784 0.051-1.154 0.14l0.034-0.007c-0.092 0.026-0.16 0.104-0.173 0.199l-0 0.001c-0.2 2.347-0.32 6.427-0.32 9.013s0.12 6.84 0.333 9.16c0.37 0.11 0.795 0.174 1.235 0.174 0.016 0 0.032-0 0.047-0l-0.002 0z"></path>
+        </svg>
+      </a>
+    </li>
+  
+  
+    <li>
+      <a class="block p-2 opacity-75 hover:opacity-100 transition duration-300 ease-in-out" title="Email" href="mailto:mohammad.h.nazeri@gmail.com">
+        <svg class="fill-current w-5 h-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+          <path d="M502.3 190.8c3.9-3.1 9.7-.2 9.7 4.7V400c0 26.5-21.5 48-48 48H48c-26.5 0-48-21.5-48-48V195.6c0-5 5.7-7.8 9.7-4.7 22.4 17.4 52.1 39.5 154.1 113.6 21.1 15.4 56.7 47.8 92.2 47.6 35.7.3 72-32.8 92.3-47.6 102-74.1 131.6-96.3 154-113.7zM256 320c23.2.4 56.6-29.2 73.4-41.4 132.7-96.3 142.8-104.7 173.4-128.7 5.8-4.5 9.2-11.5 9.2-18.9v-19c0-26.5-21.5-48-48-48H48C21.5 64 0 85.5 0 112v19c0 7.4 3.4 14.3 9.2 18.9 30.6 23.9 40.7 32.4 173.4 128.7 16.8 12.2 50.2 41.8 73.4 41.4z"></path>
+        </svg>
+      </a>
+    </li>
+  
+  
+    <li>
+      <a class="block p-2 opacity-75 hover:opacity-100 transition duration-300 ease-in-out" title="Feed" href="/index.xml">
+        <svg class="fill-current w-5 h-5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+          <title>RSS</title>
+          <path
+            d="M19.199 24C19.199 13.467 10.533 4.8 0 4.8V0c13.165 0 24 10.835 24 24h-4.801zM3.291 17.415c1.814 0 3.293 1.479 3.293 3.295 0 1.813-1.485 3.29-3.301 3.29C1.47 24 0 22.526 0 20.71s1.475-3.294 3.291-3.295zM15.909 24h-4.665c0-6.169-5.075-11.245-11.244-11.245V8.09c8.727 0 15.909 7.184 15.909 15.91z" />
+        </svg>
+      </a>
+    </li>
+  
+</ul>
+
+        </nav>
+
+        <nav id="nav-menu" class="p-4 lg:p-0 hidden lg:block w-full lg:w-auto text-gray-600">
+          <ul class="w-full flex flex-col lg:flex-row justify-end items-end lg:items-center">
+  
+</ul>
+
+        </nav>
+      </div>
+    </div>
+  </header>
+
+<main class="flex-1 mt-12 max-w-3xl mt-32 mx-auto text-gray-700 w-full">
+<div id="reading-progress-bar" role="presentation" class="fixed z-10 top-0 left-0 h-1 bg-gray-700"></div>
+
+<article class="article">
+    <h1 class="artitle__title"><a href="http://mhnazeri.now.sh/posts/sharingan/">SharinGAN</a></h1>
+
+    
+      <header class="article__header">
+        
+        <span class="">
+          Read in 13 minutes &middot;
+          <time datetime="2020-07-30T01:46:41&#43;04:30">
+            30 Jul, 2020
+          </time>
+        </span>
+      </header>
+    
+
+    <div class="py-5">
+      <p>Generative models specially with the emerge of <a href="https://papers.nips.cc/paper/5423-generative-adversarial-nets.pdf">Generative Adversarial Networks (GANs)</a> have become the spotlight of Deep Learning in recent years. They have <a href="https://github.com/nashory/gans-awesome-applications">many applications in the wild</a> and sometimes they are just for <a href="https://theaisummer.com/deepfakes/">fun</a>.
+One fun application that I really liked, was the use of GAN to generate <a href="https://www.youtube.com/watch?v=8fnynVsR53k">fake Sharingans</a> (to read more about what sharingan is please read <a href="https://naruto.fandom.com/wiki/Sharingan">this article</a>). Inspired by that video and pytorch's <a href="https://pytorch.org/tutorials/beginner/dcgan_faces_tutorial.html">DCGAN tutorial</a>, in this post I'm going to show you how to generate sharingans step by step. You can download the PyTorch source code from <a href="https://github.com/mhnazeri/sharingan">here</a>. I highly recommend to download the full source code because here I only explain important steps in writing DL model, things such as config files are not discussed here. To read more about project configuration see my <a href="https://mhnazeri.now.sh/posts/parameter_management/">Hyper-parameter Management</a> article.</p>
+
+<p>To train a model, you have to address three stages:</p>
+
+<ul>
+<li>Gathering and loading data</li>
+<li>Designing the architecture</li>
+<li>Loss function and train loop</li>
+</ul>
+
+<p>I structured my project directory as follows (if you like the structure, I created a template <a href="https://github.com/mhnazeri/ml_template">here</a>):</p>
+<div class="highlight"><pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"> └── sharinGAN/ 
+ │  └──── conf/ 
+ │  │  └──── optimizer/ 
+ │  │  │  └──── adam.yaml  
+ │  │  ├──── config.yaml  
+ │  │  ├──── dirs.yaml  
+ │  │  ├──── models.yaml  
+ │  │  └──── train.yaml  
+ │  └──── model/ 
+ │  │  ├──── data_loader.py  
+ │  │  ├──── __init__.py  
+ │  │  └──── net.py  
+ │  └──── sharingan_pics/ 
+ │  │  ├──── 0.jpeg  
+ │  │  ├──── 10.jpeg  
+ │  │  ├──── ...
+ │  ├──── train.py  
+ │  └──── utils.py   
+ ├── README.md  
+ └── requirements.txt</code></pre></div>
+<h1 id="gathering-and-loading-data">Gathering and Loading Data</h1>
+
+<p>First thing that we need, in every problem that we are going to solve with deep learning, is <em>data</em>. I gathered some sharingan pictures from google image search. It is a fairly easy task, you just need to search for keyword <code>sharingan</code> and save the pictures in a folder. I named mine <code>sharing_pics</code>. So now, we have to write the <code>data_loader</code>.</p>
+
+<p>To do so, first we need to import required libraries. We need <code>pathlib</code> to read image directories, <code>PIL</code>, Python imaging library (hence the name) to read images from the disk, pytorch's abstract <code>Dataset</code> module to write a class which handles concurrent reading and preprocessing for us, and finally for loading the config files we use a custom function that resides in <code>utils.py</code> file:</p>
+<div class="highlight"><pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python"><span style="color:#000;font-weight:bold">from</span> <span style="color:#555">omegaconf</span> <span style="color:#000;font-weight:bold">import</span> OmegaConf
+
+
+<span style="color:#000;font-weight:bold">def</span> <span style="color:#900;font-weight:bold">get_conf</span>(name: <span style="color:#0086b3">str</span>):
+    cfg <span style="color:#000;font-weight:bold">=</span> OmegaConf<span style="color:#000;font-weight:bold">.</span>load(f<span style="color:#d14">&#34;{name}.yaml&#34;</span>)
+    <span style="color:#000;font-weight:bold">return</span> cfg</code></pre></div><div class="highlight"><pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python"><span style="color:#000;font-weight:bold">from</span> <span style="color:#555">pathlib</span> <span style="color:#000;font-weight:bold">import</span> Path
+<span style="color:#000;font-weight:bold">from</span> <span style="color:#555">PIL</span> <span style="color:#000;font-weight:bold">import</span> Image
+
+<span style="color:#000;font-weight:bold">import</span> <span style="color:#555">torch</span>
+<span style="color:#000;font-weight:bold">from</span> <span style="color:#555">torch.utils.data</span> <span style="color:#000;font-weight:bold">import</span> Dataset
+
+<span style="color:#000;font-weight:bold">from</span> <span style="color:#555">utils</span> <span style="color:#000;font-weight:bold">import</span> get_conf
+
+
+<span style="color:#000;font-weight:bold">class</span> <span style="color:#458;font-weight:bold">SharinganDataset</span>(Dataset):
+    <span style="color:#000;font-weight:bold">def</span> __init__(<span style="color:#999">self</span>, transform) <span style="color:#000;font-weight:bold">-&gt;</span> <span style="color:#999">None</span>:
+        <span style="color:#998;font-style:italic"># get data directory</span>
+        data_dir <span style="color:#000;font-weight:bold">=</span> get_conf(<span style="color:#d14">&#34;conf/dirs&#34;</span>)<span style="color:#000;font-weight:bold">.</span>train_data
+        <span style="color:#998;font-style:italic"># store filenames</span>
+        <span style="color:#998;font-style:italic"># Path().iterdir() returns a generator, convert it to list</span>
+        <span style="color:#999">self</span><span style="color:#000;font-weight:bold">.</span>filenames <span style="color:#000;font-weight:bold">=</span> <span style="color:#0086b3">list</span>(Path(data_dir)<span style="color:#000;font-weight:bold">.</span>iterdir())
+        <span style="color:#999">self</span><span style="color:#000;font-weight:bold">.</span>transform <span style="color:#000;font-weight:bold">=</span> transform
+
+    <span style="color:#000;font-weight:bold">def</span> __len__(<span style="color:#999">self</span>) <span style="color:#000;font-weight:bold">-&gt;</span> <span style="color:#0086b3">int</span>:
+        <span style="color:#d14">&#34;&#34;&#34;return size of dataset&#34;&#34;&#34;</span>
+        <span style="color:#000;font-weight:bold">return</span> <span style="color:#0086b3">len</span>(<span style="color:#999">self</span><span style="color:#000;font-weight:bold">.</span>filenames)
+
+    <span style="color:#000;font-weight:bold">def</span> __getitem__(<span style="color:#999">self</span>, idx) <span style="color:#000;font-weight:bold">-&gt;</span> torch<span style="color:#000;font-weight:bold">.</span>tensor:
+        <span style="color:#998;font-style:italic"># load the image</span>
+        image <span style="color:#000;font-weight:bold">=</span> Image<span style="color:#000;font-weight:bold">.</span>open(<span style="color:#999">self</span><span style="color:#000;font-weight:bold">.</span>filenames[idx])
+        <span style="color:#998;font-style:italic"># apply transformers on it and return it</span>
+        image <span style="color:#000;font-weight:bold">=</span> <span style="color:#999">self</span><span style="color:#000;font-weight:bold">.</span>transform(image)
+        <span style="color:#000;font-weight:bold">return</span> image</code></pre></div>
+<p>In <code>SharinganDataset</code> we read image addresses and store them in <code>self.filenames</code>. Our dataset size is the length of <code>self.filenames</code>, which in our case is <code>100</code>. Every image that we want to read, it's address is in <code>self.filenames</code>, we read the image with the help of <code>PIL</code> and then apply image transformations on it. Finally the image is in the form that we want. In train loop section we will discuss these transformations. And that's it for loading data.</p>
+
+<h1 id="designing-the-architecture">Designing the Architecture</h1>
+
+<p>For the generator and discriminator architecture, we follow the <a href="https://arxiv.org/pdf/1511.06434.pdf">DCGAN</a> architecture and implement it as described in <a href="https://pytorch.org/tutorials/beginner/dcgan_faces_tutorial.html">pytorch tutorial</a> with one exception that <code>BatchNorm2d</code> is applied after the activation function. The code for model architectures resides in <code>model/net.py</code>. The noticeable network components here are:</p>
+
+<ul>
+<li><a href="https://pytorch.org/docs/stable/generated/torch.nn.ConvTranspose2d.html"><code>ConvTranspose2d(in_channels, out_channels, kernel_size, stride, padding, bias)</code></a>: sometimes called <em>deconvolution</em> operator. But they are actually not the same. <code>ConvTranspose</code> applies filter on the spaced out (with zeros) input. The end result would be an upsampled of the input with learned weights.  You can read more about it <a href="https://arxiv.org/abs/1603.07285">here</a> with corresponding <a href="https://github.com/vdumoulin/conv_arithmetic">repo</a>. The output height can be calculated with: <span  class="math">\(H_{out} =(H_{in} −1) \times stride[0]−2\times padding[0]+dilation[0]\times (kernel_size[0]−1)+output_padding[0]+1\)</span> and for the width: <span  class="math">\(W_{out} =(W_{in}−1) \times stride[1]−2\times padding[1]+dilation[1]\times (kernel_size[1]−1)+output_padding[1]+1\)</span></li>
+<li><a href="https://pytorch.org/docs/stable/generated/torch.nn.ReLU.html"><code>ReLU(inplace)</code></a>: as the activation function which is <span  class="math">\(max(0, x)\)</span>, and <code>inplace</code> is for doing the operation in-place in the output without using extra memory.</li>
+<li><a href="https://pytorch.org/docs/stable/generated/torch.nn.BatchNorm2d.html"><code>BatchNorm2d(num_features)</code></a>:  which applies batch normalization on the input feature maps. You can read more about it <a href="https://arxiv.org/abs/1502.03167">here</a>.</li>
+<li><a href="https://pytorch.org/docs/stable/generated/torch.nn.Conv2d.html"><code>Conv2d(in_channels, out_channels, kernel_size, stride, padding, bias)</code></a>: is the convolution module.</li>
+<li><a href="https://pytorch.org/docs/stable/generated/torch.nn.LeakyReLU.html"><code>LeakyRelU(negative_slope, inplace)</code></a>: is a derivative of <code>ReLU</code> which is not strictly hard on negative values. <code>negative_slope</code> is responsible for this softness.</li>
+<li><a href="https://pytorch.org/docs/stable/generated/torch.nn.Sigmoid.html"><code>Sigmoid()</code></a>: an activation function which squashed the output to be between <span  class="math">\([0, 1]\)</span> just like a probability.</li>
+</ul>
+<div class="highlight"><pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python"><span style="color:#000;font-weight:bold">import</span> <span style="color:#555">torch.nn</span> <span style="color:#000;font-weight:bold">as</span> <span style="color:#555">nn</span>
+
+<span style="color:#000;font-weight:bold">from</span> <span style="color:#555">utils</span> <span style="color:#000;font-weight:bold">import</span> get_conf
+
+
+<span style="color:#000;font-weight:bold">class</span> <span style="color:#458;font-weight:bold">Generator</span>(nn<span style="color:#000;font-weight:bold">.</span>Module):
+    <span style="color:#000;font-weight:bold">def</span> __init__(<span style="color:#999">self</span>):
+        <span style="color:#0086b3">super</span>(Generator, <span style="color:#999">self</span>)<span style="color:#000;font-weight:bold">.</span>__init__()
+        <span style="color:#999">self</span><span style="color:#000;font-weight:bold">.</span>cfg <span style="color:#000;font-weight:bold">=</span> get_conf(<span style="color:#d14">&#34;conf/model/generator&#34;</span>)
+
+        <span style="color:#999">self</span><span style="color:#000;font-weight:bold">.</span>gen <span style="color:#000;font-weight:bold">=</span> nn<span style="color:#000;font-weight:bold">.</span>Sequential(
+            <span style="color:#998;font-style:italic"># input is Z, going into a convolution</span>
+            nn<span style="color:#000;font-weight:bold">.</span>ConvTranspose2d(
+                <span style="color:#999">self</span><span style="color:#000;font-weight:bold">.</span>cfg<span style="color:#000;font-weight:bold">.</span>nz, <span style="color:#999">self</span><span style="color:#000;font-weight:bold">.</span>cfg<span style="color:#000;font-weight:bold">.</span>ngf <span style="color:#000;font-weight:bold">*</span> <span style="color:#099">8</span>, <span style="color:#099">4</span>, <span style="color:#099">1</span>, <span style="color:#099">0</span>, 
+                bias<span style="color:#000;font-weight:bold">=</span><span style="color:#999">False</span>),
+            nn<span style="color:#000;font-weight:bold">.</span>ReLU(<span style="color:#999">True</span>),
+            nn<span style="color:#000;font-weight:bold">.</span>BatchNorm2d(<span style="color:#999">self</span><span style="color:#000;font-weight:bold">.</span>cfg<span style="color:#000;font-weight:bold">.</span>ngf <span style="color:#000;font-weight:bold">*</span> <span style="color:#099">8</span>),
+            <span style="color:#998;font-style:italic"># state size. (ngf*8) x 4 x 4</span>
+            nn<span style="color:#000;font-weight:bold">.</span>ConvTranspose2d(
+                <span style="color:#999">self</span><span style="color:#000;font-weight:bold">.</span>cfg<span style="color:#000;font-weight:bold">.</span>ngf <span style="color:#000;font-weight:bold">*</span> <span style="color:#099">8</span>, <span style="color:#999">self</span><span style="color:#000;font-weight:bold">.</span>cfg<span style="color:#000;font-weight:bold">.</span>ngf <span style="color:#000;font-weight:bold">*</span> <span style="color:#099">4</span>, <span style="color:#099">4</span>, <span style="color:#099">2</span>, <span style="color:#099">1</span>, 
+                bias<span style="color:#000;font-weight:bold">=</span><span style="color:#999">False</span>),
+            nn<span style="color:#000;font-weight:bold">.</span>ReLU(<span style="color:#999">True</span>),
+            nn<span style="color:#000;font-weight:bold">.</span>BatchNorm2d(<span style="color:#999">self</span><span style="color:#000;font-weight:bold">.</span>cfg<span style="color:#000;font-weight:bold">.</span>ngf <span style="color:#000;font-weight:bold">*</span> <span style="color:#099">4</span>),
+            <span style="color:#998;font-style:italic"># state size. (ngf*4) x 8 x 8</span>
+            nn<span style="color:#000;font-weight:bold">.</span>ConvTranspose2d(
+                <span style="color:#999">self</span><span style="color:#000;font-weight:bold">.</span>cfg<span style="color:#000;font-weight:bold">.</span>ngf <span style="color:#000;font-weight:bold">*</span> <span style="color:#099">4</span>, <span style="color:#999">self</span><span style="color:#000;font-weight:bold">.</span>cfg<span style="color:#000;font-weight:bold">.</span>ngf <span style="color:#000;font-weight:bold">*</span> <span style="color:#099">2</span>, <span style="color:#099">4</span>, <span style="color:#099">2</span>, <span style="color:#099">1</span>, 
+                bias<span style="color:#000;font-weight:bold">=</span><span style="color:#999">False</span>),
+            nn<span style="color:#000;font-weight:bold">.</span>ReLU(<span style="color:#999">True</span>),
+            nn<span style="color:#000;font-weight:bold">.</span>BatchNorm2d(<span style="color:#999">self</span><span style="color:#000;font-weight:bold">.</span>cfg<span style="color:#000;font-weight:bold">.</span>ngf <span style="color:#000;font-weight:bold">*</span> <span style="color:#099">2</span>),
+            <span style="color:#998;font-style:italic"># state size. (ngf*2) x 16 x 16</span>
+            nn<span style="color:#000;font-weight:bold">.</span>ConvTranspose2d(
+                <span style="color:#999">self</span><span style="color:#000;font-weight:bold">.</span>cfg<span style="color:#000;font-weight:bold">.</span>ngf <span style="color:#000;font-weight:bold">*</span> <span style="color:#099">2</span>, <span style="color:#999">self</span><span style="color:#000;font-weight:bold">.</span>cfg<span style="color:#000;font-weight:bold">.</span>ngf, <span style="color:#099">4</span>, <span style="color:#099">2</span>, <span style="color:#099">1</span>, 
+                bias<span style="color:#000;font-weight:bold">=</span><span style="color:#999">False</span>),
+            nn<span style="color:#000;font-weight:bold">.</span>ReLU(<span style="color:#999">True</span>),
+            nn<span style="color:#000;font-weight:bold">.</span>BatchNorm2d(<span style="color:#999">self</span><span style="color:#000;font-weight:bold">.</span>cfg<span style="color:#000;font-weight:bold">.</span>ngf),
+            <span style="color:#998;font-style:italic"># state size. (ngf) x 32 x 32</span>
+            nn<span style="color:#000;font-weight:bold">.</span>ConvTranspose2d(
+                <span style="color:#999">self</span><span style="color:#000;font-weight:bold">.</span>cfg<span style="color:#000;font-weight:bold">.</span>ngf, <span style="color:#999">self</span><span style="color:#000;font-weight:bold">.</span>cfg<span style="color:#000;font-weight:bold">.</span>nc, <span style="color:#099">4</span>, <span style="color:#099">2</span>, <span style="color:#099">1</span>, 
+                bias<span style="color:#000;font-weight:bold">=</span><span style="color:#999">False</span>),
+            nn<span style="color:#000;font-weight:bold">.</span>Tanh()
+            <span style="color:#998;font-style:italic"># state size. (nc) x 64 x 64</span>
+        )
+
+    <span style="color:#000;font-weight:bold">def</span> <span style="color:#900;font-weight:bold">forward</span>(<span style="color:#999">self</span>, <span style="color:#0086b3">input</span>):
+        <span style="color:#000;font-weight:bold">return</span> <span style="color:#999">self</span><span style="color:#000;font-weight:bold">.</span>gen(<span style="color:#0086b3">input</span>)
+
+
+<span style="color:#000;font-weight:bold">class</span> <span style="color:#458;font-weight:bold">Discriminator</span>(nn<span style="color:#000;font-weight:bold">.</span>Module):
+    <span style="color:#000;font-weight:bold">def</span> __init__(<span style="color:#999">self</span>):
+        <span style="color:#0086b3">super</span>(Discriminator, <span style="color:#999">self</span>)<span style="color:#000;font-weight:bold">.</span>__init__()
+        <span style="color:#999">self</span><span style="color:#000;font-weight:bold">.</span>cfg <span style="color:#000;font-weight:bold">=</span> get_conf(<span style="color:#d14">&#34;conf/model/discriminator&#34;</span>)
+
+        <span style="color:#999">self</span><span style="color:#000;font-weight:bold">.</span>dis <span style="color:#000;font-weight:bold">=</span> nn<span style="color:#000;font-weight:bold">.</span>Sequential(
+            <span style="color:#998;font-style:italic"># input is (nc) x 64 x 64</span>
+            nn<span style="color:#000;font-weight:bold">.</span>Conv2d(
+                <span style="color:#999">self</span><span style="color:#000;font-weight:bold">.</span>cfg<span style="color:#000;font-weight:bold">.</span>nc, <span style="color:#999">self</span><span style="color:#000;font-weight:bold">.</span>cfg<span style="color:#000;font-weight:bold">.</span>ndf, <span style="color:#099">4</span>, <span style="color:#099">2</span>, <span style="color:#099">1</span>, 
+                bias<span style="color:#000;font-weight:bold">=</span><span style="color:#999">False</span>),
+            nn<span style="color:#000;font-weight:bold">.</span>LeakyReLU(<span style="color:#099">0.2</span>, inplace<span style="color:#000;font-weight:bold">=</span><span style="color:#999">True</span>),
+            <span style="color:#998;font-style:italic"># state size. (ndf) x 32 x 32</span>
+            nn<span style="color:#000;font-weight:bold">.</span>Conv2d(
+                <span style="color:#999">self</span><span style="color:#000;font-weight:bold">.</span>cfg<span style="color:#000;font-weight:bold">.</span>ndf, <span style="color:#999">self</span><span style="color:#000;font-weight:bold">.</span>cfg<span style="color:#000;font-weight:bold">.</span>ndf <span style="color:#000;font-weight:bold">*</span> <span style="color:#099">2</span>, <span style="color:#099">4</span>, <span style="color:#099">2</span>, <span style="color:#099">1</span>, 
+                bias<span style="color:#000;font-weight:bold">=</span><span style="color:#999">False</span>),
+            nn<span style="color:#000;font-weight:bold">.</span>LeakyReLU(<span style="color:#099">0.2</span>, inplace<span style="color:#000;font-weight:bold">=</span><span style="color:#999">True</span>),
+            nn<span style="color:#000;font-weight:bold">.</span>BatchNorm2d(<span style="color:#999">self</span><span style="color:#000;font-weight:bold">.</span>cfg<span style="color:#000;font-weight:bold">.</span>ndf <span style="color:#000;font-weight:bold">*</span> <span style="color:#099">2</span>),
+            <span style="color:#998;font-style:italic"># state size. (ndf*2) x 16 x 16</span>
+            nn<span style="color:#000;font-weight:bold">.</span>Conv2d(
+                <span style="color:#999">self</span><span style="color:#000;font-weight:bold">.</span>cfg<span style="color:#000;font-weight:bold">.</span>ndf <span style="color:#000;font-weight:bold">*</span> <span style="color:#099">2</span>, <span style="color:#999">self</span><span style="color:#000;font-weight:bold">.</span>cfg<span style="color:#000;font-weight:bold">.</span>ndf <span style="color:#000;font-weight:bold">*</span> <span style="color:#099">4</span>, <span style="color:#099">4</span>, <span style="color:#099">2</span>, <span style="color:#099">1</span>, 
+                bias<span style="color:#000;font-weight:bold">=</span><span style="color:#999">False</span>),
+            nn<span style="color:#000;font-weight:bold">.</span>LeakyReLU(<span style="color:#099">0.2</span>, inplace<span style="color:#000;font-weight:bold">=</span><span style="color:#999">True</span>),
+            nn<span style="color:#000;font-weight:bold">.</span>BatchNorm2d(<span style="color:#999">self</span><span style="color:#000;font-weight:bold">.</span>cfg<span style="color:#000;font-weight:bold">.</span>ndf <span style="color:#000;font-weight:bold">*</span> <span style="color:#099">4</span>),
+            <span style="color:#998;font-style:italic"># state size. (ndf*4) x 8 x 8</span>
+            nn<span style="color:#000;font-weight:bold">.</span>Conv2d(
+                <span style="color:#999">self</span><span style="color:#000;font-weight:bold">.</span>cfg<span style="color:#000;font-weight:bold">.</span>ndf <span style="color:#000;font-weight:bold">*</span> <span style="color:#099">4</span>, <span style="color:#999">self</span><span style="color:#000;font-weight:bold">.</span>cfg<span style="color:#000;font-weight:bold">.</span>ndf <span style="color:#000;font-weight:bold">*</span> <span style="color:#099">8</span>, <span style="color:#099">4</span>, <span style="color:#099">2</span>, <span style="color:#099">1</span>, 
+                bias<span style="color:#000;font-weight:bold">=</span><span style="color:#999">False</span>),
+            nn<span style="color:#000;font-weight:bold">.</span>LeakyReLU(<span style="color:#099">0.2</span>, inplace<span style="color:#000;font-weight:bold">=</span><span style="color:#999">True</span>),
+            nn<span style="color:#000;font-weight:bold">.</span>BatchNorm2d(<span style="color:#999">self</span><span style="color:#000;font-weight:bold">.</span>cfg<span style="color:#000;font-weight:bold">.</span>ndf <span style="color:#000;font-weight:bold">*</span> <span style="color:#099">8</span>),
+            <span style="color:#998;font-style:italic"># state size. (ndf*8) x 4 x 4</span>
+            nn<span style="color:#000;font-weight:bold">.</span>Conv2d(
+                <span style="color:#999">self</span><span style="color:#000;font-weight:bold">.</span>cfg<span style="color:#000;font-weight:bold">.</span>ndf <span style="color:#000;font-weight:bold">*</span> <span style="color:#099">8</span>, <span style="color:#099">1</span>, <span style="color:#099">4</span>, <span style="color:#099">1</span>, <span style="color:#099">0</span>, 
+                bias<span style="color:#000;font-weight:bold">=</span><span style="color:#999">False</span>),
+            nn<span style="color:#000;font-weight:bold">.</span>Sigmoid()
+        )
+
+    <span style="color:#000;font-weight:bold">def</span> <span style="color:#900;font-weight:bold">forward</span>(<span style="color:#999">self</span>, <span style="color:#0086b3">input</span>):
+        <span style="color:#000;font-weight:bold">return</span> <span style="color:#999">self</span><span style="color:#000;font-weight:bold">.</span>dis(<span style="color:#0086b3">input</span>)</code></pre></div>
+<p>The generator (from now on we call it <em>G</em>) is responsible for generating images like real sharingans. Therefore, it's output must be an image with the same size as the real images ((3, 64, 64) tensors). On the other side, the discriminator (<em>D</em>) is responsible to decide the authenticity of input images, it outputs <code>1</code> where the image is <em>real</em> and <code>0</code> where it is <em>fake</em>. Actually the discriminator is not that accurate, it outputs the probability of the image being authentic. Where close to <code>1</code> means the discriminator is somewhat sure that the image is real and close to <code>0</code> means vice versa. That's why we need a <code>Sigmoid()</code> function at the end of discriminator. This takes us to the last part of this project which is defining the <em>loss function</em> and <em>training loop</em>.</p>
+
+<h1 id="loss-function-and-train-loop">Loss function and Train loop</h1>
+
+<p>GANs trains a little different from normal networks. It is a zero-sum game between two networks where one tries to fool another to accept it's outputs as authentic. The loss function, defined to do so, is called adversarial loss: <span  class="math">\(min_G max_D log(D(x))+log(1−D(G(z)))\)</span>. You can read more about it in the <a href="https://papers.nips.cc/paper/5423-generative-adversarial-nets.pdf">original paper</a>:</p>
+
+<p>This is very similar to binary cross entropy where we have: <span  class="math">\(ylog(x)+(1-y)log(1−x)\)</span>. Training GANs is very tricky, I suggest reading <a href="https://github.com/soumith/ganhacks">GAN hacks</a> page which contains useful information regarding training GANs. We split training into two parts, one for discriminator and one for generator.</p>
+
+<h2 id="training-discriminator">Training Discriminator</h2>
+
+<p>The sole purpose of discriminator is to classify real and fake images with high probability. Which means we want to maximize <span  class="math">\(log(D(x))+log(1−D(G(z)))\)</span>. According to GAN hacks, we use two batches, one batch for true images and one for fake images. After forward pass of real images we label of <code>1</code>, we perform one <code>backward()</code> pass to calculate derivatives, then we pass fake (generated) images to <em>D</em> with label of <code>0</code> and perform another <code>backward()</code> pass to accumulate gradients and then update the weights.</p>
+
+<h2 id="training-generator">Training Generator</h2>
+
+<p>According to original paper <em>G</em> wants to minimize <span  class="math">\(log(1−D(G(z)))\)</span>. Minimizing this means fooling <em>D</em> to output high probability (<code>1</code> means they are real) therefor this part will descend to <code>0</code>. But in the early stages of training this is very unlikely that the <em>D</em> discriminates well, as a result of this, <em>G</em> won't get better. But instead maximizing <span  class="math">\(log(D(G(z)))\)</span> would solve this issue. To only use <span  class="math">\(log(D(G(z)))\)</span> part of binary cross entropy we need to pass the label <code>1</code> with <em>G</em> outputs to the discriminator.</p>
+
+<p>That's it. There are just little modifications left in order to start the training. According to GAN hacks, initializing weights with normal distribution yield better results. To do so, we need a function to do this for us:</p>
+<div class="highlight"><pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python"><span style="color:#000;font-weight:bold">def</span> <span style="color:#900;font-weight:bold">init_weights</span>(m):
+    <span style="color:#998;font-style:italic"># get the module name</span>
+    classname <span style="color:#000;font-weight:bold">=</span> m<span style="color:#000;font-weight:bold">.</span>__class__<span style="color:#000;font-weight:bold">.</span>__name__
+    <span style="color:#998;font-style:italic"># if it is in [&#39;Conv&#39;, &#39;BatchNorm&#39;, &#39;Linear&#39;], apply normal initialization</span>
+    <span style="color:#000;font-weight:bold">if</span> classname<span style="color:#000;font-weight:bold">.</span>find(<span style="color:#d14">&#39;Conv&#39;</span>) <span style="color:#000;font-weight:bold">!=</span> <span style="color:#000;font-weight:bold">-</span><span style="color:#099">1</span>:
+        nn<span style="color:#000;font-weight:bold">.</span>init<span style="color:#000;font-weight:bold">.</span>normal_(m<span style="color:#000;font-weight:bold">.</span>weight<span style="color:#000;font-weight:bold">.</span>data, <span style="color:#099">0.0</span>, <span style="color:#099">0.02</span>)
+    <span style="color:#000;font-weight:bold">elif</span> classname<span style="color:#000;font-weight:bold">.</span>find(<span style="color:#d14">&#39;BatchNorm&#39;</span>) <span style="color:#000;font-weight:bold">!=</span> <span style="color:#000;font-weight:bold">-</span><span style="color:#099">1</span>:
+        nn<span style="color:#000;font-weight:bold">.</span>init<span style="color:#000;font-weight:bold">.</span>normal_(m<span style="color:#000;font-weight:bold">.</span>weight<span style="color:#000;font-weight:bold">.</span>data, <span style="color:#099">1.0</span>, <span style="color:#099">0.02</span>)
+        nn<span style="color:#000;font-weight:bold">.</span>init<span style="color:#000;font-weight:bold">.</span>constant_(m<span style="color:#000;font-weight:bold">.</span>bias<span style="color:#000;font-weight:bold">.</span>data, <span style="color:#099">0</span>)
+    <span style="color:#000;font-weight:bold">elif</span> classname<span style="color:#000;font-weight:bold">.</span>find(<span style="color:#d14">&#39;Linear&#39;</span>) <span style="color:#000;font-weight:bold">!=</span> <span style="color:#000;font-weight:bold">-</span><span style="color:#099">1</span>:
+        nn<span style="color:#000;font-weight:bold">.</span>init<span style="color:#000;font-weight:bold">.</span>normal_(m<span style="color:#000;font-weight:bold">.</span>weight<span style="color:#000;font-weight:bold">.</span>data, <span style="color:#099">1.0</span>, <span style="color:#099">0.02</span>)
+        nn<span style="color:#000;font-weight:bold">.</span>init<span style="color:#000;font-weight:bold">.</span>constant_(m<span style="color:#000;font-weight:bold">.</span>bias<span style="color:#000;font-weight:bold">.</span>data, <span style="color:#099">0</span>)</code></pre></div>
+<p>And here is the training loop, some functions are imported from <code>utils.py</code> that you can find in the source code:</p>
+<div class="highlight"><pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python"><span style="color:#000;font-weight:bold">import</span> <span style="color:#555">numpy</span> <span style="color:#000;font-weight:bold">as</span> <span style="color:#555">np</span>
+<span style="color:#000;font-weight:bold">import</span> <span style="color:#555">torch</span>
+<span style="color:#000;font-weight:bold">from</span> <span style="color:#555">torchvision</span> <span style="color:#000;font-weight:bold">import</span> transforms
+<span style="color:#000;font-weight:bold">import</span> <span style="color:#555">torchvision.utils</span> <span style="color:#000;font-weight:bold">as</span> <span style="color:#555">vutils</span>
+<span style="color:#000;font-weight:bold">from</span> <span style="color:#555">torch.utils.data</span> <span style="color:#000;font-weight:bold">import</span> DataLoader
+<span style="color:#000;font-weight:bold">import</span> <span style="color:#555">torch.nn</span> <span style="color:#000;font-weight:bold">as</span> <span style="color:#555">nn</span>
+<span style="color:#000;font-weight:bold">import</span> <span style="color:#555">torch.optim</span> <span style="color:#000;font-weight:bold">as</span> <span style="color:#555">optim</span>
+<span style="color:#000;font-weight:bold">import</span> <span style="color:#555">matplotlib.pyplot</span> <span style="color:#000;font-weight:bold">as</span> <span style="color:#555">plt</span>
+
+<span style="color:#000;font-weight:bold">from</span> <span style="color:#555">utils</span> <span style="color:#000;font-weight:bold">import</span> get_device, plot_images, weights_init, get_conf
+<span style="color:#000;font-weight:bold">from</span> <span style="color:#555">model.data_loader</span> <span style="color:#000;font-weight:bold">import</span> SharinganDataset
+<span style="color:#000;font-weight:bold">from</span> <span style="color:#555">model.net</span> <span style="color:#000;font-weight:bold">import</span> Discriminator, Generator
+
+
+<span style="color:#000;font-weight:bold">def</span> <span style="color:#900;font-weight:bold">main</span>():
+    cfg <span style="color:#000;font-weight:bold">=</span> get_conf(<span style="color:#d14">&#34;conf/train&#34;</span>)
+    device <span style="color:#000;font-weight:bold">=</span> get_device()
+    <span style="color:#998;font-style:italic"># Create the generator</span>
+    netG <span style="color:#000;font-weight:bold">=</span> Generator()<span style="color:#000;font-weight:bold">.</span>to(device)
+
+    <span style="color:#998;font-style:italic"># Handle multi-gpu</span>
+    <span style="color:#000;font-weight:bold">if</span> (device<span style="color:#000;font-weight:bold">.</span>type <span style="color:#000;font-weight:bold">==</span> <span style="color:#d14">&#39;cuda&#39;</span>) <span style="color:#000;font-weight:bold">and</span> (cfg<span style="color:#000;font-weight:bold">.</span>ngpu <span style="color:#000;font-weight:bold">&gt;</span> <span style="color:#099">1</span>):
+        netG <span style="color:#000;font-weight:bold">=</span> nn<span style="color:#000;font-weight:bold">.</span>DataParallel(netG, <span style="color:#0086b3">list</span>(<span style="color:#0086b3">range</span>(cfg<span style="color:#000;font-weight:bold">.</span>ngpu)))
+
+    <span style="color:#998;font-style:italic"># Apply the weights_init function to randomly</span>
+    <span style="color:#998;font-style:italic"># initialize all weights to mean=0, stdev=0.2.</span>
+    netG<span style="color:#000;font-weight:bold">.</span>apply(init_weights)
+    <span style="color:#998;font-style:italic"># Create the Discriminator</span>
+    netD <span style="color:#000;font-weight:bold">=</span> Discriminator()<span style="color:#000;font-weight:bold">.</span>to(device)
+
+    <span style="color:#998;font-style:italic"># Handle multi-gpu if desired</span>
+    <span style="color:#000;font-weight:bold">if</span> (device<span style="color:#000;font-weight:bold">.</span>type <span style="color:#000;font-weight:bold">==</span> <span style="color:#d14">&#39;cuda&#39;</span>) <span style="color:#000;font-weight:bold">and</span> (cfg<span style="color:#000;font-weight:bold">.</span>ngpu <span style="color:#000;font-weight:bold">&gt;</span> <span style="color:#099">1</span>):
+        netD <span style="color:#000;font-weight:bold">=</span> nn<span style="color:#000;font-weight:bold">.</span>DataParallel(netD, <span style="color:#0086b3">list</span>(<span style="color:#0086b3">range</span>(cfg<span style="color:#000;font-weight:bold">.</span>ngpu)))
+
+    <span style="color:#998;font-style:italic"># Apply the weights_init function to randomly</span>
+    <span style="color:#998;font-style:italic"># initialize all weights to mean=0, stdev=0.2.</span>
+    netD<span style="color:#000;font-weight:bold">.</span>apply(init_weights)
+    <span style="color:#998;font-style:italic"># transform images: </span>
+    <span style="color:#998;font-style:italic"># Resize to 64x64 -&gt; Center crop -&gt; Convert to tensor-&gt; normalize</span>
+    transform <span style="color:#000;font-weight:bold">=</span> transforms<span style="color:#000;font-weight:bold">.</span>Compose([
+        transforms<span style="color:#000;font-weight:bold">.</span>Resize(cfg<span style="color:#000;font-weight:bold">.</span>image_size),
+        transforms<span style="color:#000;font-weight:bold">.</span>CenterCrop(cfg<span style="color:#000;font-weight:bold">.</span>image_size),
+        transforms<span style="color:#000;font-weight:bold">.</span>ToTensor(),
+        transforms<span style="color:#000;font-weight:bold">.</span>Normalize((<span style="color:#099">0.5</span>, <span style="color:#099">0.5</span>, <span style="color:#099">0.5</span>), (<span style="color:#099">0.5</span>, <span style="color:#099">0.5</span>, <span style="color:#099">0.5</span>)),
+    ])
+
+    dataset <span style="color:#000;font-weight:bold">=</span> SharinganDataset(transform)
+    dataloader <span style="color:#000;font-weight:bold">=</span> DataLoader(dataset, 
+                            batch_size<span style="color:#000;font-weight:bold">=</span>cfg<span style="color:#000;font-weight:bold">.</span>batch_size,
+                            shuffle<span style="color:#000;font-weight:bold">=</span><span style="color:#999">True</span>, 
+                            num_workers<span style="color:#000;font-weight:bold">=</span>cfg<span style="color:#000;font-weight:bold">.</span>workers)
+
+    <span style="color:#998;font-style:italic"># Initialize BCELoss function</span>
+    criterion <span style="color:#000;font-weight:bold">=</span> nn<span style="color:#000;font-weight:bold">.</span>BCELoss()
+
+    <span style="color:#998;font-style:italic"># Establish convention for real and fake labels during training</span>
+    fixed_noise <span style="color:#000;font-weight:bold">=</span> torch<span style="color:#000;font-weight:bold">.</span>randn(cfg<span style="color:#000;font-weight:bold">.</span>batch_size, 
+                              cfg<span style="color:#000;font-weight:bold">.</span>nz, <span style="color:#099">1</span>, <span style="color:#099">1</span>, device<span style="color:#000;font-weight:bold">=</span>device)
+    real_label <span style="color:#000;font-weight:bold">=</span> <span style="color:#099">1.</span>
+    fake_label <span style="color:#000;font-weight:bold">=</span> <span style="color:#099">0.</span>
+    <span style="color:#998;font-style:italic"># load adam optimizer&#39;s config</span>
+    cfg_adam <span style="color:#000;font-weight:bold">=</span> get_conf(<span style="color:#d14">&#34;conf/optimizer/adam&#34;</span>)
+    <span style="color:#998;font-style:italic"># Setup Adam optimizers for both G and D</span>
+    optimizerD <span style="color:#000;font-weight:bold">=</span> optim<span style="color:#000;font-weight:bold">.</span>Adam(netD<span style="color:#000;font-weight:bold">.</span>parameters(), 
+                            lr<span style="color:#000;font-weight:bold">=</span>cfg_adam<span style="color:#000;font-weight:bold">.</span>lr, 
+                            betas<span style="color:#000;font-weight:bold">=</span>(cfg_adam<span style="color:#000;font-weight:bold">.</span>beta1, <span style="color:#099">0.999</span>))
+    optimizerG <span style="color:#000;font-weight:bold">=</span> optim<span style="color:#000;font-weight:bold">.</span>Adam(netG<span style="color:#000;font-weight:bold">.</span>parameters(), 
+                            lr<span style="color:#000;font-weight:bold">=</span>cfg_adam<span style="color:#000;font-weight:bold">.</span>lr, 
+                            betas<span style="color:#000;font-weight:bold">=</span>(cfg_adam<span style="color:#000;font-weight:bold">.</span>beta1, <span style="color:#099">0.999</span>))
+    <span style="color:#998;font-style:italic"># Training Loop</span>
+
+    <span style="color:#998;font-style:italic"># Lists to keep track of progress</span>
+    img_list <span style="color:#000;font-weight:bold">=</span> []
+    G_losses <span style="color:#000;font-weight:bold">=</span> []
+    D_losses <span style="color:#000;font-weight:bold">=</span> []
+    iters <span style="color:#000;font-weight:bold">=</span> <span style="color:#099">0</span>
+
+    <span style="color:#000;font-weight:bold">print</span>(<span style="color:#d14">&#34;Starting Training Loop...&#34;</span>)
+    <span style="color:#998;font-style:italic"># For each epoch</span>
+    <span style="color:#000;font-weight:bold">for</span> epoch <span style="color:#000;font-weight:bold">in</span> <span style="color:#0086b3">range</span>(cfg<span style="color:#000;font-weight:bold">.</span>num_epochs):
+        <span style="color:#998;font-style:italic"># For each batch in the dataloader</span>
+        <span style="color:#000;font-weight:bold">for</span> i, data <span style="color:#000;font-weight:bold">in</span> <span style="color:#0086b3">enumerate</span>(dataloader, <span style="color:#099">0</span>):
+
+            <span style="color:#998;font-style:italic">############################</span>
+            <span style="color:#998;font-style:italic"># (1) Update D network: </span>
+            <span style="color:#998;font-style:italic"># maximize log(D(x)) + log(1 - D(G(z)))</span>
+            <span style="color:#998;font-style:italic">###########################</span>
+            <span style="color:#998;font-style:italic">## Train with all-real batch</span>
+            netD<span style="color:#000;font-weight:bold">.</span>zero_grad()
+            <span style="color:#998;font-style:italic"># send data batch to the device</span>
+            real_cpu <span style="color:#000;font-weight:bold">=</span> data<span style="color:#000;font-weight:bold">.</span>to(device)
+            <span style="color:#998;font-style:italic"># get batch size</span>
+            b_size <span style="color:#000;font-weight:bold">=</span> real_cpu<span style="color:#000;font-weight:bold">.</span>size(<span style="color:#099">0</span>)
+            <span style="color:#998;font-style:italic"># create labels for real images, </span>
+            <span style="color:#998;font-style:italic"># we need labels for each image in the batch</span>
+            label <span style="color:#000;font-weight:bold">=</span> torch<span style="color:#000;font-weight:bold">.</span>full((b_size,), 
+                               real_label, 
+                               dtype<span style="color:#000;font-weight:bold">=</span>torch<span style="color:#000;font-weight:bold">.</span>float, 
+                               device<span style="color:#000;font-weight:bold">=</span>device)
+            <span style="color:#998;font-style:italic"># Forward pass real batch through D</span>
+            output <span style="color:#000;font-weight:bold">=</span> netD(real_cpu)<span style="color:#000;font-weight:bold">.</span>view(<span style="color:#000;font-weight:bold">-</span><span style="color:#099">1</span>)
+            <span style="color:#998;font-style:italic"># Calculate loss on all-real batch</span>
+            errD_real <span style="color:#000;font-weight:bold">=</span> criterion(output, label)
+            <span style="color:#998;font-style:italic"># Calculate gradients of real batch for D in backward pass</span>
+            errD_real<span style="color:#000;font-weight:bold">.</span>backward()
+            D_x <span style="color:#000;font-weight:bold">=</span> output<span style="color:#000;font-weight:bold">.</span>mean()<span style="color:#000;font-weight:bold">.</span>item()
+
+            <span style="color:#998;font-style:italic">## Train with all-fake batch</span>
+            <span style="color:#998;font-style:italic"># Generate batch of latent vectors</span>
+            noise <span style="color:#000;font-weight:bold">=</span> torch<span style="color:#000;font-weight:bold">.</span>randn(b_size, 
+                                cfg<span style="color:#000;font-weight:bold">.</span>nz, <span style="color:#099">1</span>, <span style="color:#099">1</span>, device<span style="color:#000;font-weight:bold">=</span>device)
+            <span style="color:#998;font-style:italic"># Generate fake image batch with G</span>
+            fake <span style="color:#000;font-weight:bold">=</span> netG(noise)
+            label<span style="color:#000;font-weight:bold">.</span>fill_(fake_label)
+            <span style="color:#998;font-style:italic"># Classify all fake batch with D</span>
+            <span style="color:#998;font-style:italic"># we need to detch the computation graph here</span>
+            <span style="color:#998;font-style:italic"># because we don&#39;t want update G here</span>
+            output <span style="color:#000;font-weight:bold">=</span> netD(fake<span style="color:#000;font-weight:bold">.</span>detach())<span style="color:#000;font-weight:bold">.</span>view(<span style="color:#000;font-weight:bold">-</span><span style="color:#099">1</span>)
+            <span style="color:#998;font-style:italic"># Calculate D&#39;s loss on the all-fake batch</span>
+            errD_fake <span style="color:#000;font-weight:bold">=</span> criterion(output, label)
+            <span style="color:#998;font-style:italic"># Calculate the gradients of fake batch</span>
+            <span style="color:#998;font-style:italic"># for this batch (this gets accumulated)</span>
+            errD_fake<span style="color:#000;font-weight:bold">.</span>backward()
+            D_G_z1 <span style="color:#000;font-weight:bold">=</span> output<span style="color:#000;font-weight:bold">.</span>mean()<span style="color:#000;font-weight:bold">.</span>item()
+            <span style="color:#998;font-style:italic"># Add the gradients from the all-real and</span>
+            <span style="color:#998;font-style:italic"># all-fake batches (just for visualization)</span>
+            errD <span style="color:#000;font-weight:bold">=</span> errD_real <span style="color:#000;font-weight:bold">+</span> errD_fake
+            <span style="color:#998;font-style:italic"># Update D</span>
+            optimizerD<span style="color:#000;font-weight:bold">.</span>step()
+
+            <span style="color:#998;font-style:italic">############################</span>
+            <span style="color:#998;font-style:italic"># (2) Update G network: maximize log(D(G(z)))</span>
+            <span style="color:#998;font-style:italic">###########################</span>
+            netG<span style="color:#000;font-weight:bold">.</span>zero_grad()
+            label<span style="color:#000;font-weight:bold">.</span>fill_(real_label)  <span style="color:#998;font-style:italic"># fake labels are real for generator cost</span>
+            <span style="color:#998;font-style:italic"># Since we just updated D, perform another</span>
+            <span style="color:#998;font-style:italic"># forward pass of all-fake batch through D</span>
+            output <span style="color:#000;font-weight:bold">=</span> netD(fake)<span style="color:#000;font-weight:bold">.</span>view(<span style="color:#000;font-weight:bold">-</span><span style="color:#099">1</span>)
+            <span style="color:#998;font-style:italic"># Calculate G&#39;s loss based on this output</span>
+            errG <span style="color:#000;font-weight:bold">=</span> criterion(output, label)
+            <span style="color:#998;font-style:italic"># Calculate gradients for G</span>
+            errG<span style="color:#000;font-weight:bold">.</span>backward()
+            D_G_z2 <span style="color:#000;font-weight:bold">=</span> output<span style="color:#000;font-weight:bold">.</span>mean()<span style="color:#000;font-weight:bold">.</span>item()
+            <span style="color:#998;font-style:italic"># Update G</span>
+            optimizerG<span style="color:#000;font-weight:bold">.</span>step()
+
+            <span style="color:#998;font-style:italic"># Output training stats</span>
+            <span style="color:#000;font-weight:bold">if</span> i <span style="color:#000;font-weight:bold">%</span> <span style="color:#099">25</span> <span style="color:#000;font-weight:bold">==</span> <span style="color:#099">0</span>:
+                <span style="color:#000;font-weight:bold">print</span>(<span style="color:#d14">&#39;[</span><span style="color:#d14">%d</span><span style="color:#d14">/</span><span style="color:#d14">%d</span><span style="color:#d14">][</span><span style="color:#d14">%d</span><span style="color:#d14">/</span><span style="color:#d14">%d</span><span style="color:#d14">]</span><span style="color:#d14">\t</span><span style="color:#d14">Loss_D: </span><span style="color:#d14">%.4f</span><span style="color:#d14">\t</span><span style="color:#d14">Loss_G: </span><span style="color:#d14">%.4f</span><span style="color:#d14">\t</span><span style="color:#d14">D(x): </span><span style="color:#d14">%.4f</span><span style="color:#d14">\t</span><span style="color:#d14">D(G(z)): </span><span style="color:#d14">%.4f</span><span style="color:#d14"> / </span><span style="color:#d14">%.4f</span><span style="color:#d14">&#39;</span>
+                      <span style="color:#000;font-weight:bold">%</span> (epoch, cfg<span style="color:#000;font-weight:bold">.</span>num_epochs, i, <span style="color:#0086b3">len</span>(dataloader),
+                         errD<span style="color:#000;font-weight:bold">.</span>item(), errG<span style="color:#000;font-weight:bold">.</span>item(), D_x, D_G_z1, D_G_z2))
+
+            <span style="color:#998;font-style:italic"># Save Losses for plotting later</span>
+            G_losses<span style="color:#000;font-weight:bold">.</span>append(errG<span style="color:#000;font-weight:bold">.</span>item())
+            D_losses<span style="color:#000;font-weight:bold">.</span>append(errD<span style="color:#000;font-weight:bold">.</span>item())
+
+            <span style="color:#998;font-style:italic"># Check how the generator is doing by</span>
+            <span style="color:#998;font-style:italic"># saving G&#39;s output on fixed_noise</span>
+            <span style="color:#000;font-weight:bold">if</span> (iters <span style="color:#000;font-weight:bold">%</span> <span style="color:#099">100</span> <span style="color:#000;font-weight:bold">==</span> <span style="color:#099">0</span>) <span style="color:#000;font-weight:bold">or</span> ((epoch <span style="color:#000;font-weight:bold">==</span> cfg<span style="color:#000;font-weight:bold">.</span>num_epochs <span style="color:#000;font-weight:bold">-</span> <span style="color:#099">1</span>) <span style="color:#000;font-weight:bold">and</span> (i <span style="color:#000;font-weight:bold">==</span> <span style="color:#0086b3">len</span>(dataloader) <span style="color:#000;font-weight:bold">-</span> <span style="color:#099">1</span>)):
+                <span style="color:#000;font-weight:bold">with</span> torch<span style="color:#000;font-weight:bold">.</span>no_grad():
+                    fake <span style="color:#000;font-weight:bold">=</span> netG(fixed_noise)<span style="color:#000;font-weight:bold">.</span>detach()<span style="color:#000;font-weight:bold">.</span>cpu()
+                img_list<span style="color:#000;font-weight:bold">.</span>append(vutils<span style="color:#000;font-weight:bold">.</span>make_grid(fake, padding<span style="color:#000;font-weight:bold">=</span><span style="color:#099">2</span>, normalize<span style="color:#000;font-weight:bold">=</span><span style="color:#999">True</span>))
+
+            iters <span style="color:#000;font-weight:bold">+=</span> <span style="color:#099">1</span></code></pre></div>
+<p>This is like normal training but with a little adjustment where we need to train both <em>D</em> and <em>G</em>.</p>
+
+<h1 id="results">Results</h1>
+
+<p>After 200 epochs the results are like this:
+<figure><img src="/images/sharingan_200.png" alt="Result"></figure></p>
+
+<p>As you can see, the generator learns some pattern from the data. Of course if you train it for more epochs, it gets better and better. One improvement (again according to GAN hacks) that we can add is to train <em>D</em> more than <em>G</em>. The notion behind it is that if <em>D</em> do its job perfectly, then <em>G</em> challenged and need to can change more to keep up.</p>
+
+<p>I perform another modification on <em>D</em>'s loss. As the output of <em>D</em> is a probability, its gradients are small, as a result, the changes in weights will be minor. To make gradients bigger for bigger changes, I add squared distance of real images with fake images to the <em>D</em>'s loss with some weight <span  class="math">\(\beta\)</span> (here <span  class="math">\(\beta=0.01\)</span>). So, the <em>D</em>'s loss becomes this:</p>
+<div class="highlight"><pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python">errD_fake <span style="color:#000;font-weight:bold">=</span> criterion(output, label) <span style="color:#000;font-weight:bold">+</span> (beta <span style="color:#000;font-weight:bold">*</span> (fake<span style="color:#000;font-weight:bold">.</span>detach() <span style="color:#000;font-weight:bold">-</span> real_cpu)<span style="color:#000;font-weight:bold">.</span>pow(<span style="color:#099">2</span>)<span style="color:#000;font-weight:bold">.</span>mean(<span style="color:#099">0</span>)<span style="color:#000;font-weight:bold">.</span>sum())</code></pre></div>
+<p>Although we should keep this in mind, the gradients should not get too big. In the next section I will discuss how to prevent this. But for now, this modification yield this result for <code>1000</code> epochs:
+<figure><img src="/images/sharingan_modified_collapsed.gif" alt="Result"></figure></p>
+
+<p>As you can see here, the images getting better and better until they hit a wall and reset, and at the end, <em>G</em> only generate one sharingan, that is because this pattern was able to fool <em>D</em> and <em>G</em> does not bother itself to generate another sharingan. This situation is called <em>mode collapse</em> in GAN literature.
+<figure><img src="/images/sharingan_mod_loss.png" alt="Result"></figure></p>
+
+<p>If we take a look at the loss functions of <em>D</em> and <em>G</em>, we can see two spikes in <em>D</em>'s loss. Those spikes are exactly where we see that generated images falling apart. <em>G</em> generates garbage and <em>D</em> can't decide.</p>
+
+<p>Back to where we need to prevent gradients from exploding. To prevent this, we can add gradient clipping in order to prevent the gradients going higher than a threshold. One option is to use gradient clipping (here <code>clipping_threshold_d = 5</code>) which should be added just before updating weights:</p>
+<div class="highlight"><pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python"><span style="color:#000;font-weight:bold">if</span> clipping_threshold_d <span style="color:#000;font-weight:bold">&gt;</span> <span style="color:#099">0</span>:
+                    nn<span style="color:#000;font-weight:bold">.</span>utils<span style="color:#000;font-weight:bold">.</span>clip_grad_norm_(netD<span style="color:#000;font-weight:bold">.</span>parameters(),
+                                     clipping_threshold_d)
+<span style="color:#998;font-style:italic"># Update D</span>
+optimizerD<span style="color:#000;font-weight:bold">.</span>step()</code></pre></div>
+<p>Another option is to add <a href="https://arxiv.org/abs/1802.05957">spectral normalization</a> to <em>D</em> to stabilize its training. I also added it to the <em>G</em> as well. To add this in code, when defining <em>G</em> and <em>D</em> components, instead of <code>ConvTranspose2d</code> and <code>Conv2d</code> add these:</p>
+<div class="highlight"><pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python">nn<span style="color:#000;font-weight:bold">.</span>utils<span style="color:#000;font-weight:bold">.</span>spectral_norm(nn<span style="color:#000;font-weight:bold">.</span>ConvTranspose2d(<span style="color:#000;font-weight:bold">...</span>))
+nn<span style="color:#000;font-weight:bold">.</span>utils<span style="color:#000;font-weight:bold">.</span>spectral_norm(nn<span style="color:#000;font-weight:bold">.</span>Conv2d(<span style="color:#000;font-weight:bold">...</span>))</code></pre></div>
+<p>With these optimizations and without modified <em>D</em>'s loss, after 200 epochs we get:</p>
+
+<p><figure><img src="/images/sharingan_mod_sn.gif" alt="Result"></figure>
+<figure><img src="/images/sharingan_200_mod.png" alt="Result"></figure></p>
+
+<p>Comparing the first run with the optimized version , we can see that in the latter, <em>G</em> does its best to generate sharingans with different patterns. After 800 more epochs:</p>
+
+<p><figure><img src="/images/sharingan_1000_mod.gif" alt="Result"></figure></p>
+
+<p><figure><img src="/images/sharingan_800.png" alt="Result"></figure></p>
+
+<p><em>G</em> collapsed again but this time it has more variety.</p>
+
+<p><figure><img src="/images/sharingan_loss_800.png" alt="Result"></figure></p>
+
+<p>Taking a look at the loss function we can see this time we've managed to prevent spikes in <em>D</em>'s loss. If we train the model with less epochs the collapse would not occur. So 1000 epochs is overkill for this small dataset as in early epochs we can see good results and we should stop the training there (early stopping).</p>
+
+<p>And here is the result with optimizations and modified <em>D</em> loss function after 300 epochs (I didn't trained it more because as we saw above, it is likely would collapse):</p>
+
+<p><figure><img src="/images/sharingan_mod_300.gif" alt="Result"></figure>
+<figure><img src="/images/sharingan_mod_300.png" alt="Result"></figure></p>
+
+<p>And for the loss:</p>
+
+<p><figure><img src="/images/sharingan_loss_mod_300.png" alt="Result"></figure></p>
+
+<p>The loss is much better and more stable.</p>
+
+<p>To be honest with these low res images finding subtle patterns is difficult and <em>G</em> is doing a great job. For generating crystal clear sharingan images we need improved derivatives of GAN. Hopefully, in future posts, I will talk about implementing them. And that's it, I hope you enjoyed this post.</p>
+
+    </div>
+
+    
+      <section class="author">
+        
+          <img alt="Avatar photo" class="author__avatar" src="/images/me.jpg">
+        
+
+        <span class="author__bio">Mohammad is currently M.S. student of Computer Science at (IASBS). Follow him on <a href='https://twitter.com/m.nazeri'>Twitter</a></span>
+
+        
+        
+        
+        <a href="http://twitter.com/share?url=http%3a%2f%2fmhnazeri.now.sh%2fposts%2fsharingan%2f&text=SharinGAN&via=m.nazeri" class="author__share bg-twitter hover:color-white hover:opacity-75">
+          <svg class="fill-current w-4 h-4 mr-2" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
+            <title>Twitter</title>
+            <path d="M6.29 18.25c7.55 0 11.67-6.25 11.67-11.67v-.53c.8-.59 1.49-1.3 2.04-2.13-.75.33-1.54.55-2.36.65a4.12 4.12 0 0 0 1.8-2.27c-.8.48-1.68.81-2.6 1a4.1 4.1 0 0 0-7 3.74 11.65 11.65 0 0 1-8.45-4.3 4.1 4.1 0 0 0 1.27 5.49C2.01 8.2 1.37 8.03.8 7.7v.05a4.1 4.1 0 0 0 3.3 4.03 4.1 4.1 0 0 1-1.86.07 4.1 4.1 0 0 0 3.83 2.85A8.23 8.23 0 0 1 0 16.4a11.62 11.62 0 0 0 6.29 1.84"></path>
+          </svg>
+
+          Tweet
+        </a>
+      </section>
+    
+
+    
+      <section class="comments ">
+        <h2>Comments</h2>
+        
+      </section>
+    
+</article>
+
+
+  <aside class="flex">
+  
+  
+    <a class="w-full md:w-1/2 flex flex-col items-center py-7 px-3 no-underline rounded-md hover:bg-white transition duration-300 ease-in-out" href="/posts/image_segmentation/">
+      <span class="border border-gray-6 text-xs rounded-md mb-2 uppercase font-bold py-2 px-3">You might enjoy</span>
+      <span class="text-center">Image_segmentation</span>
+    </a>
+  
+</aside>
+
+
+
+    </main><footer class="w-full max-w-7xl mx-auto text-center border-t border-gray-200 py-9 px-3 mt-9 pin-b text-sm text-gray-500">
+  Made with <a href="https://gohugo.io" class="underline transition duration-300 ease-in-out hover:text-blue-600">Hugo</a> and <a href="https://github.com/leonardofaria/bento" class="underline transition duration-300 ease-in-out hover:text-blue-600">Bento theme</a>. 
+  Copyright © 2020 nazeri
+</footer>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/katex.min.css" integrity="sha384-zB1R0rpPzHqg7Kpt0Aljp8JPLqbXI3bhnPWROx27a9N0Ll6ZP/+DiW/UqRcLbRjq" crossorigin="anonymous">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/katex.min.js" integrity="sha384-y23I5Q6l+B6vatafAwxRu/0oK/79VlbSz7Q9aiSZUvyWYIYsd+qj+o24G5ZU2zJz" crossorigin="anonymous"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/contrib/auto-render.min.js" integrity="sha384-kWPLUVMOks5AQFrykwIup5lo0m3iMkkHrD0uJ4H5cjeGihAutqP0yW0J6dpFiVkI" crossorigin="anonymous"
+    onload="renderMathInElement(document.body);"></script>
+
+<script>
+  var initMenu = () => {
+    var navButtons = document.querySelectorAll('.nav-button');
+    var navMenu = document.querySelector('#nav-menu');
+    var navSocialLinks = document.querySelector('#nav-social-links');
+
+    for (var button of navButtons) {
+      button.addEventListener('click', () => {
+        console.log('click')
+        navMenu.classList.toggle("hidden");
+
+        if (navSocialLinks) {
+          navSocialLinks.classList.toggle("hidden");
+        }
+
+        for (var navButton of navButtons) {
+          navButton.classList.toggle("hidden");
+        };
+      });
+    }
+  }
+  document.addEventListener('turbolinks:load', initMenu());
+</script>
+
+
+<script>
+  var initHeader = () => {
+    let scrollPos = window.scrollY;
+    var header = document.querySelector('#header');
+    var headerContainer = document.querySelector("#header-container");
+    var readingProgressBar = document.querySelector("#reading-progress-bar");
+    let scrollTop = 0;
+    let scrollBottom = 0;
+    let scrollPercent = 0;
+
+    var addClassOnScroll = () => {
+      header.classList.add("shadow");
+      header.classList.add("bg-white-90");
+      header.classList.remove("py-4");
+    }
+    var removeClassOnScroll = () => {
+      header.classList.remove("shadow");
+      header.classList.remove("bg-white-90");
+      header.classList.add("py-4");
+    }
+
+    window.onscroll = function () {
+      scrollPos = window.scrollY;
+      scrollTop = document.documentElement["scrollTop"] || document.body["scrollTop"];
+      scrollBottom = (document.documentElement["scrollHeight"] || document.body["scrollHeight"]) - document.documentElement.clientHeight;
+      scrollPercent = scrollTop / scrollBottom * 100;
+      readingProgressBar.style.width = (scrollTop / scrollBottom * 100) + '%';
+
+      if (scrollPos > 0) { addClassOnScroll() }
+      else { removeClassOnScroll() }
+    }
+  }
+  document.addEventListener('turbolinks:load', initHeader());
+</script>
+
+
+</body>
+</html>
