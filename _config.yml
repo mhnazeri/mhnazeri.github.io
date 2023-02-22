@@ -2,7 +2,7 @@
 # Site settings
 # -----------------------------------------------------------------------------
 
-title: Nazeri # the website title (if blank, full name will be used instead)
+title: Mohammad # the website title (if blank, full name will be used instead)
 first_name: Mohammad
 middle_name: 
 last_name: Nazeri
@@ -231,7 +231,7 @@ display_tags: ['formatting', 'images', 'links', 'math', 'code'] # this tags will
 scholar:
 
   last_name: [Nazeri]
-  first_name: [Mohammad, H.]
+  first_name: [Mohammad]
 
   style: apa
   locale: en
