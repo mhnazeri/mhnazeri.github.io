@@ -1,4 +1,16 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" xml:lang="en"><generator uri="https://jekyllrb.com/" version="4.3.2">Jekyll</generator><link href="https://mhnazeri.github.io/feed.xml" rel="self" type="application/atom+xml"/><link href="https://mhnazeri.github.io/" rel="alternate" type="text/html" hreflang="en"/><updated>2023-02-22T04:54:14+00:00</updated><id>https://mhnazeri.github.io/feed.xml</id><title type="html">Mohammad</title><subtitle>Hello there, I am Mohammad. Welcome to my page!!! </subtitle><entry><title type="html">SharinGAN</title><link href="https://mhnazeri.github.io/blog/2020/sharinGAN/" rel="alternate" type="text/html" title="SharinGAN"/><published>2020-07-29T21:16:41+00:00</published><updated>2020-07-29T21:16:41+00:00</updated><id>https://mhnazeri.github.io/blog/2020/sharinGAN</id><content type="html" xml:base="https://mhnazeri.github.io/blog/2020/sharinGAN/"><![CDATA[<p>Generative models especially with the emerge of <a href="https://papers.nips.cc/paper/5423-generative-adversarial-nets.pdf">Generative Adversarial Networks (GANs)</a> have become the spotlight of Deep Learning in recent years. They have <a href="https://github.com/nashory/gans-awesome-applications">many applications in the wild</a> and sometimes they are just for <a href="https://theaisummer.com/deepfakes/">fun</a>. One fun application that I really liked, was the use of GAN to generate <a href="https://www.youtube.com/watch?v=8fnynVsR53k">fake Sharingans</a> (to read more about what Sharingan is please read <a href="https://naruto.fandom.com/wiki/Sharingan">this article</a>). Inspired by that video and PyTorch’s <a href="https://pytorch.org/tutorials/beginner/dcgan_faces_tutorial.html">DCGAN tutorial</a>, in this post I’m going to show you how to generate sharingans step by step. You can download the PyTorch source code from <a href="https://github.com/mhnazeri/sharingan">here</a>. I highly recommend downloading the full source code because here I only explain important steps in writing a DL model, things such as config files are not discussed here. To read more about project configuration see my <a href="https://mhnazeri.github.io/blog/2020/parameter_management/">Hyper-parameter Management</a> article.</p> <p>To train a model, you have to address three stages:</p> <ul> <li>Gathering and loading data</li> <li>Designing the architecture</li> <li>Loss function and train loop</li> </ul> <p>I structured my project directory as follows (if you like the structure, I created a template <a href="https://github.com/mhnazeri/ml_template">here</a>):</p> <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code> └── sharinGAN/ 
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" xml:lang="en"><generator uri="https://jekyllrb.com/" version="4.3.2">Jekyll</generator><link href="https://mhnazeri.github.io/feed.xml" rel="self" type="application/atom+xml" /><link href="https://mhnazeri.github.io/" rel="alternate" type="text/html" hreflang="en" /><updated>2023-12-21T02:53:55+00:00</updated><id>https://mhnazeri.github.io/feed.xml</id><title type="html">Mohammad</title><subtitle>Hello there, I&apos;m Mohammad. Welcome to my page!!!
+</subtitle><entry><title type="html">SharinGAN</title><link href="https://mhnazeri.github.io/blog/2020/sharinGAN/" rel="alternate" type="text/html" title="SharinGAN" /><published>2020-07-29T21:16:41+00:00</published><updated>2020-07-29T21:16:41+00:00</updated><id>https://mhnazeri.github.io/blog/2020/sharinGAN</id><content type="html" xml:base="https://mhnazeri.github.io/blog/2020/sharinGAN/"><![CDATA[<p>Generative models especially with the emerge of <a href="https://papers.nips.cc/paper/5423-generative-adversarial-nets.pdf">Generative Adversarial Networks (GANs)</a> have become the spotlight of Deep Learning in recent years. They have <a href="https://github.com/nashory/gans-awesome-applications">many applications in the wild</a> and sometimes they are just for <a href="https://theaisummer.com/deepfakes/">fun</a>.
+One fun application that I really liked, was the use of GAN to generate <a href="https://www.youtube.com/watch?v=8fnynVsR53k">fake Sharingans</a> (to read more about what Sharingan is please read <a href="https://naruto.fandom.com/wiki/Sharingan">this article</a>). Inspired by that video and PyTorch’s <a href="https://pytorch.org/tutorials/beginner/dcgan_faces_tutorial.html">DCGAN tutorial</a>, in this post I’m going to show you how to generate sharingans step by step. You can download the PyTorch source code from <a href="https://github.com/mhnazeri/sharingan">here</a>. I highly recommend downloading the full source code because here I only explain important steps in writing a DL model, things such as config files are not discussed here. To read more about project configuration see my <a href="https://mhnazeri.github.io/blog/2020/parameter_management/">Hyper-parameter Management</a> article.</p>
+
+<p>To train a model, you have to address three stages:</p>
+<ul>
+  <li>Gathering and loading data</li>
+  <li>Designing the architecture</li>
+  <li>Loss function and train loop</li>
+</ul>
+
+<p>I structured my project directory as follows (if you like the structure, I created a template <a href="https://github.com/mhnazeri/ml_template">here</a>):</p>
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code> └── sharinGAN/ 
  │  └──── conf/ 
  │  │  └──── optimizer/ 
  │  │  │  └──── adam.yaml  
@@ -18,13 +30,22 @@
  │  └──── utils.py   
  ├── README.md  
  └── requirements.txt
-</code></pre></div></div> <h1 id="gathering-and-loading-data">Gathering and Loading Data</h1> <p>The first thing that we need, in every problem that we are going to solve with deep learning, is <em>data</em>. I gathered some Sharingan pictures from google image search. It is a fairly easy task, you just need to search for the keyword <code class="language-plaintext highlighter-rouge">sharingan</code> and save the pictures in a folder. I named mine <code class="language-plaintext highlighter-rouge">sharing_pics</code>. So now, we have to write the <code class="language-plaintext highlighter-rouge">data_loader</code>.</p> <p>To do so, first, we need to import the required libraries. We need <code class="language-plaintext highlighter-rouge">pathlib</code> to read image directories, <code class="language-plaintext highlighter-rouge">PIL</code>, Python imaging library (hence the name) to read images from the disk, PyTorch’s abstract <code class="language-plaintext highlighter-rouge">Dataset</code> module to write a class which handles concurrent reading and preprocessing for us, and finally for loading the config files we use a custom function that resides in <code class="language-plaintext highlighter-rouge">utils.py</code> file:</p> <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">from</span> <span class="n">omegaconf</span> <span class="kn">import</span> <span class="n">OmegaConf</span>
+</code></pre></div></div>
+
+<h1 id="gathering-and-loading-data">Gathering and Loading Data</h1>
+<p>The first thing that we need, in every problem that we are going to solve with deep learning, is <em>data</em>. I gathered some Sharingan pictures from google image search. It is a fairly easy task, you just need to search for the keyword <code class="language-plaintext highlighter-rouge">sharingan</code> and save the pictures in a folder. I named mine <code class="language-plaintext highlighter-rouge">sharing_pics</code>. So now, we have to write the <code class="language-plaintext highlighter-rouge">data_loader</code>.</p>
+
+<p>To do so, first, we need to import the required libraries. We need <code class="language-plaintext highlighter-rouge">pathlib</code> to read image directories, <code class="language-plaintext highlighter-rouge">PIL</code>, Python imaging library (hence the name) to read images from the disk, PyTorch’s abstract <code class="language-plaintext highlighter-rouge">Dataset</code> module to write a class which handles concurrent reading and preprocessing for us, and finally for loading the config files we use a custom function that resides in <code class="language-plaintext highlighter-rouge">utils.py</code> file:</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">from</span> <span class="n">omegaconf</span> <span class="kn">import</span> <span class="n">OmegaConf</span>
 
 
 <span class="k">def</span> <span class="nf">get_conf</span><span class="p">(</span><span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
-    <span class="n">cfg</span> <span class="o">=</span> <span class="n">OmegaConf</span><span class="p">.</span><span class="nf">load</span><span class="p">(</span><span class="sa">f</span><span class="s">"</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s">.yaml"</span><span class="p">)</span>
+    <span class="n">cfg</span> <span class="o">=</span> <span class="n">OmegaConf</span><span class="p">.</span><span class="nf">load</span><span class="p">(</span><span class="sa">f</span><span class="sh">"</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s">.yaml</span><span class="sh">"</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">cfg</span>
-</code></pre></div></div> <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">from</span> <span class="n">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
+</code></pre></div></div>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">from</span> <span class="n">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
 <span class="kn">from</span> <span class="n">PIL</span> <span class="kn">import</span> <span class="n">Image</span>
 
 <span class="kn">import</span> <span class="n">torch</span>
@@ -36,14 +57,14 @@
 <span class="k">class</span> <span class="nc">SharinganDataset</span><span class="p">(</span><span class="n">Dataset</span><span class="p">):</span>
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="n">self</span><span class="p">,</span> <span class="n">transform</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="bp">None</span><span class="p">:</span>
         <span class="c1"># get data directory
-</span>        <span class="n">data_dir</span> <span class="o">=</span> <span class="nf">get_conf</span><span class="p">(</span><span class="s">"conf/dirs"</span><span class="p">).</span><span class="n">train_data</span>
+</span>        <span class="n">data_dir</span> <span class="o">=</span> <span class="nf">get_conf</span><span class="p">(</span><span class="sh">"</span><span class="s">conf/dirs</span><span class="sh">"</span><span class="p">).</span><span class="n">train_data</span>
         <span class="c1"># store filenames
 </span>        <span class="c1"># Path().iterdir() returns a generator, convert it to list
 </span>        <span class="n">self</span><span class="p">.</span><span class="n">filenames</span> <span class="o">=</span> <span class="nf">list</span><span class="p">(</span><span class="nc">Path</span><span class="p">(</span><span class="n">data_dir</span><span class="p">).</span><span class="nf">iterdir</span><span class="p">())</span>
         <span class="n">self</span><span class="p">.</span><span class="n">transform</span> <span class="o">=</span> <span class="n">transform</span>
 
     <span class="k">def</span> <span class="nf">__len__</span><span class="p">(</span><span class="n">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
-        <span class="s">"""return size of dataset"""</span>
+        <span class="sh">"""</span><span class="s">return size of dataset</span><span class="sh">"""</span>
         <span class="k">return</span> <span class="nf">len</span><span class="p">(</span><span class="n">self</span><span class="p">.</span><span class="n">filenames</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">__getitem__</span><span class="p">(</span><span class="n">self</span><span class="p">,</span> <span class="n">idx</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">torch</span><span class="p">.</span><span class="n">tensor</span><span class="p">:</span>
@@ -52,7 +73,21 @@
         <span class="c1"># apply transformers on it and return it
 </span>        <span class="n">image</span> <span class="o">=</span> <span class="n">self</span><span class="p">.</span><span class="nf">transform</span><span class="p">(</span><span class="n">image</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">image</span>
-</code></pre></div></div> <p>In <code class="language-plaintext highlighter-rouge">SharinganDataset</code> we read image addresses and store them in <code class="language-plaintext highlighter-rouge">self.filenames</code>. Our dataset size is the length of <code class="language-plaintext highlighter-rouge">self.filenames</code>, which in our case is <code class="language-plaintext highlighter-rouge">100</code>. Every image that we want to read, it’s address is in <code class="language-plaintext highlighter-rouge">self.filenames</code>, we read the image with the help of <code class="language-plaintext highlighter-rouge">PIL</code> and then apply image transformations on it. Finally, the image is in the form that we want. In the train loop section, we will discuss these transformations. And that’s it for loading data.</p> <h1 id="designing-the-architecture">Designing the Architecture</h1> <p>For the generator and discriminator architecture, we follow the <a href="https://arxiv.org/pdf/1511.06434.pdf">DCGAN</a> architecture and implement it as described in <a href="https://pytorch.org/tutorials/beginner/dcgan_faces_tutorial.html">pytorch tutorial</a> with one exception that <code class="language-plaintext highlighter-rouge">BatchNorm2d</code> is applied after the activation function. The code for model architectures resides in <code class="language-plaintext highlighter-rouge">model/net.py</code>. The noticeable network components here are:</p> <ul> <li><a href="https://pytorch.org/docs/stable/generated/torch.nn.ConvTranspose2d.html"><code class="language-plaintext highlighter-rouge">ConvTranspose2d(in_channels, out_channels, kernel_size, stride, padding, bias)</code></a>: sometimes called <em>deconvolution</em> operator. But they are actually not the same. <code class="language-plaintext highlighter-rouge">ConvTranspose</code> applies filter on the spaced out (with zeros) input. The end result would be an upsampled of the input with learned weights. You can read more about it <a href="https://arxiv.org/abs/1603.07285">here</a> with corresponding <a href="https://github.com/vdumoulin/conv_arithmetic">repo</a>. The output height can be calculated with: \(H_{out} =(H_{in} −1) \times stride[0]−2\times padding[0]+dilation[0]\times (kernel_size[0]−1)+outputpadding[0]+1\) and for the width: \(W_{out} =(W_{in}−1) \times stride[1]−2\times padding[1]+dilation[1]\times (kernel_size[1]−1)+outputpadding[1]+1\)</li> <li><a href="https://pytorch.org/docs/stable/generated/torch.nn.ReLU.html"><code class="language-plaintext highlighter-rouge">ReLU(inplace)</code></a>: as the activation function which is $max(0, x)$, and <code class="language-plaintext highlighter-rouge">inplace</code> is for doing the operation in-place in the output without using extra memory.</li> <li><a href="https://pytorch.org/docs/stable/generated/torch.nn.BatchNorm2d.html"><code class="language-plaintext highlighter-rouge">BatchNorm2d(num_features)</code></a>: which applies batch normalization on the input feature maps. You can read more about it <a href="https://arxiv.org/abs/1502.03167">here</a>.</li> <li><a href="https://pytorch.org/docs/stable/generated/torch.nn.Conv2d.html"><code class="language-plaintext highlighter-rouge">Conv2d(in_channels, out_channels, kernel_size, stride, padding, bias)</code></a>: is the convolution module.</li> <li><a href="https://pytorch.org/docs/stable/generated/torch.nn.LeakyReLU.html"><code class="language-plaintext highlighter-rouge">LeakyRelU(negative_slope, inplace)</code></a>: is a derivative of <code class="language-plaintext highlighter-rouge">ReLU</code> which is not strictly hard on negative values. <code class="language-plaintext highlighter-rouge">negative_slope</code> is responsible for this softness.</li> <li><a href="https://pytorch.org/docs/stable/generated/torch.nn.Sigmoid.html"><code class="language-plaintext highlighter-rouge">Sigmoid()</code></a>: an activation function which squashed the output to be between $[0, 1]$ just like a probability.</li> </ul> <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">import</span> <span class="n">torch.nn</span> <span class="k">as</span> <span class="n">nn</span>
+</code></pre></div></div>
+<p>In <code class="language-plaintext highlighter-rouge">SharinganDataset</code> we read image addresses and store them in <code class="language-plaintext highlighter-rouge">self.filenames</code>. Our dataset size is the length of <code class="language-plaintext highlighter-rouge">self.filenames</code>, which in our case is <code class="language-plaintext highlighter-rouge">100</code>. Every image that we want to read, it’s address is in <code class="language-plaintext highlighter-rouge">self.filenames</code>, we read the image with the help of <code class="language-plaintext highlighter-rouge">PIL</code> and then apply image transformations on it. Finally, the image is in the form that we want. In the train loop section, we will discuss these transformations. And that’s it for loading data.</p>
+
+<h1 id="designing-the-architecture">Designing the Architecture</h1>
+<p>For the generator and discriminator architecture, we follow the <a href="https://arxiv.org/pdf/1511.06434.pdf">DCGAN</a> architecture and implement it as described in <a href="https://pytorch.org/tutorials/beginner/dcgan_faces_tutorial.html">pytorch tutorial</a> with one exception that <code class="language-plaintext highlighter-rouge">BatchNorm2d</code> is applied after the activation function. The code for model architectures resides in <code class="language-plaintext highlighter-rouge">model/net.py</code>. The noticeable network components here are:</p>
+<ul>
+  <li><a href="https://pytorch.org/docs/stable/generated/torch.nn.ConvTranspose2d.html"><code class="language-plaintext highlighter-rouge">ConvTranspose2d(in_channels, out_channels, kernel_size, stride, padding, bias)</code></a>: sometimes called <em>deconvolution</em> operator. But they are actually not the same. <code class="language-plaintext highlighter-rouge">ConvTranspose</code> applies filter on the spaced out (with zeros) input. The end result would be an upsampled of the input with learned weights.  You can read more about it <a href="https://arxiv.org/abs/1603.07285">here</a> with corresponding <a href="https://github.com/vdumoulin/conv_arithmetic">repo</a>. The output height can be calculated with: \(H_{out} =(H_{in} −1) \times stride[0]−2\times padding[0]+dilation[0]\times (kernel_size[0]−1)+outputpadding[0]+1\) and for the width: \(W_{out} =(W_{in}−1) \times stride[1]−2\times padding[1]+dilation[1]\times (kernel_size[1]−1)+outputpadding[1]+1\)</li>
+  <li><a href="https://pytorch.org/docs/stable/generated/torch.nn.ReLU.html"><code class="language-plaintext highlighter-rouge">ReLU(inplace)</code></a>: as the activation function which is $max(0, x)$, and <code class="language-plaintext highlighter-rouge">inplace</code> is for doing the operation in-place in the output without using extra memory.</li>
+  <li><a href="https://pytorch.org/docs/stable/generated/torch.nn.BatchNorm2d.html"><code class="language-plaintext highlighter-rouge">BatchNorm2d(num_features)</code></a>:  which applies batch normalization on the input feature maps. You can read more about it <a href="https://arxiv.org/abs/1502.03167">here</a>.</li>
+  <li><a href="https://pytorch.org/docs/stable/generated/torch.nn.Conv2d.html"><code class="language-plaintext highlighter-rouge">Conv2d(in_channels, out_channels, kernel_size, stride, padding, bias)</code></a>: is the convolution module.</li>
+  <li><a href="https://pytorch.org/docs/stable/generated/torch.nn.LeakyReLU.html"><code class="language-plaintext highlighter-rouge">LeakyRelU(negative_slope, inplace)</code></a>: is a derivative of <code class="language-plaintext highlighter-rouge">ReLU</code> which is not strictly hard on negative values. <code class="language-plaintext highlighter-rouge">negative_slope</code> is responsible for this softness.</li>
+  <li><a href="https://pytorch.org/docs/stable/generated/torch.nn.Sigmoid.html"><code class="language-plaintext highlighter-rouge">Sigmoid()</code></a>: an activation function which squashed the output to be between $[0, 1]$ just like a probability.</li>
+</ul>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">import</span> <span class="n">torch.nn</span> <span class="k">as</span> <span class="n">nn</span>
 
 <span class="kn">from</span> <span class="n">utils</span> <span class="kn">import</span> <span class="n">get_conf</span>
 
@@ -60,7 +95,7 @@
 <span class="k">class</span> <span class="nc">Generator</span><span class="p">(</span><span class="n">nn</span><span class="p">.</span><span class="n">Module</span><span class="p">):</span>
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="n">self</span><span class="p">):</span>
         <span class="nf">super</span><span class="p">(</span><span class="n">Generator</span><span class="p">,</span> <span class="n">self</span><span class="p">).</span><span class="nf">__init__</span><span class="p">()</span>
-        <span class="n">self</span><span class="p">.</span><span class="n">cfg</span> <span class="o">=</span> <span class="nf">get_conf</span><span class="p">(</span><span class="s">"conf/model/generator"</span><span class="p">)</span>
+        <span class="n">self</span><span class="p">.</span><span class="n">cfg</span> <span class="o">=</span> <span class="nf">get_conf</span><span class="p">(</span><span class="sh">"</span><span class="s">conf/model/generator</span><span class="sh">"</span><span class="p">)</span>
 
         <span class="n">self</span><span class="p">.</span><span class="n">gen</span> <span class="o">=</span> <span class="n">nn</span><span class="p">.</span><span class="nc">Sequential</span><span class="p">(</span>
             <span class="c1"># input is Z, going into a convolution
@@ -102,7 +137,7 @@
 <span class="k">class</span> <span class="nc">Discriminator</span><span class="p">(</span><span class="n">nn</span><span class="p">.</span><span class="n">Module</span><span class="p">):</span>
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="n">self</span><span class="p">):</span>
         <span class="nf">super</span><span class="p">(</span><span class="n">Discriminator</span><span class="p">,</span> <span class="n">self</span><span class="p">).</span><span class="nf">__init__</span><span class="p">()</span>
-        <span class="n">self</span><span class="p">.</span><span class="n">cfg</span> <span class="o">=</span> <span class="nf">get_conf</span><span class="p">(</span><span class="s">"conf/model/discriminator"</span><span class="p">)</span>
+        <span class="n">self</span><span class="p">.</span><span class="n">cfg</span> <span class="o">=</span> <span class="nf">get_conf</span><span class="p">(</span><span class="sh">"</span><span class="s">conf/model/discriminator</span><span class="sh">"</span><span class="p">)</span>
 
         <span class="n">self</span><span class="p">.</span><span class="n">dis</span> <span class="o">=</span> <span class="n">nn</span><span class="p">.</span><span class="nc">Sequential</span><span class="p">(</span>
             <span class="c1"># input is (nc) x 64 x 64
@@ -137,19 +172,47 @@
 
     <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="n">self</span><span class="p">,</span> <span class="nb">input</span><span class="p">):</span>
         <span class="k">return</span> <span class="n">self</span><span class="p">.</span><span class="nf">dis</span><span class="p">(</span><span class="nb">input</span><span class="p">)</span>
-</code></pre></div></div> <p>The generator (from now on we call it <em>G</em>) is responsible for generating images like real Sharingans. Therefore, it’s output must be an image with the same size as the real images ((3, 64, 64) tensors). On the other side, the discriminator (<em>D</em>) is responsible to decide the authenticity of input images, it outputs <code class="language-plaintext highlighter-rouge">1</code> where the image is <em>real</em> and <code class="language-plaintext highlighter-rouge">0</code> where it is <em>fake</em>. Actually, the discriminator is not that accurate, it outputs the probability of the image being authentic. Where close to <code class="language-plaintext highlighter-rouge">1</code> means the discriminator is somewhat sure that the image is real and close to <code class="language-plaintext highlighter-rouge">0</code> means vice versa. That’s why we need a <code class="language-plaintext highlighter-rouge">Sigmoid()</code> function at the end of the discriminator. This takes us to the last part of this project which is defining the <em>loss function</em> and <em>training loop</em>.</p> <h1 id="loss-function-and-train-loop">Loss function and Train loop</h1> <p>GANs train a little different from normal networks. It is a zero-sum game between two networks where one tries to fool another to accept its outputs as authentic. The loss function, defined to do so, is called adversarial loss:</p> \[min_G max_D log(D(x))+log(1−D(G(z)))\] <p>You can read more about it in the <a href="https://papers.nips.cc/paper/5423-generative-adversarial-nets.pdf">original paper</a>:</p> <p>This is very similar to binary cross-entropy where we have:</p> \[ylog(x)+(1-y)log(1−x)\] <p>Training GANs is very tricky, I suggest reading <a href="https://github.com/soumith/ganhacks">GAN hacks</a> page which contains useful information regarding training GANs. We split training into two parts, one for the discriminator and one for the generator.</p> <h2 id="training-discriminator">Training Discriminator</h2> <p>The sole purpose of the discriminator is to classify real and fake images with high probability. Which means we want to maximize \(log(D(x))+log(1−D(G(z)))\) According to GAN hacks, we use two batches, one batch for true images and one for fake images. After forward pass of real images we label of <code class="language-plaintext highlighter-rouge">1</code>, we perform one <code class="language-plaintext highlighter-rouge">backward()</code> pass to calculate derivatives, then we pass fake (generated) images to <em>D</em> with label of <code class="language-plaintext highlighter-rouge">0</code> and perform another <code class="language-plaintext highlighter-rouge">backward()</code> pass to accumulate gradients and then update the weights.</p> <h2 id="training-generator">Training Generator</h2> <p>According to original paper <em>G</em> wants to minimize \(log(1−D(G(z)))\) Minimizing this means fooling <em>D</em> to output high probability (<code class="language-plaintext highlighter-rouge">1</code> means they are real) therefor this part will descend to <code class="language-plaintext highlighter-rouge">0</code>. But in the early stages of training, this is very unlikely that the <em>D</em> discriminates well, as a result of this, <em>G</em> won’t get better. But instead maximizing \(log(D(G(z)))\) would solve this issue. To only use \(log(D(G(z)))\) part of binary cross-entropy we need to pass the label <code class="language-plaintext highlighter-rouge">1</code> with <em>G</em> outputs to the discriminator.</p> <p>That’s it. There are just little modifications left in order to start the training. According to GAN hacks, initializing weights with normal distribution yield better results. To do so, we need a function to do this for us:</p> <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nf">init_weights</span><span class="p">(</span><span class="n">m</span><span class="p">):</span>
+</code></pre></div></div>
+
+<p>The generator (from now on we call it <em>G</em>) is responsible for generating images like real Sharingans. Therefore, it’s output must be an image with the same size as the real images ((3, 64, 64) tensors). On the other side, the discriminator (<em>D</em>) is responsible to decide the authenticity of input images, it outputs <code class="language-plaintext highlighter-rouge">1</code> where the image is <em>real</em> and <code class="language-plaintext highlighter-rouge">0</code> where it is <em>fake</em>. Actually, the discriminator is not that accurate, it outputs the probability of the image being authentic. Where close to <code class="language-plaintext highlighter-rouge">1</code> means the discriminator is somewhat sure that the image is real and close to <code class="language-plaintext highlighter-rouge">0</code> means vice versa. That’s why we need a <code class="language-plaintext highlighter-rouge">Sigmoid()</code> function at the end of the discriminator. This takes us to the last part of this project which is defining the <em>loss function</em> and <em>training loop</em>.</p>
+
+<h1 id="loss-function-and-train-loop">Loss function and Train loop</h1>
+<p>GANs train a little different from normal networks. It is a zero-sum game between two networks where one tries to fool another to accept its outputs as authentic. The loss function, defined to do so, is called adversarial loss:</p>
+
+\[min_G max_D log(D(x))+log(1−D(G(z)))\]
+
+<p>You can read more about it in the <a href="https://papers.nips.cc/paper/5423-generative-adversarial-nets.pdf">original paper</a>:</p>
+
+<p>This is very similar to binary cross-entropy where we have:</p>
+
+\[ylog(x)+(1-y)log(1−x)\]
+
+<p>Training GANs is very tricky, I suggest reading <a href="https://github.com/soumith/ganhacks">GAN hacks</a> page which contains useful information regarding training GANs. We split training into two parts, one for the discriminator and one for the generator.</p>
+
+<h2 id="training-discriminator">Training Discriminator</h2>
+<p>The sole purpose of the discriminator is to classify real and fake images with high probability. Which means we want to maximize \(log(D(x))+log(1−D(G(z)))\)
+According to GAN hacks, we use two batches, one batch for true images and one for fake images. After forward pass of real images we label of <code class="language-plaintext highlighter-rouge">1</code>, we perform one <code class="language-plaintext highlighter-rouge">backward()</code> pass to calculate derivatives, then we pass fake (generated) images to <em>D</em> with label of <code class="language-plaintext highlighter-rouge">0</code> and perform another <code class="language-plaintext highlighter-rouge">backward()</code> pass to accumulate gradients and then update the weights.</p>
+
+<h2 id="training-generator">Training Generator</h2>
+<p>According to original paper <em>G</em> wants to minimize \(log(1−D(G(z)))\)
+Minimizing this means fooling <em>D</em> to output high probability (<code class="language-plaintext highlighter-rouge">1</code> means they are real) therefor this part will descend to <code class="language-plaintext highlighter-rouge">0</code>. But in the early stages of training, this is very unlikely that the <em>D</em> discriminates well, as a result of this, <em>G</em> won’t get better. But instead maximizing \(log(D(G(z)))\) would solve this issue. To only use \(log(D(G(z)))\) part of binary cross-entropy we need to pass the label <code class="language-plaintext highlighter-rouge">1</code> with <em>G</em> outputs to the discriminator.</p>
+
+<p>That’s it. There are just little modifications left in order to start the training. According to GAN hacks, initializing weights with normal distribution yield better results. To do so, we need a function to do this for us:</p>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nf">init_weights</span><span class="p">(</span><span class="n">m</span><span class="p">):</span>
     <span class="c1"># get the module name
 </span>    <span class="n">classname</span> <span class="o">=</span> <span class="n">m</span><span class="p">.</span><span class="n">__class__</span><span class="p">.</span><span class="n">__name__</span>
     <span class="c1"># if it is in ['Conv', 'BatchNorm', 'Linear'], apply normal initialization
-</span>    <span class="k">if</span> <span class="n">classname</span><span class="p">.</span><span class="nf">find</span><span class="p">(</span><span class="s">'Conv'</span><span class="p">)</span> <span class="o">!=</span> <span class="o">-</span><span class="mi">1</span><span class="p">:</span>
+</span>    <span class="k">if</span> <span class="n">classname</span><span class="p">.</span><span class="nf">find</span><span class="p">(</span><span class="sh">'</span><span class="s">Conv</span><span class="sh">'</span><span class="p">)</span> <span class="o">!=</span> <span class="o">-</span><span class="mi">1</span><span class="p">:</span>
         <span class="n">nn</span><span class="p">.</span><span class="n">init</span><span class="p">.</span><span class="nf">normal_</span><span class="p">(</span><span class="n">m</span><span class="p">.</span><span class="n">weight</span><span class="p">.</span><span class="n">data</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.02</span><span class="p">)</span>
-    <span class="k">elif</span> <span class="n">classname</span><span class="p">.</span><span class="nf">find</span><span class="p">(</span><span class="s">'BatchNorm'</span><span class="p">)</span> <span class="o">!=</span> <span class="o">-</span><span class="mi">1</span><span class="p">:</span>
+    <span class="k">elif</span> <span class="n">classname</span><span class="p">.</span><span class="nf">find</span><span class="p">(</span><span class="sh">'</span><span class="s">BatchNorm</span><span class="sh">'</span><span class="p">)</span> <span class="o">!=</span> <span class="o">-</span><span class="mi">1</span><span class="p">:</span>
         <span class="n">nn</span><span class="p">.</span><span class="n">init</span><span class="p">.</span><span class="nf">normal_</span><span class="p">(</span><span class="n">m</span><span class="p">.</span><span class="n">weight</span><span class="p">.</span><span class="n">data</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.02</span><span class="p">)</span>
         <span class="n">nn</span><span class="p">.</span><span class="n">init</span><span class="p">.</span><span class="nf">constant_</span><span class="p">(</span><span class="n">m</span><span class="p">.</span><span class="n">bias</span><span class="p">.</span><span class="n">data</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
-    <span class="k">elif</span> <span class="n">classname</span><span class="p">.</span><span class="nf">find</span><span class="p">(</span><span class="s">'Linear'</span><span class="p">)</span> <span class="o">!=</span> <span class="o">-</span><span class="mi">1</span><span class="p">:</span>
+    <span class="k">elif</span> <span class="n">classname</span><span class="p">.</span><span class="nf">find</span><span class="p">(</span><span class="sh">'</span><span class="s">Linear</span><span class="sh">'</span><span class="p">)</span> <span class="o">!=</span> <span class="o">-</span><span class="mi">1</span><span class="p">:</span>
         <span class="n">nn</span><span class="p">.</span><span class="n">init</span><span class="p">.</span><span class="nf">normal_</span><span class="p">(</span><span class="n">m</span><span class="p">.</span><span class="n">weight</span><span class="p">.</span><span class="n">data</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.02</span><span class="p">)</span>
         <span class="n">nn</span><span class="p">.</span><span class="n">init</span><span class="p">.</span><span class="nf">constant_</span><span class="p">(</span><span class="n">m</span><span class="p">.</span><span class="n">bias</span><span class="p">.</span><span class="n">data</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
-</code></pre></div></div> <p>And here is the training loop, some functions are imported from <code class="language-plaintext highlighter-rouge">utils.py</code> that you can find in the source code:</p> <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">import</span> <span class="n">numpy</span> <span class="k">as</span> <span class="n">np</span>
+</code></pre></div></div>
+<p>And here is the training loop, some functions are imported from <code class="language-plaintext highlighter-rouge">utils.py</code> that you can find in the source code:</p>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">import</span> <span class="n">numpy</span> <span class="k">as</span> <span class="n">np</span>
 <span class="kn">import</span> <span class="n">torch</span>
 <span class="kn">from</span> <span class="n">torchvision</span> <span class="kn">import</span> <span class="n">transforms</span>
 <span class="kn">import</span> <span class="n">torchvision.utils</span> <span class="k">as</span> <span class="n">vutils</span>
@@ -164,13 +227,13 @@
 
 
 <span class="k">def</span> <span class="nf">main</span><span class="p">():</span>
-    <span class="n">cfg</span> <span class="o">=</span> <span class="nf">get_conf</span><span class="p">(</span><span class="s">"conf/train"</span><span class="p">)</span>
+    <span class="n">cfg</span> <span class="o">=</span> <span class="nf">get_conf</span><span class="p">(</span><span class="sh">"</span><span class="s">conf/train</span><span class="sh">"</span><span class="p">)</span>
     <span class="n">device</span> <span class="o">=</span> <span class="nf">get_device</span><span class="p">()</span>
     <span class="c1"># Create the generator
 </span>    <span class="n">netG</span> <span class="o">=</span> <span class="nc">Generator</span><span class="p">().</span><span class="nf">to</span><span class="p">(</span><span class="n">device</span><span class="p">)</span>
 
     <span class="c1"># Handle multi-gpu
-</span>    <span class="nf">if </span><span class="p">(</span><span class="n">device</span><span class="p">.</span><span class="nb">type</span> <span class="o">==</span> <span class="s">'cuda'</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span><span class="n">cfg</span><span class="p">.</span><span class="n">ngpu</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">):</span>
+</span>    <span class="nf">if </span><span class="p">(</span><span class="n">device</span><span class="p">.</span><span class="nb">type</span> <span class="o">==</span> <span class="sh">'</span><span class="s">cuda</span><span class="sh">'</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span><span class="n">cfg</span><span class="p">.</span><span class="n">ngpu</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">):</span>
         <span class="n">netG</span> <span class="o">=</span> <span class="n">nn</span><span class="p">.</span><span class="nc">DataParallel</span><span class="p">(</span><span class="n">netG</span><span class="p">,</span> <span class="nf">list</span><span class="p">(</span><span class="nf">range</span><span class="p">(</span><span class="n">cfg</span><span class="p">.</span><span class="n">ngpu</span><span class="p">)))</span>
 
     <span class="c1"># Apply the weights_init function to randomly
@@ -180,7 +243,7 @@
 </span>    <span class="n">netD</span> <span class="o">=</span> <span class="nc">Discriminator</span><span class="p">().</span><span class="nf">to</span><span class="p">(</span><span class="n">device</span><span class="p">)</span>
 
     <span class="c1"># Handle multi-gpu if desired
-</span>    <span class="nf">if </span><span class="p">(</span><span class="n">device</span><span class="p">.</span><span class="nb">type</span> <span class="o">==</span> <span class="s">'cuda'</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span><span class="n">cfg</span><span class="p">.</span><span class="n">ngpu</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">):</span>
+</span>    <span class="nf">if </span><span class="p">(</span><span class="n">device</span><span class="p">.</span><span class="nb">type</span> <span class="o">==</span> <span class="sh">'</span><span class="s">cuda</span><span class="sh">'</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span><span class="n">cfg</span><span class="p">.</span><span class="n">ngpu</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">):</span>
         <span class="n">netD</span> <span class="o">=</span> <span class="n">nn</span><span class="p">.</span><span class="nc">DataParallel</span><span class="p">(</span><span class="n">netD</span><span class="p">,</span> <span class="nf">list</span><span class="p">(</span><span class="nf">range</span><span class="p">(</span><span class="n">cfg</span><span class="p">.</span><span class="n">ngpu</span><span class="p">)))</span>
 
     <span class="c1"># Apply the weights_init function to randomly
@@ -210,7 +273,7 @@
     <span class="n">real_label</span> <span class="o">=</span> <span class="mf">1.</span>
     <span class="n">fake_label</span> <span class="o">=</span> <span class="mf">0.</span>
     <span class="c1"># load adam optimizer's config
-</span>    <span class="n">cfg_adam</span> <span class="o">=</span> <span class="nf">get_conf</span><span class="p">(</span><span class="s">"conf/optimizer/adam"</span><span class="p">)</span>
+</span>    <span class="n">cfg_adam</span> <span class="o">=</span> <span class="nf">get_conf</span><span class="p">(</span><span class="sh">"</span><span class="s">conf/optimizer/adam</span><span class="sh">"</span><span class="p">)</span>
     <span class="c1"># Setup Adam optimizers for both G and D
 </span>    <span class="n">optimizerD</span> <span class="o">=</span> <span class="n">optim</span><span class="p">.</span><span class="nc">Adam</span><span class="p">(</span><span class="n">netD</span><span class="p">.</span><span class="nf">parameters</span><span class="p">(),</span> 
                             <span class="n">lr</span><span class="o">=</span><span class="n">cfg_adam</span><span class="p">.</span><span class="n">lr</span><span class="p">,</span> 
@@ -226,7 +289,7 @@
     <span class="n">D_losses</span> <span class="o">=</span> <span class="p">[]</span>
     <span class="n">iters</span> <span class="o">=</span> <span class="mi">0</span>
 
-    <span class="nf">print</span><span class="p">(</span><span class="s">"Starting Training Loop..."</span><span class="p">)</span>
+    <span class="nf">print</span><span class="p">(</span><span class="sh">"</span><span class="s">Starting Training Loop...</span><span class="sh">"</span><span class="p">)</span>
     <span class="c1"># For each epoch
 </span>    <span class="k">for</span> <span class="n">epoch</span> <span class="ow">in</span> <span class="nf">range</span><span class="p">(</span><span class="n">cfg</span><span class="p">.</span><span class="n">num_epochs</span><span class="p">):</span>
         <span class="c1"># For each batch in the dataloader
@@ -297,7 +360,7 @@
 
             <span class="c1"># Output training stats
 </span>            <span class="k">if</span> <span class="n">i</span> <span class="o">%</span> <span class="mi">25</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
-                <span class="nf">print</span><span class="p">(</span><span class="s">'[%d/%d][%d/%d]</span><span class="se">\t</span><span class="s">Loss_D: %.4f</span><span class="se">\t</span><span class="s">Loss_G: %.4f</span><span class="se">\t</span><span class="s">D(x): %.4f</span><span class="se">\t</span><span class="s">D(G(z)): %.4f / %.4f'</span>
+                <span class="nf">print</span><span class="p">(</span><span class="sh">'</span><span class="s">[%d/%d][%d/%d]</span><span class="se">\t</span><span class="s">Loss_D: %.4f</span><span class="se">\t</span><span class="s">Loss_G: %.4f</span><span class="se">\t</span><span class="s">D(x): %.4f</span><span class="se">\t</span><span class="s">D(G(z)): %.4f / %.4f</span><span class="sh">'</span>
                       <span class="o">%</span> <span class="p">(</span><span class="n">epoch</span><span class="p">,</span> <span class="n">cfg</span><span class="p">.</span><span class="n">num_epochs</span><span class="p">,</span> <span class="n">i</span><span class="p">,</span> <span class="nf">len</span><span class="p">(</span><span class="n">dataloader</span><span class="p">),</span>
                          <span class="n">errD</span><span class="p">.</span><span class="nf">item</span><span class="p">(),</span> <span class="n">errG</span><span class="p">.</span><span class="nf">item</span><span class="p">(),</span> <span class="n">D_x</span><span class="p">,</span> <span class="n">D_G_z1</span><span class="p">,</span> <span class="n">D_G_z2</span><span class="p">))</span>
 
@@ -313,31 +376,295 @@
                 <span class="n">img_list</span><span class="p">.</span><span class="nf">append</span><span class="p">(</span><span class="n">vutils</span><span class="p">.</span><span class="nf">make_grid</span><span class="p">(</span><span class="n">fake</span><span class="p">,</span> <span class="n">padding</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">normalize</span><span class="o">=</span><span class="bp">True</span><span class="p">))</span>
 
             <span class="n">iters</span> <span class="o">+=</span> <span class="mi">1</span>
-</code></pre></div></div> <p>This is like normal training but with a little adjustment where we need to train both <em>D</em> and <em>G</em>.</p> <h1 id="results">Results</h1> <p>After 200 epochs the results are like this:</p> <div class="row mt-3"> <figure> <picture> <source class="responsive-img-srcset" media="(max-width: 480px)" srcset="/assets/img/sharingan/sharingan_200-480.webp"/> <source class="responsive-img-srcset" media="(max-width: 800px)" srcset="/assets/img/sharingan/sharingan_200-800.webp"/> <source class="responsive-img-srcset" media="(max-width: 1400px)" srcset="/assets/img/sharingan/sharingan_200-1400.webp"/> <img src="/assets/img/sharingan/sharingan_200.png" class="img-fluid rounded z-depth-1" width="auto" height="auto" data-zoomable="" onerror="this.onerror=null; $('.responsive-img-srcset').remove();"/> </picture> </figure> </div> <p>As you can see, the generator learns some patterns from the data. Of course, if you train it for more epochs, it gets better and better. One improvement (again according to GAN hacks) that we can add is to train <em>D</em> more than <em>G</em>. The notion behind it is that if <em>D</em> do its job perfectly, then <em>G</em> challenged and need to can change more to keep up.</p> <p>I perform another modification on <em>D</em>’s loss. As the output of <em>D</em> is a probability, its gradients are small, as a result, the changes in weights will be minor. To make gradients bigger for bigger changes, I add squared distance of real images with fake images to the <em>D</em>’s loss with some weight $\beta$ (here $\beta=0.01$). So, the <em>D</em>’s loss becomes this:</p> <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">errD_fake</span> <span class="o">=</span> <span class="nf">criterion</span><span class="p">(</span><span class="n">output</span><span class="p">,</span> <span class="n">label</span><span class="p">)</span> <span class="o">+</span> <span class="p">(</span><span class="n">beta</span> <span class="o">*</span> <span class="p">(</span><span class="n">fake</span><span class="p">.</span><span class="nf">detach</span><span class="p">()</span> <span class="o">-</span> <span class="n">real_cpu</span><span class="p">).</span><span class="nf">pow</span><span class="p">(</span><span class="mi">2</span><span class="p">).</span><span class="nf">mean</span><span class="p">(</span><span class="mi">0</span><span class="p">).</span><span class="nf">sum</span><span class="p">())</span>
-</code></pre></div></div> <p>Although we should keep this in mind, the gradients should not get too big. In the next section, I will discuss how to prevent this. But for now, this modification yields this result for <code class="language-plaintext highlighter-rouge">1000</code> epochs:</p> <div class="row mt-3"> <figure> <picture> <source class="responsive-img-srcset" media="(max-width: 480px)" srcset="/assets/img/sharingan/sharingan_modified_collapsed.gif-480.webp"/> <source class="responsive-img-srcset" media="(max-width: 800px)" srcset="/assets/img/sharingan/sharingan_modified_collapsed.gif-800.webp"/> <source class="responsive-img-srcset" media="(max-width: 1400px)" srcset="/assets/img/sharingan/sharingan_modified_collapsed.gif-1400.webp"/> <img src="/assets/img/sharingan/sharingan_modified_collapsed.gif" class="img-fluid rounded z-depth-1" width="auto" height="auto" data-zoomable="" onerror="this.onerror=null; $('.responsive-img-srcset').remove();"/> </picture> </figure> </div> <p>As you can see here, the images getting better and better until they hit a wall and reset, and at the end, <em>G</em> only generate one Sharingan, that is because this pattern was able to fool <em>D</em> and <em>G</em> does not bother itself to generate another Sharingan. This situation is called <em>mode collapse</em> in GAN literature.</p> <div class="row mt-3"> <figure> <picture> <source class="responsive-img-srcset" media="(max-width: 480px)" srcset="/assets/img/sharingan/sharingan_mod_loss-480.webp"/> <source class="responsive-img-srcset" media="(max-width: 800px)" srcset="/assets/img/sharingan/sharingan_mod_loss-800.webp"/> <source class="responsive-img-srcset" media="(max-width: 1400px)" srcset="/assets/img/sharingan/sharingan_mod_loss-1400.webp"/> <img src="/assets/img/sharingan/sharingan_mod_loss.png" class="img-fluid rounded z-depth-1" width="auto" height="auto" data-zoomable="" onerror="this.onerror=null; $('.responsive-img-srcset').remove();"/> </picture> </figure> </div> <p>If we take a look at the loss functions of <em>D</em> and <em>G</em>, we can see two spikes in <em>D</em>’s loss. Those spikes are exactly where we see that generated images falling apart. <em>G</em> generates garbage and <em>D</em> can’t decide.</p> <p>Back to where we need to prevent gradients from exploding. To prevent this, we can add gradient clipping in order to prevent the gradients going higher than a threshold. One option is to use gradient clipping (here <code class="language-plaintext highlighter-rouge">clipping_threshold_d = 5</code>) which should be added just before updating weights:</p> <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">if</span> <span class="n">clipping_threshold_d</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+</code></pre></div></div>
+<p>This is like normal training but with a little adjustment where we need to train both <em>D</em> and <em>G</em>.</p>
+
+<h1 id="results">Results</h1>
+<p>After 200 epochs the results are like this:</p>
+
+<div class="row mt-3">
+        <figure>
+
+  <picture>
+    
+    <source class="responsive-img-srcset" media="(max-width: 480px)" srcset="/assets/img/sharingan/sharingan_200-480.webp" />
+    <source class="responsive-img-srcset" media="(max-width: 800px)" srcset="/assets/img/sharingan/sharingan_200-800.webp" />
+    <source class="responsive-img-srcset" media="(max-width: 1400px)" srcset="/assets/img/sharingan/sharingan_200-1400.webp" />
+    
+
+    <!-- Fallback to the original file -->
+    <img src="/assets/img/sharingan/sharingan_200.png" class="img-fluid rounded z-depth-1" width="auto" height="auto" data-zoomable="" onerror="this.onerror=null; $('.responsive-img-srcset').remove();" />
+
+  </picture>
+
+</figure>
+
+</div>
+
+<p>As you can see, the generator learns some patterns from the data. Of course, if you train it for more epochs, it gets better and better. One improvement (again according to GAN hacks) that we can add is to train <em>D</em> more than <em>G</em>. The notion behind it is that if <em>D</em> do its job perfectly, then <em>G</em> challenged and need to can change more to keep up.</p>
+
+<p>I perform another modification on <em>D</em>’s loss. As the output of <em>D</em> is a probability, its gradients are small, as a result, the changes in weights will be minor. To make gradients bigger for bigger changes, I add squared distance of real images with fake images to the <em>D</em>’s loss with some weight $\beta$ (here $\beta=0.01$). So, the <em>D</em>’s loss becomes this:</p>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">errD_fake</span> <span class="o">=</span> <span class="nf">criterion</span><span class="p">(</span><span class="n">output</span><span class="p">,</span> <span class="n">label</span><span class="p">)</span> <span class="o">+</span> <span class="p">(</span><span class="n">beta</span> <span class="o">*</span> <span class="p">(</span><span class="n">fake</span><span class="p">.</span><span class="nf">detach</span><span class="p">()</span> <span class="o">-</span> <span class="n">real_cpu</span><span class="p">).</span><span class="nf">pow</span><span class="p">(</span><span class="mi">2</span><span class="p">).</span><span class="nf">mean</span><span class="p">(</span><span class="mi">0</span><span class="p">).</span><span class="nf">sum</span><span class="p">())</span>
+</code></pre></div></div>
+
+<p>Although we should keep this in mind, the gradients should not get too big. In the next section, I will discuss how to prevent this. But for now, this modification yields this result for <code class="language-plaintext highlighter-rouge">1000</code> epochs:</p>
+
+<div class="row mt-3">
+        <figure>
+
+  <picture>
+    
+    <source class="responsive-img-srcset" media="(max-width: 480px)" srcset="/assets/img/sharingan/sharingan_modified_collapsed.gif-480.webp" />
+    <source class="responsive-img-srcset" media="(max-width: 800px)" srcset="/assets/img/sharingan/sharingan_modified_collapsed.gif-800.webp" />
+    <source class="responsive-img-srcset" media="(max-width: 1400px)" srcset="/assets/img/sharingan/sharingan_modified_collapsed.gif-1400.webp" />
+    
+
+    <!-- Fallback to the original file -->
+    <img src="/assets/img/sharingan/sharingan_modified_collapsed.gif" class="img-fluid rounded z-depth-1" width="auto" height="auto" data-zoomable="" onerror="this.onerror=null; $('.responsive-img-srcset').remove();" />
+
+  </picture>
+
+</figure>
+
+</div>
+
+<p>As you can see here, the images getting better and better until they hit a wall and reset, and at the end, <em>G</em> only generate one Sharingan, that is because this pattern was able to fool <em>D</em> and <em>G</em> does not bother itself to generate another Sharingan. This situation is called <em>mode collapse</em> in GAN literature.</p>
+
+<div class="row mt-3">
+        <figure>
+
+  <picture>
+    
+    <source class="responsive-img-srcset" media="(max-width: 480px)" srcset="/assets/img/sharingan/sharingan_mod_loss-480.webp" />
+    <source class="responsive-img-srcset" media="(max-width: 800px)" srcset="/assets/img/sharingan/sharingan_mod_loss-800.webp" />
+    <source class="responsive-img-srcset" media="(max-width: 1400px)" srcset="/assets/img/sharingan/sharingan_mod_loss-1400.webp" />
+    
+
+    <!-- Fallback to the original file -->
+    <img src="/assets/img/sharingan/sharingan_mod_loss.png" class="img-fluid rounded z-depth-1" width="auto" height="auto" data-zoomable="" onerror="this.onerror=null; $('.responsive-img-srcset').remove();" />
+
+  </picture>
+
+</figure>
+
+</div>
+
+<p>If we take a look at the loss functions of <em>D</em> and <em>G</em>, we can see two spikes in <em>D</em>’s loss. Those spikes are exactly where we see that generated images falling apart. <em>G</em> generates garbage and <em>D</em> can’t decide.</p>
+
+<p>Back to where we need to prevent gradients from exploding. To prevent this, we can add gradient clipping in order to prevent the gradients going higher than a threshold. One option is to use gradient clipping (here <code class="language-plaintext highlighter-rouge">clipping_threshold_d = 5</code>) which should be added just before updating weights:</p>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">if</span> <span class="n">clipping_threshold_d</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
                     <span class="n">nn</span><span class="p">.</span><span class="n">utils</span><span class="p">.</span><span class="nf">clip_grad_norm_</span><span class="p">(</span><span class="n">netD</span><span class="p">.</span><span class="nf">parameters</span><span class="p">(),</span>
                                      <span class="n">clipping_threshold_d</span><span class="p">)</span>
 <span class="c1"># Update D
 </span><span class="n">optimizerD</span><span class="p">.</span><span class="nf">step</span><span class="p">()</span>
-</code></pre></div></div> <p>Another option is to add <a href="https://arxiv.org/abs/1802.05957">spectral normalization</a> to <em>D</em> to stabilize its training. I also added it to the <em>G</em> as well. To add this in code, when defining <em>G</em> and <em>D</em> components, instead of <code class="language-plaintext highlighter-rouge">ConvTranspose2d</code> and <code class="language-plaintext highlighter-rouge">Conv2d</code> add these:</p> <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">nn</span><span class="p">.</span><span class="n">utils</span><span class="p">.</span><span class="nf">spectral_norm</span><span class="p">(</span><span class="n">nn</span><span class="p">.</span><span class="nc">ConvTranspose2d</span><span class="p">(...))</span>
+</code></pre></div></div>
+<p>Another option is to add <a href="https://arxiv.org/abs/1802.05957">spectral normalization</a> to <em>D</em> to stabilize its training. I also added it to the <em>G</em> as well. To add this in code, when defining <em>G</em> and <em>D</em> components, instead of <code class="language-plaintext highlighter-rouge">ConvTranspose2d</code> and <code class="language-plaintext highlighter-rouge">Conv2d</code> add these:</p>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">nn</span><span class="p">.</span><span class="n">utils</span><span class="p">.</span><span class="nf">spectral_norm</span><span class="p">(</span><span class="n">nn</span><span class="p">.</span><span class="nc">ConvTranspose2d</span><span class="p">(...))</span>
 <span class="n">nn</span><span class="p">.</span><span class="n">utils</span><span class="p">.</span><span class="nf">spectral_norm</span><span class="p">(</span><span class="n">nn</span><span class="p">.</span><span class="nc">Conv2d</span><span class="p">(...))</span>
-</code></pre></div></div> <p>With these optimizations and without modified <em>D</em>’s loss, after 200 epochs we get:</p> <div class="row mt-3"> <figure> <picture> <source class="responsive-img-srcset" media="(max-width: 480px)" srcset="/assets/img/sharingan/sharingan_mod_sn.gif-480.webp"/> <source class="responsive-img-srcset" media="(max-width: 800px)" srcset="/assets/img/sharingan/sharingan_mod_sn.gif-800.webp"/> <source class="responsive-img-srcset" media="(max-width: 1400px)" srcset="/assets/img/sharingan/sharingan_mod_sn.gif-1400.webp"/> <img src="/assets/img/sharingan/sharingan_mod_sn.gif" class="img-fluid rounded z-depth-1" width="auto" height="auto" data-zoomable="" onerror="this.onerror=null; $('.responsive-img-srcset').remove();"/> </picture> </figure> </div> <div class="row mt-3"> <figure> <picture> <source class="responsive-img-srcset" media="(max-width: 480px)" srcset="/assets/img/sharingan/sharingan_200_mod-480.webp"/> <source class="responsive-img-srcset" media="(max-width: 800px)" srcset="/assets/img/sharingan/sharingan_200_mod-800.webp"/> <source class="responsive-img-srcset" media="(max-width: 1400px)" srcset="/assets/img/sharingan/sharingan_200_mod-1400.webp"/> <img src="/assets/img/sharingan/sharingan_200_mod.png" class="img-fluid rounded z-depth-1" width="auto" height="auto" data-zoomable="" onerror="this.onerror=null; $('.responsive-img-srcset').remove();"/> </picture> </figure> </div> <p>Comparing the first run with the optimized version, we can see that in the latter, <em>G</em> does its best to generate Sharingans with different patterns. After 800 more epochs:</p> <div class="row mt-3"> <figure> <picture> <source class="responsive-img-srcset" media="(max-width: 480px)" srcset="/assets/img/sharingan/sharingan_1000_mod.gif-480.webp"/> <source class="responsive-img-srcset" media="(max-width: 800px)" srcset="/assets/img/sharingan/sharingan_1000_mod.gif-800.webp"/> <source class="responsive-img-srcset" media="(max-width: 1400px)" srcset="/assets/img/sharingan/sharingan_1000_mod.gif-1400.webp"/> <img src="/assets/img/sharingan/sharingan_1000_mod.gif" class="img-fluid rounded z-depth-1" width="auto" height="auto" data-zoomable="" onerror="this.onerror=null; $('.responsive-img-srcset').remove();"/> </picture> </figure> </div> <div class="row mt-3"> <figure> <picture> <source class="responsive-img-srcset" media="(max-width: 480px)" srcset="/assets/img/sharingan/sharingan_800-480.webp"/> <source class="responsive-img-srcset" media="(max-width: 800px)" srcset="/assets/img/sharingan/sharingan_800-800.webp"/> <source class="responsive-img-srcset" media="(max-width: 1400px)" srcset="/assets/img/sharingan/sharingan_800-1400.webp"/> <img src="/assets/img/sharingan/sharingan_800.png" class="img-fluid rounded z-depth-1" width="auto" height="auto" data-zoomable="" onerror="this.onerror=null; $('.responsive-img-srcset').remove();"/> </picture> </figure> </div> <p><em>G</em> collapsed again but this time it has more variety.</p> <div class="row mt-3"> <figure> <picture> <source class="responsive-img-srcset" media="(max-width: 480px)" srcset="/assets/img/sharingan/sharingan_loss_800-480.webp"/> <source class="responsive-img-srcset" media="(max-width: 800px)" srcset="/assets/img/sharingan/sharingan_loss_800-800.webp"/> <source class="responsive-img-srcset" media="(max-width: 1400px)" srcset="/assets/img/sharingan/sharingan_loss_800-1400.webp"/> <img src="/assets/img/sharingan/sharingan_loss_800.png" class="img-fluid rounded z-depth-1" width="auto" height="auto" data-zoomable="" onerror="this.onerror=null; $('.responsive-img-srcset').remove();"/> </picture> </figure> </div> <p>Taking a look at the loss function we can see this time we’ve managed to prevent spikes in <em>D</em>’s loss. If we train the model with fewer epochs the collapse would not occur. So 1000 epochs are overkill for this small dataset as in early epochs we can see good results and we should stop the training there (early stopping).</p> <p>And here is the result with optimizations and modified <em>D</em> loss function after 300 epochs (I didn’t train it more because as we saw above, it is likely would collapse):</p> <div class="row mt-3"> <figure> <picture> <source class="responsive-img-srcset" media="(max-width: 480px)" srcset="/assets/img/sharingan/sharingan_mod_300.gif-480.webp"/> <source class="responsive-img-srcset" media="(max-width: 800px)" srcset="/assets/img/sharingan/sharingan_mod_300.gif-800.webp"/> <source class="responsive-img-srcset" media="(max-width: 1400px)" srcset="/assets/img/sharingan/sharingan_mod_300.gif-1400.webp"/> <img src="/assets/img/sharingan/sharingan_mod_300.gif" class="img-fluid rounded z-depth-1" width="auto" height="auto" data-zoomable="" onerror="this.onerror=null; $('.responsive-img-srcset').remove();"/> </picture> </figure> </div> <div class="row mt-3"> <figure> <picture> <source class="responsive-img-srcset" media="(max-width: 480px)" srcset="/assets/img/sharingan/sharingan_mod_300-480.webp"/> <source class="responsive-img-srcset" media="(max-width: 800px)" srcset="/assets/img/sharingan/sharingan_mod_300-800.webp"/> <source class="responsive-img-srcset" media="(max-width: 1400px)" srcset="/assets/img/sharingan/sharingan_mod_300-1400.webp"/> <img src="/assets/img/sharingan/sharingan_mod_300.png" class="img-fluid rounded z-depth-1" width="auto" height="auto" data-zoomable="" onerror="this.onerror=null; $('.responsive-img-srcset').remove();"/> </picture> </figure> </div> <p>And for the loss:</p> <div class="row mt-3"> <figure> <picture> <source class="responsive-img-srcset" media="(max-width: 480px)" srcset="/assets/img/sharingan/sharingan_loss_mod_300-480.webp"/> <source class="responsive-img-srcset" media="(max-width: 800px)" srcset="/assets/img/sharingan/sharingan_loss_mod_300-800.webp"/> <source class="responsive-img-srcset" media="(max-width: 1400px)" srcset="/assets/img/sharingan/sharingan_loss_mod_300-1400.webp"/> <img src="/assets/img/sharingan/sharingan_loss_mod_300.png" class="img-fluid rounded z-depth-1" width="auto" height="auto" data-zoomable="" onerror="this.onerror=null; $('.responsive-img-srcset').remove();"/> </picture> </figure> </div> <p>The loss is much better and more stable.</p> <p>To be honest, with these low res images finding subtle patterns is difficult and <em>G</em> is doing a great job. For generating crystal clear Sharingan images we need improved derivatives of GAN. Hopefully, in future posts, I will talk about implementing them. And that’s it, I hope you enjoyed this post.</p>]]></content><author><name></name></author><category term="programming"/><category term="computer_vision"/><category term="generative"/><summary type="html"><![CDATA[Generative models especially with the emerge of Generative Adversarial Networks (GANs) have become the spotlight of Deep Learning in recent years. They have many applications in the wild and sometimes they are just for fun. One fun application that I really liked, was the use of GAN to generate fake Sharingans (to read more about what Sharingan is please read this article). Inspired by that video and PyTorch’s DCGAN tutorial, in this post I’m going to show you how to generate sharingans step by step. You can download the PyTorch source code from here. I highly recommend downloading the full source code because here I only explain important steps in writing a DL model, things such as config files are not discussed here. To read more about project configuration see my Hyper-parameter Management article.]]></summary></entry><entry><title type="html">Hyper-parameter Management in Deep Learning Projects</title><link href="https://mhnazeri.github.io/blog/2020/parameter_management/" rel="alternate" type="text/html" title="Hyper-parameter Management in Deep Learning Projects"/><published>2020-05-15T20:15:00+00:00</published><updated>2020-05-15T20:15:00+00:00</updated><id>https://mhnazeri.github.io/blog/2020/parameter_management</id><content type="html" xml:base="https://mhnazeri.github.io/blog/2020/parameter_management/"><![CDATA[<p>Deep Learning (DL) projects have a plethora of hyper-parameters. Especially in research, they are like knobs that should be adjusted to yields the best results. There are multiple ways one can manage these hyper-parameters in Python. In this article, I’m going to discuss 3 common approaches.</p> <h1 id="argument-parser">Argument Parser</h1> <p>The first approach which is very easy and common is to use Python’s built-in argument parser module. All we need to do is to define some parameters preferably with default values or pass/change them during the program execution. Let’s create a simple script called <code class="language-plaintext highlighter-rouge">main.py</code>:</p> <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># import the module
+</code></pre></div></div>
+<p>With these optimizations and without modified <em>D</em>’s loss, after 200 epochs we get:</p>
+
+<div class="row mt-3">
+        <figure>
+
+  <picture>
+    
+    <source class="responsive-img-srcset" media="(max-width: 480px)" srcset="/assets/img/sharingan/sharingan_mod_sn.gif-480.webp" />
+    <source class="responsive-img-srcset" media="(max-width: 800px)" srcset="/assets/img/sharingan/sharingan_mod_sn.gif-800.webp" />
+    <source class="responsive-img-srcset" media="(max-width: 1400px)" srcset="/assets/img/sharingan/sharingan_mod_sn.gif-1400.webp" />
+    
+
+    <!-- Fallback to the original file -->
+    <img src="/assets/img/sharingan/sharingan_mod_sn.gif" class="img-fluid rounded z-depth-1" width="auto" height="auto" data-zoomable="" onerror="this.onerror=null; $('.responsive-img-srcset').remove();" />
+
+  </picture>
+
+</figure>
+
+</div>
+
+<div class="row mt-3">
+        <figure>
+
+  <picture>
+    
+    <source class="responsive-img-srcset" media="(max-width: 480px)" srcset="/assets/img/sharingan/sharingan_200_mod-480.webp" />
+    <source class="responsive-img-srcset" media="(max-width: 800px)" srcset="/assets/img/sharingan/sharingan_200_mod-800.webp" />
+    <source class="responsive-img-srcset" media="(max-width: 1400px)" srcset="/assets/img/sharingan/sharingan_200_mod-1400.webp" />
+    
+
+    <!-- Fallback to the original file -->
+    <img src="/assets/img/sharingan/sharingan_200_mod.png" class="img-fluid rounded z-depth-1" width="auto" height="auto" data-zoomable="" onerror="this.onerror=null; $('.responsive-img-srcset').remove();" />
+
+  </picture>
+
+</figure>
+
+</div>
+
+<p>Comparing the first run with the optimized version, we can see that in the latter, <em>G</em> does its best to generate Sharingans with different patterns. After 800 more epochs:</p>
+
+<div class="row mt-3">
+        <figure>
+
+  <picture>
+    
+    <source class="responsive-img-srcset" media="(max-width: 480px)" srcset="/assets/img/sharingan/sharingan_1000_mod.gif-480.webp" />
+    <source class="responsive-img-srcset" media="(max-width: 800px)" srcset="/assets/img/sharingan/sharingan_1000_mod.gif-800.webp" />
+    <source class="responsive-img-srcset" media="(max-width: 1400px)" srcset="/assets/img/sharingan/sharingan_1000_mod.gif-1400.webp" />
+    
+
+    <!-- Fallback to the original file -->
+    <img src="/assets/img/sharingan/sharingan_1000_mod.gif" class="img-fluid rounded z-depth-1" width="auto" height="auto" data-zoomable="" onerror="this.onerror=null; $('.responsive-img-srcset').remove();" />
+
+  </picture>
+
+</figure>
+
+</div>
+
+<div class="row mt-3">
+        <figure>
+
+  <picture>
+    
+    <source class="responsive-img-srcset" media="(max-width: 480px)" srcset="/assets/img/sharingan/sharingan_800-480.webp" />
+    <source class="responsive-img-srcset" media="(max-width: 800px)" srcset="/assets/img/sharingan/sharingan_800-800.webp" />
+    <source class="responsive-img-srcset" media="(max-width: 1400px)" srcset="/assets/img/sharingan/sharingan_800-1400.webp" />
+    
+
+    <!-- Fallback to the original file -->
+    <img src="/assets/img/sharingan/sharingan_800.png" class="img-fluid rounded z-depth-1" width="auto" height="auto" data-zoomable="" onerror="this.onerror=null; $('.responsive-img-srcset').remove();" />
+
+  </picture>
+
+</figure>
+
+</div>
+
+<p><em>G</em> collapsed again but this time it has more variety.</p>
+
+<div class="row mt-3">
+        <figure>
+
+  <picture>
+    
+    <source class="responsive-img-srcset" media="(max-width: 480px)" srcset="/assets/img/sharingan/sharingan_loss_800-480.webp" />
+    <source class="responsive-img-srcset" media="(max-width: 800px)" srcset="/assets/img/sharingan/sharingan_loss_800-800.webp" />
+    <source class="responsive-img-srcset" media="(max-width: 1400px)" srcset="/assets/img/sharingan/sharingan_loss_800-1400.webp" />
+    
+
+    <!-- Fallback to the original file -->
+    <img src="/assets/img/sharingan/sharingan_loss_800.png" class="img-fluid rounded z-depth-1" width="auto" height="auto" data-zoomable="" onerror="this.onerror=null; $('.responsive-img-srcset').remove();" />
+
+  </picture>
+
+</figure>
+
+</div>
+
+<p>Taking a look at the loss function we can see this time we’ve managed to prevent spikes in <em>D</em>’s loss. If we train the model with fewer epochs the collapse would not occur. So 1000 epochs are overkill for this small dataset as in early epochs we can see good results and we should stop the training there (early stopping).</p>
+
+<p>And here is the result with optimizations and modified <em>D</em> loss function after 300 epochs (I didn’t train it more because as we saw above, it is likely would collapse):</p>
+
+<div class="row mt-3">
+        <figure>
+
+  <picture>
+    
+    <source class="responsive-img-srcset" media="(max-width: 480px)" srcset="/assets/img/sharingan/sharingan_mod_300.gif-480.webp" />
+    <source class="responsive-img-srcset" media="(max-width: 800px)" srcset="/assets/img/sharingan/sharingan_mod_300.gif-800.webp" />
+    <source class="responsive-img-srcset" media="(max-width: 1400px)" srcset="/assets/img/sharingan/sharingan_mod_300.gif-1400.webp" />
+    
+
+    <!-- Fallback to the original file -->
+    <img src="/assets/img/sharingan/sharingan_mod_300.gif" class="img-fluid rounded z-depth-1" width="auto" height="auto" data-zoomable="" onerror="this.onerror=null; $('.responsive-img-srcset').remove();" />
+
+  </picture>
+
+</figure>
+
+</div>
+
+<div class="row mt-3">
+        <figure>
+
+  <picture>
+    
+    <source class="responsive-img-srcset" media="(max-width: 480px)" srcset="/assets/img/sharingan/sharingan_mod_300-480.webp" />
+    <source class="responsive-img-srcset" media="(max-width: 800px)" srcset="/assets/img/sharingan/sharingan_mod_300-800.webp" />
+    <source class="responsive-img-srcset" media="(max-width: 1400px)" srcset="/assets/img/sharingan/sharingan_mod_300-1400.webp" />
+    
+
+    <!-- Fallback to the original file -->
+    <img src="/assets/img/sharingan/sharingan_mod_300.png" class="img-fluid rounded z-depth-1" width="auto" height="auto" data-zoomable="" onerror="this.onerror=null; $('.responsive-img-srcset').remove();" />
+
+  </picture>
+
+</figure>
+
+</div>
+
+<p>And for the loss:</p>
+
+<div class="row mt-3">
+        <figure>
+
+  <picture>
+    
+    <source class="responsive-img-srcset" media="(max-width: 480px)" srcset="/assets/img/sharingan/sharingan_loss_mod_300-480.webp" />
+    <source class="responsive-img-srcset" media="(max-width: 800px)" srcset="/assets/img/sharingan/sharingan_loss_mod_300-800.webp" />
+    <source class="responsive-img-srcset" media="(max-width: 1400px)" srcset="/assets/img/sharingan/sharingan_loss_mod_300-1400.webp" />
+    
+
+    <!-- Fallback to the original file -->
+    <img src="/assets/img/sharingan/sharingan_loss_mod_300.png" class="img-fluid rounded z-depth-1" width="auto" height="auto" data-zoomable="" onerror="this.onerror=null; $('.responsive-img-srcset').remove();" />
+
+  </picture>
+
+</figure>
+
+</div>
+
+<p>The loss is much better and more stable.</p>
+
+<p>To be honest, with these low res images finding subtle patterns is difficult and <em>G</em> is doing a great job. For generating crystal clear Sharingan images we need improved derivatives of GAN. Hopefully, in future posts, I will talk about implementing them. And that’s it, I hope you enjoyed this post.</p>]]></content><author><name></name></author><category term="programming" /><category term="computer_vision" /><category term="generative" /><summary type="html"><![CDATA[Generative models especially with the emerge of Generative Adversarial Networks (GANs) have become the spotlight of Deep Learning in recent years. They have many applications in the wild and sometimes they are just for fun. One fun application that I really liked, was the use of GAN to generate fake Sharingans (to read more about what Sharingan is please read this article). Inspired by that video and PyTorch’s DCGAN tutorial, in this post I’m going to show you how to generate sharingans step by step. You can download the PyTorch source code from here. I highly recommend downloading the full source code because here I only explain important steps in writing a DL model, things such as config files are not discussed here. To read more about project configuration see my Hyper-parameter Management article.]]></summary></entry><entry><title type="html">Hyper-parameter Management in Deep Learning Projects</title><link href="https://mhnazeri.github.io/blog/2020/parameter_management/" rel="alternate" type="text/html" title="Hyper-parameter Management in Deep Learning Projects" /><published>2020-05-15T20:15:00+00:00</published><updated>2020-05-15T20:15:00+00:00</updated><id>https://mhnazeri.github.io/blog/2020/parameter_management</id><content type="html" xml:base="https://mhnazeri.github.io/blog/2020/parameter_management/"><![CDATA[<p>Deep Learning (DL) projects have a plethora of hyper-parameters. Especially in research, they are like knobs that should be adjusted to yields the best results. There are multiple ways one can manage these hyper-parameters in Python. In this article, I’m going to discuss 3 common approaches.</p>
+
+<h1 id="argument-parser">Argument Parser</h1>
+<p>The first approach which is very easy and common is to use Python’s built-in argument parser module. All we need to do is to define some parameters preferably with default values or pass/change them during the program execution. Let’s create a simple script called <code class="language-plaintext highlighter-rouge">main.py</code>:</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># import the module
 </span><span class="kn">import</span> <span class="n">argparse</span>
 
 
-<span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s">"__main__"</span><span class="p">:</span>
+<span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="sh">"</span><span class="s">__main__</span><span class="sh">"</span><span class="p">:</span>
     <span class="c1"># create a parser object
 </span>    <span class="n">parser</span> <span class="o">=</span> <span class="n">argparse</span><span class="p">.</span><span class="nc">ArgumentParser</span><span class="p">()</span>
     <span class="c1"># define some arguments
-</span>    <span class="n">parser</span><span class="p">.</span><span class="nf">add_argument</span><span class="p">(</span><span class="s">'--batch_size'</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="mi">64</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">int</span><span class="p">)</span>
-    <span class="n">parser</span><span class="p">.</span><span class="nf">add_argument</span><span class="p">(</span><span class="s">'--num_epochs'</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="mi">200</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">int</span><span class="p">)</span>
+</span>    <span class="n">parser</span><span class="p">.</span><span class="nf">add_argument</span><span class="p">(</span><span class="sh">'</span><span class="s">--batch_size</span><span class="sh">'</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="mi">64</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">int</span><span class="p">)</span>
+    <span class="n">parser</span><span class="p">.</span><span class="nf">add_argument</span><span class="p">(</span><span class="sh">'</span><span class="s">--num_epochs</span><span class="sh">'</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="mi">200</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">int</span><span class="p">)</span>
 
     <span class="c1"># access the define arguments in project
 </span>    <span class="n">args</span> <span class="o">=</span> <span class="n">parser</span><span class="p">.</span><span class="nf">parse_args</span><span class="p">()</span>
     <span class="nf">print</span><span class="p">(</span><span class="n">args</span><span class="p">.</span><span class="n">batch_size</span><span class="p">)</span>
     <span class="nf">print</span><span class="p">(</span><span class="n">args</span><span class="p">.</span><span class="n">num_epochs</span><span class="p">)</span>
-</code></pre></div></div> <p>When experimenting with different values for hyper-parameters, we can change the value of each argument when running the script:</p> <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>python main.py <span class="nt">--batch_size</span> 32 <span class="nt">--num_epochs</span> 100
-</code></pre></div></div> <p>Arguments that have a double dash (<code class="language-plaintext highlighter-rouge">--</code>) at the beginning of their name are optional. If you don’t put <code class="language-plaintext highlighter-rouge">--</code> at the beginning of the argument name, it means that the argument is positional and should be provided when executing the script. You can read more about <code class="language-plaintext highlighter-rouge">argparse</code> module at <a href="https://docs.python.org/3/library/argparse.html">official docs</a>.</p> <p>This approach is effortless to implement and can be easily changed in experiments with different values. But, it has some downsides too. If the project has a lot of hyper-parameters to handle, which in research, it is usually the case, this list can become extensive. One way to circumvent this issue is to create a separate python file to hold and parse these parameters. Then, the only thing that needs to be done, is to change the default value when you want to experiment with other values.</p> <h1 id="using-auxiliary-file-formats">Using Auxiliary File Formats</h1> <p>We can also use an extra file (with different extension) to manage the hyper-parameters. Here, I’m going to introduce 3 different common files to store hyper-parameters.</p> <h2 id="ini-file"><code class="language-plaintext highlighter-rouge">.ini</code> File</h2> <p>Python has a built-in module to parse <code class="language-plaintext highlighter-rouge">.ini</code> files, therefore using <code class="language-plaintext highlighter-rouge">.ini.</code> file to store parameters in Python is easy. Also, in <code class="language-plaintext highlighter-rouge">.ini</code> files we can group hyper-parameters based on their usage. Let’s create a <code class="language-plaintext highlighter-rouge">config.ini</code> file:</p> <div class="language-ini highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nn">[TRAINING]</span>
+</code></pre></div></div>
+
+<p>When experimenting with different values for hyper-parameters, we can change the value of each argument when running the script:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>python main.py <span class="nt">--batch_size</span> 32 <span class="nt">--num_epochs</span> 100
+</code></pre></div></div>
+
+<p>Arguments that have a double dash (<code class="language-plaintext highlighter-rouge">--</code>) at the beginning of their name are optional. If you don’t put <code class="language-plaintext highlighter-rouge">--</code> at the beginning of the argument name, it means that the argument is positional and should be provided when executing the script. You can read more about <code class="language-plaintext highlighter-rouge">argparse</code> module at <a href="https://docs.python.org/3/library/argparse.html">official docs</a>.</p>
+
+<p>This approach is effortless to implement and can be easily changed in experiments with different values. But, it has some downsides too. If the project has a lot of hyper-parameters to handle, which in research, it is usually the case, this list can become extensive. One way to circumvent this issue is to create a separate python file to hold and parse these parameters. Then, the only thing that needs to be done, is to change the default value when you want to experiment with other  values.</p>
+
+<h1 id="using-auxiliary-file-formats">Using Auxiliary File Formats</h1>
+<p>We can also use an extra file (with different extension) to manage the hyper-parameters. Here, I’m going to introduce 3 different common files to store hyper-parameters.</p>
+
+<h2 id="ini-file"><code class="language-plaintext highlighter-rouge">.ini</code> File</h2>
+<p>Python has a built-in module to parse <code class="language-plaintext highlighter-rouge">.ini</code> files, therefore using <code class="language-plaintext highlighter-rouge">.ini.</code> file to store parameters in Python is easy. Also, in <code class="language-plaintext highlighter-rouge">.ini</code> files we can group hyper-parameters based on their usage. Let’s create a <code class="language-plaintext highlighter-rouge">config.ini</code> file:</p>
+<div class="language-ini highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nn">[TRAINING]</span>
 <span class="py">epochs</span> <span class="p">=</span> <span class="s">200</span>
 <span class="py">learning_rate</span> <span class="p">=</span> <span class="s">1e-4</span>
 
@@ -345,47 +672,66 @@
 <span class="py">root</span> <span class="p">=</span> <span class="s">./</span>
 <span class="py">save_model</span> <span class="p">=</span> <span class="s">./save</span>
 <span class="py">log</span> <span class="p">=</span> <span class="s">./logs</span>
-</code></pre></div></div> <p>Here, we separated the parameters into two groups, one is related to training the model, and the other is related to managing directories. We need a helper function to help us parse the <code class="language-plaintext highlighter-rouge">config.ini</code> file.</p> <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># import the required module
+</code></pre></div></div>
+<p>Here, we separated the parameters into two groups, one is related to training the model, and the other is related to managing directories. We need a helper function to help us parse the <code class="language-plaintext highlighter-rouge">config.ini</code> file.</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># import the required module
 </span><span class="kn">import</span> <span class="n">configparser</span>
 
 
 <span class="k">def</span> <span class="nf">config_parser</span><span class="p">(</span><span class="n">module_name</span><span class="p">:</span> <span class="nb">str</span><span class="o">=</span><span class="bp">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]:</span>
-    <span class="s">"""A helper function which receive the config category name,
+    <span class="sh">"""</span><span class="s">A helper function which receive the config category name,
        and returns a dictionary containing the values of 
        hyper-parameters of the specific category
-    """</span>
+    </span><span class="sh">"""</span>
     <span class="c1"># create a config parser object
 </span>    <span class="n">config</span> <span class="o">=</span> <span class="n">configparser</span><span class="p">.</span><span class="nc">ConfigParser</span><span class="p">()</span>
     <span class="c1"># pass it the absolute address of config.ini file
-</span>    <span class="n">config</span><span class="p">.</span><span class="nf">read</span><span class="p">(</span><span class="s">"config.ini"</span><span class="p">)</span>
+</span>    <span class="n">config</span><span class="p">.</span><span class="nf">read</span><span class="p">(</span><span class="sh">"</span><span class="s">config.ini</span><span class="sh">"</span><span class="p">)</span>
     <span class="k">try</span><span class="p">:</span>
         <span class="c1"># if the key present in the config file, return it
 </span>        <span class="k">return</span> <span class="n">config</span><span class="p">[</span><span class="n">module_name</span><span class="p">]</span>
     <span class="k">except</span> <span class="nb">KeyError</span> <span class="k">as</span> <span class="n">err</span><span class="p">:</span>
-        <span class="nf">print</span><span class="p">(</span><span class="sa">f</span><span class="s">"Module name should be one of the:</span><span class="se">\n</span><span class="s"> "</span>
-              <span class="sa">f</span><span class="s">"</span><span class="si">{</span><span class="n">config</span><span class="p">.</span><span class="nf">sections</span><span class="p">()</span><span class="si">}</span><span class="s"> not </span><span class="si">{</span><span class="n">err</span><span class="si">}</span><span class="s">"</span><span class="p">)</span>
-</code></pre></div></div> <p>Now that we have a helper function to parse the config file, we can use it wherever we want in the main script to obtain required hyper-parameters:</p> <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s">"__main__"</span><span class="p">:</span>
-    <span class="n">DIRECTORIES</span> <span class="o">=</span> <span class="nf">config_parser</span><span class="p">(</span><span class="s">"DIRECTORIES"</span><span class="p">)</span>
-    <span class="n">TRAINING</span> <span class="o">=</span> <span class="nf">config_parser</span><span class="p">(</span><span class="s">"TRAINING"</span><span class="p">)</span>
+        <span class="nf">print</span><span class="p">(</span><span class="sa">f</span><span class="sh">"</span><span class="s">Module name should be one of the:</span><span class="se">\n</span><span class="s"> </span><span class="sh">"</span>
+              <span class="sa">f</span><span class="sh">"</span><span class="si">{</span><span class="n">config</span><span class="p">.</span><span class="nf">sections</span><span class="p">()</span><span class="si">}</span><span class="s"> not </span><span class="si">{</span><span class="n">err</span><span class="si">}</span><span class="sh">"</span><span class="p">)</span>
+</code></pre></div></div>
+
+<p>Now that we have a helper function to parse the config file, we can use it wherever we want in the main script to obtain required hyper-parameters:</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="sh">"</span><span class="s">__main__</span><span class="sh">"</span><span class="p">:</span>
+    <span class="n">DIRECTORIES</span> <span class="o">=</span> <span class="nf">config_parser</span><span class="p">(</span><span class="sh">"</span><span class="s">DIRECTORIES</span><span class="sh">"</span><span class="p">)</span>
+    <span class="n">TRAINING</span> <span class="o">=</span> <span class="nf">config_parser</span><span class="p">(</span><span class="sh">"</span><span class="s">TRAINING</span><span class="sh">"</span><span class="p">)</span>
 
     <span class="c1"># treat the files like dictionary
-</span>    <span class="nf">print</span><span class="p">(</span><span class="n">DIRECTORIES</span><span class="p">[</span><span class="s">"root"</span><span class="p">])</span>
-    <span class="nf">print</span><span class="p">(</span><span class="n">DIRECTORIES</span><span class="p">[</span><span class="s">"log"</span><span class="p">])</span>
-    <span class="nf">print</span><span class="p">(</span><span class="nf">int</span><span class="p">(</span><span class="n">TRAINING</span><span class="p">[</span><span class="s">"epochs"</span><span class="p">]))</span>
-    <span class="nf">print</span><span class="p">(</span><span class="nf">float</span><span class="p">(</span><span class="n">TRAINING</span><span class="p">[</span><span class="s">"learning_rate"</span><span class="p">]))</span>
-</code></pre></div></div> <p>One thing that should be noted here is that the config parser treats each value as a string, therefore, we need to convert it to the desired data type. And it only supports one level deep hierarchy. But the bright side is that it keeps your main script cleaner and shorter.</p> <h2 id="python-script-as-a-config-manager">Python Script as a Config Manager</h2> <p>We can also use an auxiliary python file to hold hyper-parameters. Create a file called <code class="language-plaintext highlighter-rouge">configs.py</code> containing only a dictionary:</p> <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">config</span> <span class="o">=</span> <span class="p">{</span>
-    <span class="s">"epoch"</span><span class="p">:</span> <span class="mi">200</span><span class="p">,</span>
-    <span class="s">"learning_rate"</span><span class="p">:</span> <span class="mf">1e-4</span><span class="p">,</span>
-    <span class="s">"root"</span><span class="p">:</span> <span class="s">"./"</span>
+</span>    <span class="nf">print</span><span class="p">(</span><span class="n">DIRECTORIES</span><span class="p">[</span><span class="sh">"</span><span class="s">root</span><span class="sh">"</span><span class="p">])</span>
+    <span class="nf">print</span><span class="p">(</span><span class="n">DIRECTORIES</span><span class="p">[</span><span class="sh">"</span><span class="s">log</span><span class="sh">"</span><span class="p">])</span>
+    <span class="nf">print</span><span class="p">(</span><span class="nf">int</span><span class="p">(</span><span class="n">TRAINING</span><span class="p">[</span><span class="sh">"</span><span class="s">epochs</span><span class="sh">"</span><span class="p">]))</span>
+    <span class="nf">print</span><span class="p">(</span><span class="nf">float</span><span class="p">(</span><span class="n">TRAINING</span><span class="p">[</span><span class="sh">"</span><span class="s">learning_rate</span><span class="sh">"</span><span class="p">]))</span>
+</code></pre></div></div>
+<p>One thing that should be noted here is that the config parser treats each value as a string, therefore, we need to convert it to the desired data type. And it only supports one level deep hierarchy. But the bright side is that it keeps your main script cleaner and shorter.</p>
+
+<h2 id="python-script-as-a-config-manager">Python Script as a Config Manager</h2>
+<p>We can also use an auxiliary python file to hold hyper-parameters. Create a file called <code class="language-plaintext highlighter-rouge">configs.py</code> containing only a dictionary:</p>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">config</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="sh">"</span><span class="s">epoch</span><span class="sh">"</span><span class="p">:</span> <span class="mi">200</span><span class="p">,</span>
+    <span class="sh">"</span><span class="s">learning_rate</span><span class="sh">"</span><span class="p">:</span> <span class="mf">1e-4</span><span class="p">,</span>
+    <span class="sh">"</span><span class="s">root</span><span class="sh">"</span><span class="p">:</span> <span class="sh">"</span><span class="s">./</span><span class="sh">"</span>
 <span class="p">}</span>
-</code></pre></div></div> <p>We can add all model hyper-parameters as a dictionary. For different parts of the model we can create different dictionaries and use them as follows:</p> <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">from</span> <span class="n">configs</span> <span class="kn">import</span> <span class="n">config</span>
+</code></pre></div></div>
+<p>We can add all model hyper-parameters as a dictionary. For different parts of the model we can create different dictionaries and use them as follows:</p>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">from</span> <span class="n">configs</span> <span class="kn">import</span> <span class="n">config</span>
 
 
-<span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s">"__main__"</span><span class="p">:</span>
-    <span class="nf">print</span><span class="p">(</span><span class="n">config</span><span class="p">[</span><span class="s">"epoch"</span><span class="p">],</span> <span class="nf">type</span><span class="p">(</span><span class="n">config</span><span class="p">[</span><span class="s">"epoch"</span><span class="p">]))</span>
-    <span class="nf">print</span><span class="p">(</span><span class="n">config</span><span class="p">[</span><span class="s">"root"</span><span class="p">],</span> <span class="nf">type</span><span class="p">(</span><span class="n">config</span><span class="p">[</span><span class="s">"root"</span><span class="p">]))</span>
-    <span class="nf">print</span><span class="p">(</span><span class="n">config</span><span class="p">[</span><span class="s">"learning_rate"</span><span class="p">],</span> <span class="nf">type</span><span class="p">(</span><span class="n">config</span><span class="p">[</span><span class="s">"learning_rate"</span><span class="p">]))</span>
-</code></pre></div></div> <p>In contrast to <code class="language-plaintext highlighter-rouge">.ini</code> file, the data types are reserved and there is no need for conversion. As easy as this approach is, but it is not very common. The reason for this is that it is not language agnostic.</p> <h2 id="yaml-files">YAML Files</h2> <p>YAML file format is increasingly becoming more popular due to readability and conciseness. There are multiple third-party libraries to handle YAML files in Python. Create <code class="language-plaintext highlighter-rouge">config.yaml</code> file:</p> <div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="na">Datasets</span><span class="pi">:</span>
+<span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="sh">"</span><span class="s">__main__</span><span class="sh">"</span><span class="p">:</span>
+    <span class="nf">print</span><span class="p">(</span><span class="n">config</span><span class="p">[</span><span class="sh">"</span><span class="s">epoch</span><span class="sh">"</span><span class="p">],</span> <span class="nf">type</span><span class="p">(</span><span class="n">config</span><span class="p">[</span><span class="sh">"</span><span class="s">epoch</span><span class="sh">"</span><span class="p">]))</span>
+    <span class="nf">print</span><span class="p">(</span><span class="n">config</span><span class="p">[</span><span class="sh">"</span><span class="s">root</span><span class="sh">"</span><span class="p">],</span> <span class="nf">type</span><span class="p">(</span><span class="n">config</span><span class="p">[</span><span class="sh">"</span><span class="s">root</span><span class="sh">"</span><span class="p">]))</span>
+    <span class="nf">print</span><span class="p">(</span><span class="n">config</span><span class="p">[</span><span class="sh">"</span><span class="s">learning_rate</span><span class="sh">"</span><span class="p">],</span> <span class="nf">type</span><span class="p">(</span><span class="n">config</span><span class="p">[</span><span class="sh">"</span><span class="s">learning_rate</span><span class="sh">"</span><span class="p">]))</span>
+</code></pre></div></div>
+<p>In contrast to <code class="language-plaintext highlighter-rouge">.ini</code> file, the data types are reserved and there is no need for conversion. As easy as this approach is, but it is not very common. The reason for this is that it is not language agnostic.</p>
+
+<h2 id="yaml-files">YAML Files</h2>
+<p>YAML file format is increasingly becoming more popular due to readability and conciseness. There are multiple third-party libraries to handle YAML files in Python. Create <code class="language-plaintext highlighter-rouge">config.yaml</code> file:</p>
+<div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="na">Datasets</span><span class="pi">:</span>
   <span class="c1"># flip dataset consists of 256 images</span>
   <span class="na">flip-dataset</span><span class="pi">:</span>
     <span class="na">batch</span><span class="pi">:</span> <span class="m">32</span>
@@ -398,24 +744,39 @@
 <span class="na">Directories</span><span class="pi">:</span>
   <span class="na">root</span><span class="pi">:</span> <span class="s2">"</span><span class="s">./"</span>
   <span class="na">logs</span><span class="pi">:</span> <span class="s2">"</span><span class="s">logs/"</span>
-</code></pre></div></div> <p>As we can see, it supports multi-level hierarchy configs and even comments! In the above case, we have two different datasets, <code class="language-plaintext highlighter-rouge">flip-dataset</code> and <code class="language-plaintext highlighter-rouge">flop-dataset</code> with different configurations. To parse this file, we need a third-party library such as <a href="https://omegaconf.readthedocs.io/en/latest/index.html"><em>OmegaConf</em></a>, <a href="https://pyyaml.org"><em>PyYAML</em></a> or <a href="https://confuse.readthedocs.io/en/latest/"><em>Confuse</em></a>. Here, I’m going to use PyYAML. Install it using your favorite Python package manager:</p> <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>pip <span class="nb">install</span> <span class="nt">--user</span> pyyaml
-</code></pre></div></div> <p>We can use it in our project as follow:</p> <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">import</span> <span class="n">yaml</span>
+</code></pre></div></div>
+
+<p>As we can see, it supports multi-level hierarchy configs and even comments! In the above case, we have two different datasets, <code class="language-plaintext highlighter-rouge">flip-dataset</code> and <code class="language-plaintext highlighter-rouge">flop-dataset</code> with different configurations. To parse this file, we need a third-party library such as <a href="https://omegaconf.readthedocs.io/en/latest/index.html"><em>OmegaConf</em></a>, <a href="https://pyyaml.org"><em>PyYAML</em></a> or <a href="https://confuse.readthedocs.io/en/latest/"><em>Confuse</em></a>. Here, I’m going to use PyYAML. Install it using your favorite Python package manager:</p>
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>pip <span class="nb">install</span> <span class="nt">--user</span> pyyaml
+</code></pre></div></div>
+<p>We can use it in our project as follow:</p>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">import</span> <span class="n">yaml</span>
 
 
-<span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s">"__main__"</span><span class="p">:</span>
-    <span class="k">with</span> <span class="nf">open</span><span class="p">(</span><span class="s">"config.yaml"</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+<span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="sh">"</span><span class="s">__main__</span><span class="sh">"</span><span class="p">:</span>
+    <span class="k">with</span> <span class="nf">open</span><span class="p">(</span><span class="sh">"</span><span class="s">config.yaml</span><span class="sh">"</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
         <span class="n">config</span> <span class="o">=</span> <span class="n">yaml</span><span class="p">.</span><span class="nf">load</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">Loader</span><span class="o">=</span><span class="n">yaml</span><span class="p">.</span><span class="n">FullLoader</span><span class="p">)</span>
 
-    <span class="nf">print</span><span class="p">(</span><span class="n">config</span><span class="p">[</span><span class="s">"Datasets"</span><span class="p">][</span><span class="s">"flip-dataset"</span><span class="p">][</span><span class="s">"batch"</span><span class="p">])</span>
-    <span class="nf">print</span><span class="p">(</span><span class="n">config</span><span class="p">[</span><span class="s">"Datasets"</span><span class="p">][</span><span class="s">"flip-dataset"</span><span class="p">][</span><span class="s">"shuffle"</span><span class="p">])</span>
-    <span class="nf">print</span><span class="p">(</span><span class="n">config</span><span class="p">[</span><span class="s">"Datasets"</span><span class="p">][</span><span class="s">"flop-dataset"</span><span class="p">][</span><span class="s">"batch"</span><span class="p">])</span>
-    <span class="nf">print</span><span class="p">(</span><span class="n">config</span><span class="p">[</span><span class="s">"Directories"</span><span class="p">][</span><span class="s">"logs"</span><span class="p">])</span>
-</code></pre></div></div> <p>The good thing is that it also reserves data types and is language agnostic. One benefit of <a href="https://omegaconf.readthedocs.io/en/latest/index.html"><em>OmegaConf</em></a> with respect to other libraries is that the parameters are treated as attributes and we can call them like attributes of a class by using <code class="language-plaintext highlighter-rouge">.</code> notation. One think that should be kept in mind is that, if we want using attribute calling notation, we should be careful with our naming. For example in the config above, name <code class="language-plaintext highlighter-rouge">flip-dataset</code> is not a valid python variable name (why?). Instead use underscores like <code class="language-plaintext highlighter-rouge">flip_dataset</code>.</p> <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">from</span> <span class="n">omegaconf</span> <span class="kn">import</span> <span class="n">OmegaConf</span>
+    <span class="nf">print</span><span class="p">(</span><span class="n">config</span><span class="p">[</span><span class="sh">"</span><span class="s">Datasets</span><span class="sh">"</span><span class="p">][</span><span class="sh">"</span><span class="s">flip-dataset</span><span class="sh">"</span><span class="p">][</span><span class="sh">"</span><span class="s">batch</span><span class="sh">"</span><span class="p">])</span>
+    <span class="nf">print</span><span class="p">(</span><span class="n">config</span><span class="p">[</span><span class="sh">"</span><span class="s">Datasets</span><span class="sh">"</span><span class="p">][</span><span class="sh">"</span><span class="s">flip-dataset</span><span class="sh">"</span><span class="p">][</span><span class="sh">"</span><span class="s">shuffle</span><span class="sh">"</span><span class="p">])</span>
+    <span class="nf">print</span><span class="p">(</span><span class="n">config</span><span class="p">[</span><span class="sh">"</span><span class="s">Datasets</span><span class="sh">"</span><span class="p">][</span><span class="sh">"</span><span class="s">flop-dataset</span><span class="sh">"</span><span class="p">][</span><span class="sh">"</span><span class="s">batch</span><span class="sh">"</span><span class="p">])</span>
+    <span class="nf">print</span><span class="p">(</span><span class="n">config</span><span class="p">[</span><span class="sh">"</span><span class="s">Directories</span><span class="sh">"</span><span class="p">][</span><span class="sh">"</span><span class="s">logs</span><span class="sh">"</span><span class="p">])</span>
+</code></pre></div></div>
+<p>The good thing is that it also reserves data types and is language agnostic. One benefit of <a href="https://omegaconf.readthedocs.io/en/latest/index.html"><em>OmegaConf</em></a> with respect to other libraries is that the parameters are treated as attributes and we can call them like attributes of a class by using <code class="language-plaintext highlighter-rouge">.</code> notation. One think that should be kept in mind is that, if we want using attribute calling notation, we should be careful with our naming. For example in the config above, name <code class="language-plaintext highlighter-rouge">flip-dataset</code> is not a valid python variable name (why?). Instead use underscores like <code class="language-plaintext highlighter-rouge">flip_dataset</code>.</p>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">from</span> <span class="n">omegaconf</span> <span class="kn">import</span> <span class="n">OmegaConf</span>
 
 
-<span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s">"__main__"</span><span class="p">:</span>
-    <span class="n">config</span> <span class="o">=</span> <span class="n">OmegaConf</span><span class="p">.</span><span class="nf">load</span><span class="p">(</span><span class="s">"config.yaml"</span><span class="p">)</span>
+<span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="sh">"</span><span class="s">__main__</span><span class="sh">"</span><span class="p">:</span>
+    <span class="n">config</span> <span class="o">=</span> <span class="n">OmegaConf</span><span class="p">.</span><span class="nf">load</span><span class="p">(</span><span class="sh">"</span><span class="s">config.yaml</span><span class="sh">"</span><span class="p">)</span>
 
     <span class="nf">print</span><span class="p">(</span><span class="n">config</span><span class="p">.</span><span class="n">Datasets</span><span class="p">)</span>
     <span class="nf">print</span><span class="p">(</span><span class="n">config</span><span class="p">.</span><span class="n">Directories</span><span class="p">.</span><span class="n">logs</span><span class="p">)</span>
-</code></pre></div></div> <p>You can use different file formats of your choice such as <code class="language-plaintext highlighter-rouge">JSON</code> and <code class="language-plaintext highlighter-rouge">XML</code> to declutter the project codebase. But managing nested configs with such formats is exasperating.</p> <h1 id="hydra">Hydra</h1> <p>In situations where we have a huge project with a plethora of hyper-parameters, multiple datasets, multiple optimizer and we want to experiment with different values but we are short on time, <a href="https://hydra.cc"><strong>Hydra</strong></a> is the hero we want. It is “a framework for elegantly configuring complex applications” developed at Facebook. It uses YAML, therefore inherent its advantages. It also gives us the ability to run multiple experiments in parallel with different configurations. We can put all our configuration files in a separate directory such as <code class="language-plaintext highlighter-rouge">configs</code>. We can also create different folders to hold different configurations (called <code class="language-plaintext highlighter-rouge">config group</code>) for different parts of the project to prevent extensive config files and easily alternate between them. Another cool feature of <em>hydra</em> is that you can treat YAML keys as arguments and change them when executing the program like <code class="language-plaintext highlighter-rouge">argparse</code> module. If you see the need to use <em>hydra</em> in your project, its <a href="https://hydra.cc/docs/tutorial/simple_cli/">tutorial page</a> is comprehensive. It is a feature-packed framework and writing a tutorial about it is out of scope of this short article.</p> <h1 id="wrapping-up">Wrapping up</h1> <p>Although it seems that the approaches above are incrementally get better and better, but actually, it is not the case. All of these approaches have their own pros and cons. Choosing one is highly correlated to your project’s size and needs. I hope by showing simple examples I could give you an insight on how to choose an approach. So, which one is your favorite approach?</p>]]></content><author><name></name></author><category term="programming"/><category term="deep_learning"/><category term="programming"/><summary type="html"><![CDATA[Deep Learning (DL) projects have a plethora of hyper-parameters. Especially in research, they are like knobs that should be adjusted to yields the best results. There are multiple ways one can manage these hyper-parameters in Python. In this article, I’m going to discuss 3 common approaches.]]></summary></entry></feed>
+</code></pre></div></div>
+
+<p>You can use different file formats of your choice such as <code class="language-plaintext highlighter-rouge">JSON</code> and <code class="language-plaintext highlighter-rouge">XML</code> to declutter the project codebase. But managing nested configs with such formats is exasperating.</p>
+
+<h1 id="hydra">Hydra</h1>
+<p>In situations where we have a huge project with a plethora of hyper-parameters, multiple datasets, multiple optimizer and we want to experiment with different values but we are short on time, <a href="https://hydra.cc"><strong>Hydra</strong></a> is the hero we want. It is “a framework for elegantly configuring complex applications” developed at Facebook. It uses YAML, therefore inherent its advantages. It also gives us the ability to run multiple experiments in parallel with different configurations. We can put all our configuration files in a separate directory such as <code class="language-plaintext highlighter-rouge">configs</code>. We can also create different folders to hold different configurations (called <code class="language-plaintext highlighter-rouge">config group</code>) for different parts of the project to prevent extensive config files and easily alternate between them. Another cool feature of <em>hydra</em> is that you can treat YAML keys as arguments and change them when executing the program like <code class="language-plaintext highlighter-rouge">argparse</code> module. If you see the need to use <em>hydra</em> in your project, its <a href="https://hydra.cc/docs/tutorial/simple_cli/">tutorial page</a> is comprehensive. It is a feature-packed framework and writing a tutorial about it is out of scope of this short article.</p>
+
+<h1 id="wrapping-up">Wrapping up</h1>
+<p>Although it seems that the approaches above are incrementally get better and better, but actually, it is not the case. All of these approaches have their own pros and cons. Choosing one is highly correlated to your project’s size and needs. I hope by showing simple examples I could give you an insight on how to choose an approach. So, which one is your favorite approach?</p>]]></content><author><name></name></author><category term="programming" /><category term="deep_learning" /><category term="programming" /><summary type="html"><![CDATA[Deep Learning (DL) projects have a plethora of hyper-parameters. Especially in research, they are like knobs that should be adjusted to yields the best results. There are multiple ways one can manage these hyper-parameters in Python. In this article, I’m going to discuss 3 common approaches.]]></summary></entry></feed>

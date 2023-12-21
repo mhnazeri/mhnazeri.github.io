@@ -1,1 +1,46 @@
-<?xml version="1.0" encoding="UTF-8"?> <urlset xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9 http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd" xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"> <url> <loc>https://mhnazeri.github.io/news/announcement_1/</loc> <lastmod>2023-01-01T19:59:00+00:00</lastmod> </url> <url> <loc>https://mhnazeri.github.io/blog/2020/parameter_management/</loc> <lastmod>2020-05-15T20:15:00+00:00</lastmod> </url> <url> <loc>https://mhnazeri.github.io/blog/2020/sharinGAN/</loc> <lastmod>2020-07-29T21:16:41+00:00</lastmod> </url> <url> <loc>https://mhnazeri.github.io/</loc> </url> <url> <loc>https://mhnazeri.github.io/publications/</loc> </url> <url> <loc>https://mhnazeri.github.io/blog/tag/deep-learning/</loc> </url> <url> <loc>https://mhnazeri.github.io/blog/tag/programming/</loc> </url> <url> <loc>https://mhnazeri.github.io/blog/tag/computer-vision/</loc> </url> <url> <loc>https://mhnazeri.github.io/blog/tag/generative/</loc> </url> <url> <loc>https://mhnazeri.github.io/blog/category/programming/</loc> </url> <url> <loc>https://mhnazeri.github.io/blog/2020/</loc> </url> </urlset>
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9 http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd" xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+<url>
+<loc>https://mhnazeri.github.io/news/announcement_1/</loc>
+<lastmod>2023-01-01T19:59:00+00:00</lastmod>
+</url>
+<url>
+<loc>https://mhnazeri.github.io/news/announcement_2/</loc>
+<lastmod>2023-06-30T19:59:00+00:00</lastmod>
+</url>
+<url>
+<loc>https://mhnazeri.github.io/blog/2020/parameter_management/</loc>
+<lastmod>2020-05-15T20:15:00+00:00</lastmod>
+</url>
+<url>
+<loc>https://mhnazeri.github.io/blog/2020/sharinGAN/</loc>
+<lastmod>2020-07-29T21:16:41+00:00</lastmod>
+</url>
+<url>
+<loc>https://mhnazeri.github.io/</loc>
+</url>
+<url>
+<loc>https://mhnazeri.github.io/news/</loc>
+</url>
+<url>
+<loc>https://mhnazeri.github.io/publications/</loc>
+</url>
+<url>
+<loc>https://mhnazeri.github.io/blog/tag/deep-learning/</loc>
+</url>
+<url>
+<loc>https://mhnazeri.github.io/blog/tag/programming/</loc>
+</url>
+<url>
+<loc>https://mhnazeri.github.io/blog/tag/computer-vision/</loc>
+</url>
+<url>
+<loc>https://mhnazeri.github.io/blog/tag/generative/</loc>
+</url>
+<url>
+<loc>https://mhnazeri.github.io/blog/category/programming/</loc>
+</url>
+<url>
+<loc>https://mhnazeri.github.io/blog/2020/</loc>
+</url>
+</urlset>
