@@ -1,8 +1,8 @@
 ---
 layout: post
-date: 2023-01-01 15:59:00-0400
+date: 2023-06-30 15:59:00-0400
 inline: true
 related_posts: false
 ---
 
-I began my Ph.D. studies in Computer Science and Robotics at GMU, working with [Dr. Xuesu Xiao](https://people.cs.gmu.edu/~xxiao2/).
+[MuSoHu: A Large-Scale, Multi-Modal, Social Human Navigation Dataset](https://ieeexplore.ieee.org/document/10342447) was accepted at IROS 2023.

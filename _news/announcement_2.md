@@ -1,8 +1,8 @@
 ---
 layout: post
-date: 2023-06-30 15:59:00-0400
+date: 2024-01-14 15:59:00-0400
 inline: true
 related_posts: false
 ---
 
-[MuSoHu: A Large-Scale, Multi-Modal, Social Human Navigation Dataset](https://arxiv.org/abs/2303.14880v2.pdf) was accepted at IROS 2023.
+[Verti-wheelers](https://arxiv.org/abs/2303.00998v3) was accepted at ICRA 2024.
