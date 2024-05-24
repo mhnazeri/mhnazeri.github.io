@@ -5,4 +5,4 @@ inline: true
 related_posts: false
 ---
 
-CAHSOR: Competence-Aware High-Speed Off-Road Ground Navigation that uses SSL to augment vision space with IMU data is on [arXiv](https://arxiv.org/abs/2402.07065).
+[CAHSOR](https://arxiv.org/abs/2402.07065): Competence-Aware High-Speed Off-Road Ground Navigation that uses SSL to augment vision space with IMU data is on [arXiv](https://arxiv.org/abs/2402.07065).
