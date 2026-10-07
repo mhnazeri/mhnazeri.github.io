@@ -7,11 +7,11 @@
  ******************************************************************************/
 :root {
   --global-bg-color: #ffffff;
-  --global-code-bg-color: rgba(181, 9, 172, 0.05);
+  --global-code-bg-color: rgba(79, 70, 229, 0.05);
   --global-text-color: #000000;
   --global-text-color-light: #828282;
-  --global-theme-color: #B509AC;
-  --global-hover-color: #B509AC;
+  --global-theme-color: #4f46e5;
+  --global-hover-color: #4f46e5;
   --global-footer-bg-color: #1C1C1D;
   --global-footer-text-color: #e8e8e8;
   --global-footer-link-color: #ffffff;
@@ -39,8 +39,8 @@ html[data-theme=dark] {
   --global-code-bg-color: #2c3237;
   --global-text-color: #e8e8e8;
   --global-text-color-light: #e8e8e8;
-  --global-theme-color: #2698BA;
-  --global-hover-color: #2698BA;
+  --global-theme-color: #0f766e;
+  --global-hover-color: #0f766e;
   --global-footer-bg-color: #e8e8e8;
   --global-footer-text-color: #1C1C1D;
   --global-footer-link-color: #000000;
@@ -84,7 +84,7 @@ body.sticky-bottom-footer {
 }
 
 .container {
-  max-width: 800px;
+  max-width: 960px;
 }
 
 .profile img {
@@ -113,6 +113,21 @@ li,
 span,
 strong {
   color: var(--global-text-color);
+}
+
+body {
+  font-family: "Inter", sans-serif;
+  letter-spacing: 0.01em;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: "Source Serif 4", serif;
+  letter-spacing: 0;
 }
 
 hr {
@@ -538,7 +553,12 @@ footer.sticky-bottom {
 .publications ol.bibliography li .preview {
   width: 100%;
   min-width: 80px;
-  max-width: 200px;
+  max-width: 320px;
+  cursor: zoom-in;
+}
+.publications ol.bibliography li .publication-preview:focus-visible {
+  outline: 2px solid var(--global-theme-color);
+  outline-offset: 4px;
 }
 .publications ol.bibliography li .abbr {
   height: 2rem;
@@ -638,6 +658,26 @@ footer.sticky-bottom {
 }
 .publications ol.bibliography li div.abstract.hidden.open {
   border-color: var(--global-text-color);
+}
+
+.publication-preview-modal {
+  align-items: center;
+  background: rgba(0, 0, 0, 0.85);
+  cursor: zoom-out;
+  display: flex;
+  inset: 0;
+  justify-content: center;
+  padding: 2rem;
+  position: fixed;
+  z-index: 1050;
+}
+
+.publication-preview-modal img,
+.publication-preview-modal video {
+  cursor: default;
+  max-height: 90vh;
+  max-width: 90vw;
+  object-fit: contain;
 }
 
 figure.highlight {

@@ -190,29 +190,17 @@ $ git clone git@github.com:<your-username>/<your-repo-name>.git
 $ cd <your-repo-name>
 ```
 
-Finally, run the following command that will pull a pre-built image from DockerHub and will run your website.
+Finally, run the following command to build the current Ruby/Jekyll image and run your website.
 
 ```bash
 $ docker-compose up
 ```
 
-Note that when you run it for the first time, it will download a docker image of size 300MB or so.
+The first run downloads the Ruby base image and installs the versions locked in `Gemfile.lock`.
 
 Now, feel free to customize the theme however you like (don't forget to change the name!). After you are done, you can use the same command (`docker-compose up`) to render the webpage with all you changes. Also, make sure to commit your final changes.
 
 > To change port number, you can edit `docker-compose.yml` file.
-
-<details><summary>(click to expand) <strong>Build your own docker image:</strong></summary>
-
-> Note: this approach is only necessary if you would like to build an older or very custom version of al-folio.
-
-Build and run a new docker image using:
-```bash
-$ docker-compose -f docker-local.yml up
-```
-> If you want to update jekyll, install new ruby packages, etc., all you have to do is build the image again using `--force-recreate` argument at the end of previous command! It will download ruby and jekyll and install all ruby packages again from scratch.
-
-</details>
 
 ---
 

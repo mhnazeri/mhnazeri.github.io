@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" xml:lang="en"><generator uri="https://jekyllrb.com/" version="4.3.4">Jekyll</generator><link href="https://mhnazeri.github.io/feed.xml" rel="self" type="application/atom+xml" /><link href="https://mhnazeri.github.io/" rel="alternate" type="text/html" hreflang="en" /><updated>2024-10-23T03:40:52+00:00</updated><id>https://mhnazeri.github.io/feed.xml</id><title type="html">Mohammad</title><subtitle>Hello there, I&apos;m Mohammad. Welcome to my page!!!
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" xml:lang="en"><generator uri="https://jekyllrb.com/" version="4.4.1">Jekyll</generator><link href="https://mhnazeri.github.io/feed.xml" rel="self" type="application/atom+xml" /><link href="https://mhnazeri.github.io/" rel="alternate" type="text/html" hreflang="en" /><updated>2026-10-07T22:35:10+00:00</updated><id>https://mhnazeri.github.io/feed.xml</id><title type="html">Mohammad</title><subtitle>Hello there, I&apos;m Mohammad. Welcome to my page!!!
 </subtitle><entry><title type="html">SharinGAN</title><link href="https://mhnazeri.github.io/blog/2020/sharinGAN/" rel="alternate" type="text/html" title="SharinGAN" /><published>2020-07-29T21:16:41+00:00</published><updated>2020-07-29T21:16:41+00:00</updated><id>https://mhnazeri.github.io/blog/2020/sharinGAN</id><content type="html" xml:base="https://mhnazeri.github.io/blog/2020/sharinGAN/"><![CDATA[<p>Generative models especially with the emerge of <a href="https://papers.nips.cc/paper/5423-generative-adversarial-nets.pdf">Generative Adversarial Networks (GANs)</a> have become the spotlight of Deep Learning in recent years. They have <a href="https://github.com/nashory/gans-awesome-applications">many applications in the wild</a> and sometimes they are just for <a href="https://theaisummer.com/deepfakes/">fun</a>.
 One fun application that I really liked, was the use of GAN to generate <a href="https://www.youtube.com/watch?v=8fnynVsR53k">fake Sharingans</a> (to read more about what Sharingan is please read <a href="https://naruto.fandom.com/wiki/Sharingan">this article</a>). Inspired by that video and PyTorch’s <a href="https://pytorch.org/tutorials/beginner/dcgan_faces_tutorial.html">DCGAN tutorial</a>, in this post I’m going to show you how to generate sharingans step by step. You can download the PyTorch source code from <a href="https://github.com/mhnazeri/sharingan">here</a>. I highly recommend downloading the full source code because here I only explain important steps in writing a DL model, things such as config files are not discussed here. To read more about project configuration see my <a href="https://mhnazeri.github.io/blog/2020/parameter_management/">Hyper-parameter Management</a> article.</p>
 
@@ -664,14 +664,14 @@ Minimizing this means fooling <em>D</em> to output high probability (<code class
 
 <h2 id="ini-file"><code class="language-plaintext highlighter-rouge">.ini</code> File</h2>
 <p>Python has a built-in module to parse <code class="language-plaintext highlighter-rouge">.ini</code> files, therefore using <code class="language-plaintext highlighter-rouge">.ini.</code> file to store parameters in Python is easy. Also, in <code class="language-plaintext highlighter-rouge">.ini</code> files we can group hyper-parameters based on their usage. Let’s create a <code class="language-plaintext highlighter-rouge">config.ini</code> file:</p>
-<div class="language-ini highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nn">[TRAINING]</span>
-<span class="py">epochs</span> <span class="p">=</span> <span class="s">200</span>
-<span class="py">learning_rate</span> <span class="p">=</span> <span class="s">1e-4</span>
-
-<span class="nn">[DIRECTORIES]</span>
-<span class="py">root</span> <span class="p">=</span> <span class="s">./</span>
-<span class="py">save_model</span> <span class="p">=</span> <span class="s">./save</span>
-<span class="py">log</span> <span class="p">=</span> <span class="s">./logs</span>
+<div class="language-ini highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nn">[TRAINING]</span><span class="w">
+</span><span class="py">epochs</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="s">200</span>
+<span class="py">learning_rate</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="s">1e-4</span>
+<span class="w">
+</span><span class="nn">[DIRECTORIES]</span><span class="w">
+</span><span class="py">root</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="s">./</span>
+<span class="py">save_model</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="s">./save</span>
+<span class="py">log</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="s">./logs</span>
 </code></pre></div></div>
 <p>Here, we separated the parameters into two groups, one is related to training the model, and the other is related to managing directories. We need a helper function to help us parse the <code class="language-plaintext highlighter-rouge">config.ini</code> file.</p>
 
