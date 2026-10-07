@@ -2,9 +2,13 @@
 ---
 <!-- _layouts/bib.html -->
       <div class="row">
-        <div class="col-sm-2 {% if entry.preview %}preview{% else %}abbr{% endif %}">
+        <div class="{% if entry.preview %}col-sm-3 publication-preview{% else %}col-sm-2{% endif %} {% if entry.preview %}preview{% else %}abbr{% endif %}"{% if entry.preview %} tabindex="0" role="button" aria-label="Open publication preview"{% endif %}>
         {%- if entry.preview -%}
-          {% if entry.preview contains '://' -%}
+          {% if entry.preview contains '.mp4' -%}
+          <video class="preview z-depth-1 rounded" autoplay loop muted playsinline controls preload="metadata">
+            <source src="{{ entry.preview | prepend: '/assets/img/publication_preview/' | relative_url }}" type="video/mp4">
+          </video>
+          {% elsif entry.preview contains '://' -%}
           <img class="preview z-depth-1 rounded" src="{{ entry.preview }}">
           {%- else -%}
             {%- assign entry_path = entry.preview | prepend: '/assets/img/publication_preview/' -%}
@@ -183,6 +187,13 @@
           {%- endif %}
           {%- if entry.website %}
             <a href="{{ entry.website }}" class="btn btn-sm z-depth-0" role="button">Website</a>
+          {%- endif %}
+          {%- if entry.video %}
+            {% if entry.video contains '://' -%}
+            <a href="{{ entry.video }}" class="btn btn-sm z-depth-0" role="button">Video</a>
+            {%- else -%}
+            <a href="{{ entry.video | prepend: '/assets/img/publication_preview/' | relative_url }}" class="btn btn-sm z-depth-0" role="button">Video</a>
+            {%- endif %}
           {%- endif %}
           </div>
           {% if site.badges %}

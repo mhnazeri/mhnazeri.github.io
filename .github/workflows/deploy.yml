@@ -23,15 +23,14 @@ jobs:
     - name: Setup Ruby
       uses: ruby/setup-ruby@v1
       with:
-        ruby-version: '3.2.1'
+        ruby-version: '3.3'
         bundler-cache: true
     - name: Install and Build 🔧
       run: |
-        npm install -g mermaid.cli
+        npm install -g @mermaid-js/mermaid-cli
         bundle exec jekyll build
     - name: Deploy 🚀
       if: github.event_name != 'pull_request'
       uses: JamesIves/github-pages-deploy-action@v4
       with:
         folder: _site
-

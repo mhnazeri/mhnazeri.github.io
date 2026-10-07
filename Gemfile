@@ -1,7 +1,9 @@
 source 'https://rubygems.org'
+ruby '>= 3.2'
+
 group :jekyll_plugins do
     gem 'classifier-reborn'
-    gem 'jekyll'
+    gem 'jekyll', '~> 4.4'
     gem 'jekyll-archives'
     gem 'jekyll-diagrams'
     gem 'jekyll-email-protect'
@@ -14,7 +16,7 @@ group :jekyll_plugins do
     gem 'jekyll-sitemap'
     gem 'jekyll-twitter-plugin'
     gem 'jemoji'
-    gem 'mini_racer'
+    gem 'ostruct'
     gem 'unicode_utils'
     gem 'webrick'
     gem 'jekyll-target-blank'

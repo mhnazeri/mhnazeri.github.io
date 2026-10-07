@@ -23,7 +23,6 @@ repositories: false
 teaching: false
 ---
 
-Hello there, I'm Mohammad, a second year Ph.D. student in the Computer Science Department at George Mason University. I am very lucky to be a part of [RobotiXX lab](https://people.cs.gmu.edu/~xxiao2/RobotiXX/lab.html) and working with a group of talented people. 
+Hello, I'm Mohammad, a Ph.D. candidate in Computer Science at George Mason University, working in the [RobotiXX lab](https://people.cs.gmu.edu/~xxiao2/RobotiXX/lab.html).
 
-**Research Goal:** My research focuses on aiding mobile robots to become more aware of their surrounding and navigate autonomously with minimum human supervision. I approach this challenge by going beyond task-specific agents and designing self-supervised algorithms that learn by unifying multiple data modalities to better understand the environment.
-
+**Research Goal:** I study how robots can learn to understand and act in the physical world with minimal human supervision. My work combines self-supervised learning from multiple sensor modalities, learned models of how the world responds to a robot's actions, and real-time planning with those models on real hardware. I'm especially interested in representations and world models that aren't tied to a single task, so the same ideas can carry across robots, environments, and embodiments.
