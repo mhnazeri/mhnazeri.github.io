@@ -2,8 +2,8 @@
 layout: post
 title: Hyper-parameter Management in Deep Learning Projects
 date: 2020-05-16T00:45:00+04:30
-tags: deep_learning programming
-categories: programming
+tags: programming code
+categories: musings
 ---
 
 Deep Learning (DL) projects have a plethora of hyper-parameters. Especially in research, they are like knobs that should be adjusted to yields the best results. There are multiple ways one can manage these hyper-parameters in Python. In this article, I'm going to discuss 3 common approaches.

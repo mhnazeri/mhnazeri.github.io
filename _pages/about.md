@@ -2,7 +2,7 @@
 layout: about
 title: about
 permalink: /
-subtitle: <a href='#'>Ph.D. Student</a>
+subtitle: Robot Learning Researcher
 
 profile:
   align: right
@@ -21,6 +21,14 @@ cv: false
 projects: false
 repositories: false
 teaching: false
+announcements:
+  enabled: true # includes a list of news items
+  scrollable: true # adds a vertical scroll bar if there are more than 3 news items
+  limit: 5 # leave blank to include all the news in the `_news` folder
+latest_posts:
+  enabled: false
+  scrollable: true # adds a vertical scroll bar if there are more than 3 new posts items
+  limit: 3 # leave blank to include all the blog posts
 ---
 
 Hello, I'm Mohammad, a Ph.D. candidate in Computer Science at George Mason University, working in the [RobotiXX lab](https://people.cs.gmu.edu/~xxiao2/RobotiXX/lab.html).
