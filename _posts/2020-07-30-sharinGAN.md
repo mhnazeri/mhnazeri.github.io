@@ -2,7 +2,7 @@
 layout: post
 title: SharinGAN
 date: 2020-07-30T01:46:41+04:30
-tags: computer_vision generative
+tags: computer_vision generative code
 categories: programming
 autoCollapseToc: false
 ---
@@ -395,7 +395,7 @@ This is like normal training but with a little adjustment where we need to train
 After 200 epochs the results are like this: 
 
 <div class="row mt-3">
-        {% include figure.html path="assets/img/sharingan/sharingan_200.png" class="img-fluid rounded z-depth-1" zoomable=true %}
+        {% include figure.liquid path="assets/img/sharingan/sharingan_200.png" class="img-fluid rounded z-depth-1" zoomable=true %}
 </div>
 
 As you can see, the generator learns some patterns from the data. Of course, if you train it for more epochs, it gets better and better. One improvement (again according to GAN hacks) that we can add is to train *D* more than *G*. The notion behind it is that if *D* do its job perfectly, then *G* challenged and need to can change more to keep up.
@@ -408,13 +408,13 @@ errD_fake = criterion(output, label) + (beta * (fake.detach() - real_cpu).pow(2)
 Although we should keep this in mind, the gradients should not get too big. In the next section, I will discuss how to prevent this. But for now, this modification yields this result for `1000` epochs:
 
 <div class="row mt-3">
-        {% include figure.html path="assets/img/sharingan/sharingan_modified_collapsed.gif" class="img-fluid rounded z-depth-1" zoomable=true %}
+        {% include figure.liquid path="assets/img/sharingan/sharingan_modified_collapsed.gif" class="img-fluid rounded z-depth-1" zoomable=true %}
 </div>
 
 As you can see here, the images getting better and better until they hit a wall and reset, and at the end, *G* only generate one Sharingan, that is because this pattern was able to fool *D* and *G* does not bother itself to generate another Sharingan. This situation is called *mode collapse* in GAN literature. 
 
 <div class="row mt-3">
-        {% include figure.html path="/assets/img/sharingan/sharingan_mod_loss.png" class="img-fluid rounded z-depth-1" zoomable=true %}
+        {% include figure.liquid path="/assets/img/sharingan/sharingan_mod_loss.png" class="img-fluid rounded z-depth-1" zoomable=true %}
 </div>
 
 If we take a look at the loss functions of *D* and *G*, we can see two spikes in *D*'s loss. Those spikes are exactly where we see that generated images falling apart. *G* generates garbage and *D* can't decide.
@@ -435,27 +435,27 @@ nn.utils.spectral_norm(nn.Conv2d(...))
 With these optimizations and without modified *D*'s loss, after 200 epochs we get:
 
 <div class="row mt-3">
-        {% include figure.html path="/assets/img/sharingan/sharingan_mod_sn.gif" class="img-fluid rounded z-depth-1" zoomable=true %}
+        {% include figure.liquid path="/assets/img/sharingan/sharingan_mod_sn.gif" class="img-fluid rounded z-depth-1" zoomable=true %}
 </div>
 
 <div class="row mt-3">
-        {% include figure.html path="/assets/img/sharingan/sharingan_200_mod.png" class="img-fluid rounded z-depth-1" zoomable=true %}
+        {% include figure.liquid path="/assets/img/sharingan/sharingan_200_mod.png" class="img-fluid rounded z-depth-1" zoomable=true %}
 </div>
 
 Comparing the first run with the optimized version, we can see that in the latter, *G* does its best to generate Sharingans with different patterns. After 800 more epochs:
 
 <div class="row mt-3">
-        {% include figure.html path="assets/img/sharingan/sharingan_1000_mod.gif" class="img-fluid rounded z-depth-1" zoomable=true %}
+        {% include figure.liquid path="assets/img/sharingan/sharingan_1000_mod.gif" class="img-fluid rounded z-depth-1" zoomable=true %}
 </div>
 
 <div class="row mt-3">
-        {% include figure.html path="assets/img/sharingan/sharingan_800.png" class="img-fluid rounded z-depth-1" zoomable=true %}
+        {% include figure.liquid path="assets/img/sharingan/sharingan_800.png" class="img-fluid rounded z-depth-1" zoomable=true %}
 </div>
 
 *G* collapsed again but this time it has more variety. 
 
 <div class="row mt-3">
-        {% include figure.html path="assets/img/sharingan/sharingan_loss_800.png" class="img-fluid rounded z-depth-1" zoomable=true %}
+        {% include figure.liquid path="assets/img/sharingan/sharingan_loss_800.png" class="img-fluid rounded z-depth-1" zoomable=true %}
 </div>
 
 Taking a look at the loss function we can see this time we've managed to prevent spikes in *D*'s loss. If we train the model with fewer epochs the collapse would not occur. So 1000 epochs are overkill for this small dataset as in early epochs we can see good results and we should stop the training there (early stopping).
@@ -463,17 +463,17 @@ Taking a look at the loss function we can see this time we've managed to prevent
 And here is the result with optimizations and modified *D* loss function after 300 epochs (I didn't train it more because as we saw above, it is likely would collapse):
 
 <div class="row mt-3">
-        {% include figure.html path="assets/img/sharingan/sharingan_mod_300.gif" class="img-fluid rounded z-depth-1" zoomable=true %}
+        {% include figure.liquid path="assets/img/sharingan/sharingan_mod_300.gif" class="img-fluid rounded z-depth-1" zoomable=true %}
 </div>
 
 <div class="row mt-3">
-        {% include figure.html path="assets/img/sharingan/sharingan_mod_300.png" class="img-fluid rounded z-depth-1" zoomable=true %}
+        {% include figure.liquid path="assets/img/sharingan/sharingan_mod_300.png" class="img-fluid rounded z-depth-1" zoomable=true %}
 </div>
 
 And for the loss:
 
 <div class="row mt-3">
-        {% include figure.html path="assets/img/sharingan/sharingan_loss_mod_300.png" class="img-fluid rounded z-depth-1" zoomable=true %}
+        {% include figure.liquid path="assets/img/sharingan/sharingan_loss_mod_300.png" class="img-fluid rounded z-depth-1" zoomable=true %}
 </div>
 
 The loss is much better and more stable.
