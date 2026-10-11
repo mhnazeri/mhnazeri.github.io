@@ -1,0 +1,259 @@
+<!DOCTYPE html> <html lang="en"> <head> <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"> <meta charset="utf-8"> <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"> <meta http-equiv="X-UA-Compatible" content="IE=edge"> <title> Beyond Muscle Memory: Why True Planning is the Missing Link in AI Autonomy | Mohammad </title> <meta name="author" content="Mohammad Nazeri"> <meta name="description" content="Hello there, I'm Mohammad. Welcome to my page!!! "> <meta name="keywords" content="robotics, representation-learning, world-models"> <meta property="og:site_name" content="Mohammad"> <meta property="og:type" content="article"> <meta property="og:title" content="Mohammad | Beyond Muscle Memory: Why True Planning is the Missing Link in AI Autonomy"> <meta property="og:url" content="https://mhnazeri.github.io/blog/2026/planning/"> <meta property="og:description" content="Hello there, I'm Mohammad. Welcome to my page!!! "> <meta property="og:image" content="https://mhnazeri.github.io/assets/img/prof_pic.jpg"> <meta property="og:locale" content="en"> <meta name="twitter:card" content="summary"> <meta name="twitter:title" content="Beyond Muscle Memory: Why True Planning is the Missing Link in AI Autonomy"> <meta name="twitter:description" content="Hello there, I'm Mohammad. Welcome to my page!!! "> <meta name="twitter:image" content="https://mhnazeri.github.io/assets/img/prof_pic.jpg"> <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https:; style-src 'self' 'unsafe-inline' https:; img-src 'self' data: https:; font-src 'self' data: https:; media-src 'self' https:; frame-src 'self' https:; connect-src 'self' https:;"> <style>
+  :root {
+    --max-content-width: 930px;
+  }
+</style> <link rel="stylesheet" href="/assets/css/tailwind.css?v=50c64c15cbb9fd1ce6056fdb8bcb4b62"> <link defer rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@7.2.0/css/all.min.css" integrity="sha256-MVopmdyC2tYTiJ8wlktf0uh0v4NgT+vNdyVFepi7Q0c=" crossorigin="anonymous"> <link defer rel="stylesheet" href="https://cdn.jsdelivr.net/npm/academicons@1.9.5/css/academicons.min.css" integrity="sha256-SzrCOBJbGVFMahewkgjwnApaV2+av1DwMAA+/QGLyZw=" crossorigin="anonymous"> <link defer rel="stylesheet" href="https://cdn.jsdelivr.net/npm/scholar-icons@1.0.3/css/scholar-icons.css" integrity="sha256-VY3hHVj/hNX3fYG6wtbA6TcKJQl7+FthzGSyIB64klY=" crossorigin="anonymous"> <link defer rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700|Roboto+Slab:100,300,400,500,700|Material+Icons&amp;display=swap"> <link defer rel="stylesheet" href="/assets/css/jekyll-pygments-themes-github.css?v=591dab5a4e56573bf4ef7fd332894c99" media="" id="highlight_theme_light"> <link rel="shortcut icon" href="/assets/img//icon/icon.svg?v=7b0280cf618db467f4fb5bdae059f88e"> <link rel="stylesheet" href="/assets/css/main.css?v=3116ba77db9ee1581d05bb3e86fbf7f1"> <link rel="canonical" href="https://mhnazeri.github.io/blog/2026/planning/"> <script src="/assets/js/theme.js?v=5286c3e4c334d0ecb8fc0c40ff4fa7ec"></script> <link defer rel="stylesheet" href="/assets/css/jekyll-pygments-themes-native.css?v=5847e5ed4a4568527aa6cfab446049ca" media="none" id="highlight_theme_dark"> <script>
+    initTheme();
+  </script> </head> <body class="fixed-top-nav "> <header> <nav id="navbar" class="navbar navbar-light navbar-expand-sm fixed-top" role="navigation"> <div class="container"> <a class="navbar-brand title font-weight-lighter" href="/"> Mohammad </a> <button class="navbar-toggler collapsed navbar-toggler-main" type="button" data-nav-toggle="navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation"> <span class="sr-only">Toggle navigation</span> <span class="icon-bar top-bar"></span> <span class="icon-bar middle-bar"></span> <span class="icon-bar bottom-bar"></span> </button> <div class="collapse navbar-collapse navbar-collapse-main" id="navbarNav"> <ul class="navbar-nav navbar-menu-list flex-nowrap"> <li class="nav-item "> <a class="nav-link" href="/">about </a> </li> <li class="nav-item active"> <a class="nav-link" href="/blog/">blog </a> </li> <li class="nav-item "> <a class="nav-link" href="/publications/">publications </a> </li> <li class="nav-item"> <button id="search-toggle" type="button" title="Search" aria-label="Open search"> <span class="nav-link">ctrl k <i class="fa-solid fa-magnifying-glass"></i></span> </button> </li> <li class="toggle-container"> <button id="light-toggle" type="button" title="Change theme" aria-label="Change color theme"> <i class="fa-half-sun-moon" id="light-toggle-system"></i> <i class="fa-solid fa-moon" id="light-toggle-dark"></i> <i class="fa-solid fa-sun" id="light-toggle-light"></i> </button> </li> </ul> </div> </div> </nav> <progress id="progress" value="0"> <div class="progress-container"> <span class="progress-bar"></span> </div> </progress> </header> <div class="container mt-5" role="main"> <div class="post"> <header class="post-header"> <h1 class="post-title">Beyond Muscle Memory: Why True Planning is the Missing Link in AI Autonomy</h1> <p class="post-meta"> Created on October 11, 2026 </p> <p class="post-tags"> <a href="/blog/2026"> <i class="fa-solid fa-calendar fa-sm"></i> 2026 </a>   ·   <a href="/blog/tag/cs"> <i class="fa-solid fa-hashtag fa-sm"></i> cs</a>   ·   <a href="/blog/category/musing"> <i class="fa-solid fa-tag fa-sm"></i> musing</a> </p> </header> <article class="post-content"> <div id="markdown-content"> <p>If you watch modern robots or autonomous agents in action today, you might think the problem of navigation and decision-making is largely solved. Many of these systems rely heavily on Imitation Learning or Behavior Cloning (BC). The concept is straightforward: show an AI thousands of hours of a human performing a task, and train the network to map the current camera view to the correct steering or joint angle. It looks magical. But there is a catch: it is essentially just muscle memory.</p> <pre><code class="language-mermaid">graph LR
+    Input[Sensor Data] -- "High-dim Inputs" --&gt; E2E["End-to-End Policy π_θ(a|s)"]
+    E2E -- "Action" --&gt; Output[Actuation]
+    
+    style E2E fill:#e6f0fa,stroke:#333
+</code></pre> <p>If you drive the exact same route to work every single day, you eventually do it on autopilot. But what happens if a tree falls across the road? Your muscle memory can’t help you here.</p> <h3 id="the-illusion-of-reasoning-in-vlas">The Illusion of Reasoning in VLAs</h3> <pre><code class="language-mermaid">graph LR
+    Input[Sensor Data]
+    LangInput[Language Instruction]
+    Output[Actuation]
+
+    subgraph VLA ["Vision-Language-Action Model"]
+        direction LR
+        Vis[Vision Encoder]
+        LangLM[Language Model]
+        Act["Action Head π_θ"]
+    end
+
+    Input -- "Observations" --&gt; Vis
+    LangInput -- "Text Tokens" --&gt; LangLM
+    Vis -- "Visual Tokens" --&gt; LangLM
+    LangLM -- "Fused Embedding" --&gt; Act
+    LangLM -. "Instructive Signal" .-&gt; Act
+    Act -- "Action" --&gt; Output
+
+    style Act fill:#e6f0fa,stroke:#333
+</code></pre> <p>To handle more complex tasks, the robotics field has recently pivoted toward Vision-Language-Action (VLA) architectures. As illustrated above, these models pass observations through a vision encoder and language instructions through a language model. The resulting visual tokens and text tokens combine into a fused embedding that feeds into an action head.</p> <p>Because we can guide these models with natural language, they appear to reason. But under the hood, this is still behavior cloning. <strong>These are fundamentally greedy approaches: they select the best action by only considering the present moment.</strong> The text instruction acts strictly as an instructive supervisory signal. It tells the robot what to accomplish, but it does so without grounding the policy in the causal consequences of its actions. A VLA knows what the steering angle should be when an image looks a certain way, but it cannot simulate what the scene will look like after turning the wheel.</p> <h3 id="dreaming-to-plan-the-world-model-paradigm">Dreaming to Plan: The World Model Paradigm</h3> <p>Going back to the road closure example. When you see the fallen tree, you have to stop, pull up a mental map of your city, and evaluate alternative routes to find a detour. That deliberative, forward-looking process is Planning.</p> <p>At its core, planning is the ability to search through a sequence of possible future actions to achieve a specific goal. Unlike greedy methods, planning considers the long-term impact of a chosen action. To do this effectively, the system requires two core components: a dynamics model (a world model) to simulate how the environment will change, and a defined goal (a cost function) to evaluate the desirability of those future states. In our fallen tree scenario, this cost function would heavily penalize hitting the obstacle while rewarding forward progress toward your office.</p> <p>Rather than asking, “What action did the human take when the image looked like this?” a planning system asks, “If I take action \(a_1\), followed by \(a_2\), what will the world look like, and does that bring me closer to my goal?”</p> <p>In classic artificial intelligence, planning is often represented as a search tree. The agent systematically explores branches of future possibilities, scores them based on some metric, for example, safety and efficiency, and executes the optimal path.</p> <h5 id="so-why-dont-we-use-classic-planning-for-everything">So why don’t we use classic planning for everything?</h5> <p>The “Pixel Problem”: The roadblock that pushed many researchers toward behavior cloning is the sheer complexity of the real world.</p> <pre><code class="language-mermaid">graph TD
+    %% Root Node
+    Root((Start)) --&gt; L1((State))
+    Root --&gt; R1((State))
+
+    %% Left Branch (Failing/Obstacle paths)
+    L1 --&gt; L2_1((State))
+    L1 --&gt; L2_2((State))
+    
+    L2_1 --&gt; L3_1((Action))
+    L3_1 --&gt; F1((Fail))
+    L3_1 --&gt; F2((Fail))
+    
+    L2_2 --&gt; F3((Fail))
+
+    %% Right Branch (Exploration and Goal paths)
+    R1 --&gt; R2_1((State))
+    R2_1 --&gt; R3_1((State))
+    R3_1 --&gt; R4_1((State))
+    R4_1 --&gt; R5_1((State))
+    R5_1 --&gt; R6_1((State))
+    R6_1 --&gt; F4((Fail))
+
+    R1 --&gt; R2_2((State))
+    R2_2 --&gt; R3_2((State))
+    R3_2 --&gt; G1((Fail))
+    R3_2 --&gt; G2((Goal))
+
+    %% Styling
+    classDef default fill:#3b9cf2,stroke:#1e80d4,stroke-width:2px,color:#fff,font-weight:bold;
+    classDef fail fill:#e74c3c,stroke:#c0392b,stroke-width:2px,color:#fff;
+    classDef goal fill:#2ecc71,stroke:#27ae60,stroke-width:2px,color:#fff;
+    classDef start fill:#f39c12,stroke:#e67e22,stroke-width:2px,color:#fff;
+
+    class Root start;
+    class F1,F2,F3,F4,G1 fail;
+    class G2 goal;
+</code></pre> <p>Classic planning works exceptionally well in discrete, well-defined environments like a chessboard or the image above. But a robot operating in the real world doesn’t see neat, discrete grids. It sees raw, continuous pixels. If an agent receives observations as high-dimensional images, a single state \(s\) exists in a continuous space of \(\mathbb{R}^{H \times W \times C}\).</p> <p>Trying to perform search-based planning directly in this high-dimensional pixel space is computationally unfeasible. The branching factor is too large, and predicting exactly how every pixel will change after an action (e.g., simulating the lighting changes, shadows, and textures of a moving scene) wastes valuable compute on details that don’t matter for the actual task.</p> <h4 id="dreaming-to-plan-the-world-model-paradigm-1">Dreaming to Plan: The World Model Paradigm</h4> <pre><code class="language-mermaid">graph LR
+    Input[Sensor Data]
+    Output[Actuation]
+
+    subgraph WM ["World Model"]
+        direction LR
+        Percep["Perception (Encoder)"]
+        Dyn[Dynamics Model]
+        Plan[Planner / Policy]
+    end
+
+    Input -- "Observations" --&gt; Percep
+    Percep --&gt; Dyn
+    Plan -- "Action Plan" --&gt; Output
+    
+    Dyn -. "Latent State Rollout" .-&gt; Plan
+    Plan -. "Latent Action Rollout" .-&gt; Dyn
+</code></pre> <p>To bring planning back to complex robotics, we need to teach the AI to dream in summaries (latent space), not in pixels. This is where World Models and Latent Planning come in.</p> <p>Instead of trying to predict the exact visual future, we train a neural network to compress the high-dimensional visual input into a compact, low-dimensional representation called a latent state, \(z_t\). We then train a dynamics model to predict the next latent state based on the current state and a chosen action:\(z_{t+1} = f(z_t, a_t)\)</p> <p>By doing this, we strip away the noise, the exact texture of the grass, the reflection in a window, and preserve only the critical semantic and geometric information. Because this latent space is compact (and sometimes discrete), we can run expansive search algorithms again. The agent can “imagine” multiple potential futures in its latent space in a fraction of a second, find the best sequence of decisions, and then execute them using continuous control frameworks.</p> <h3 id="pioneering-the-real-world-shift">Pioneering the Real-World Shift</h3> <p>While deliberative planning in continuous pixel space is notoriously difficult, we are beginning to see breakthroughs that prove it is possible. Two recent models represent exciting first steps toward planning in the real world for naviation: <a href="https://www.amirbar.net/nwm/index.html" rel="external nofollow noopener" target="_blank">Navigation World Models (NWM)</a>, and <a href="https://robotixx.github.io/hydra" rel="external nofollow noopener" target="_blank">Hydra</a>.</p> <p>Both systems showcase how latent dynamic models allow us to reintroduce true forward-looking search into modern robotics. <em>(I will be doing a deeper dive into the specific architectures of Hydra and NWM in the future)</em>.</p> <h3 id="the-future-is-deliberative">The Future is Deliberative</h3> <p>Behavior cloning gave us a fantastic head start, providing baseline policies and getting robots moving. But muscle memory alone cannot yield true autonomy in dynamic, unstructured environments.</p> <p>The real frontier for the next generation of robotics is not just collecting more human demonstrations to cover every edge case. It is about building AI that actually understands cause and effect. By developing robust world models that capture the true dynamics of the environment, we empower agents to imagine the consequences of their actions and solve completely novel situations on the fly. We are moving away from robots that just react, toward agents that truly reason.</p> </div> </article> <br> <hr> <br> <h2 class="text-3xl font-semibold mb-4 mt-12">Enjoy Reading This Article?</h2> <p class="mb-2">Here are some more articles you might like to read next:</p> <ul class="list-disc pl-7 my-3 space-y-2 marker:text-[var(--global-theme-color)]"> <li class="leading-relaxed"> <a class="underline decoration-1 hover:text-[var(--global-hover-color)]" href="/blog/2020/sharinGAN/">SharinGAN</a> </li> <li class="leading-relaxed"> <a class="underline decoration-1 hover:text-[var(--global-hover-color)]" href="/blog/2020/parameter_management/">Hyper-parameter Management in Deep Learning Projects</a> </li> </ul> </div> </div> <footer class="fixed-bottom" role="contentinfo"> <div class="container mt-0"> © Copyright 2026 Mohammad Nazeri. Powered by <a href="https://jekyllrb.com/" target="_blank" rel="external nofollow noopener">Jekyll</a> with <a href="https://github.com/alshedivat/al-folio" rel="external nofollow noopener" target="_blank">al-folio</a> theme. Hosted by <a href="https://pages.github.com/" target="_blank" rel="external nofollow noopener">GitHub Pages</a>. </div> </footer> <script>
+  window.alFolio = {
+    compatBootstrap: false
+  };
+</script> <script src="/assets/js/nav-toggle.js?v=141bd79a73ebc0f0b6ea58e440ae79fc"></script> <script defer src="https://cdn.jsdelivr.net/npm/masonry-layout@4.2.2/dist/masonry.pkgd.min.js" integrity="sha256-Nn1q/fx0H7SNLZMQ5Hw5JLaTRZp0yILA/FRexe19VdI=" crossorigin="anonymous"></script> <script defer src="https://cdn.jsdelivr.net/npm/imagesloaded@5.0.0/imagesloaded.pkgd.min.js" integrity="sha256-htrLFfZJ6v5udOG+3kNLINIKh2gvoKqwEhHYfTTMICc=" crossorigin="anonymous"></script> <script defer src="/assets/js/masonry.js?v=e49affc7bd2646f6acdad1dbe02c2359" type="text/javascript"></script> <script defer src="https://cdn.jsdelivr.net/npm/mermaid@10.7.0/dist/mermaid.min.js" integrity="sha256-TtLOdUA8mstPoO6sGvHIGx2ceXrrX4KgIItO06XOn8A=" crossorigin="anonymous"></script> <script defer src="/assets/al_charts/js/mermaid-setup.js" type="text/javascript"></script> <script defer type="text/javascript" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3.2.2/es5/tex-mml-chtml.js" integrity="sha256-MASABpB4tYktI2Oitl4t+78w/lyA+D7b/s9GEP0JOGI=" crossorigin="anonymous"></script> <script src="/assets/al_math/js/mathjax-setup.js"></script> <script src="/assets/js/tooltips-setup.js?v=fe487e99db6c43751e6e7bdb2d6a0611"></script> <script src="/assets/js/no_defer.js?v=53b1b1a645525975c963ce8bf8bfefcf"></script> <script defer src="/assets/js/common.js?v=d41d8cd98f00b204e9800998ecf8427e"></script> <script defer src="/assets/js/copy_code.js?v=19fa03120a50f4307b3cb10d18ffbf2b" type="text/javascript"></script> <script defer src="/assets/js/jupyter_new_tab.js?v=896d254890d9b47f0281f63bfccf0dee"></script> <script defer src="https://cdn.jsdelivr.net/npm/medium-zoom@1.1.0/dist/medium-zoom.min.js" integrity="sha256-ZgMyDAIYDYGxbcpJcfUnYwNevG/xi9OHKaR/8GK+jWc=" crossorigin="anonymous"></script> <script defer src="/assets/al_img_tools/js/zoom.js"></script> <script defer src="/assets/js/progress-bar.js?v=499464c5c63ced6cf7ad62509f1e2610" type="text/javascript"></script> <script src="https://cdn.jsdelivr.net/npm/vanilla-back-to-top@7.2.1/dist/vanilla-back-to-top.min.js" integrity="sha256-uMJJ3EoTyfRBoTbR+lrfu1uRQ87RZG8AR3cVNuQVeFg=" crossorigin="anonymous"></script> <script>
+    addBackToTop();
+  </script> <script type="module" src="/assets/al_search/js/search/ninja-keys.min.js"></script> <ninja-keys hidebreadcrumbs noautoloadmdicons placeholder="Type to start searching"></ninja-keys> <script src="/assets/al_search/js/search-setup.js"></script> <script>
+// get the ninja-keys element
+const ninja = document.querySelector('ninja-keys');
+
+// add the home and posts menu items
+ninja.data = [{
+    id: "nav-about",
+    title: "about",
+    section: "Navigation",
+    handler: () => {
+      window.location.href = "/";
+    },
+  },{id: "nav-blog",
+          title: "blog",
+          description: "",
+          section: "Navigation",
+          handler: () => {
+            window.location.href = "/blog/";
+          },
+        },{id: "nav-publications",
+          title: "publications",
+          description: "publications by categories in reversed chronological order. generated by jekyll-scholar.",
+          section: "Navigation",
+          handler: () => {
+            window.location.href = "/publications/";
+          },
+        },{id: "post-beyond-muscle-memory-why-true-planning-is-the-missing-link-in-ai-autonomy",
+        
+          title: "Beyond Muscle Memory: Why True Planning is the Missing Link in AI Autonomy...",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2026/planning/";
+          
+        },
+      },{id: "post-sharingan",
+        
+          title: "SharinGAN",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2020/sharinGAN/";
+          
+        },
+      },{id: "post-hyper-parameter-management-in-deep-learning-projects",
+        
+          title: "Hyper-parameter Management in Deep Learning Projects",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2020/parameter_management/";
+          
+        },
+      },{id: "news-musohu-a-large-scale-multi-modal-social-human-navigation-dataset-https-ieeexplore-ieee-org-document-10342447-was-accepted-at-iros-2023",
+          title: '[MuSoHu: A Large-Scale, Multi-Modal, Social Human Navigation Dataset](https://ieeexplore.ieee.org/document/10342447) was accepted at IROS 2023....',
+          description: "",
+          section: "News",},{id: "news-verti-wheelers-https-arxiv-org-abs-2303-00998v3-was-accepted-at-icra-2024",
+          title: '[Verti-wheelers](https://arxiv.org/abs/2303.00998v3) was accepted at ICRA 2024.',
+          description: "",
+          section: "News",},{id: "news-cahsor-https-arxiv-org-abs-2402-07065-competence-aware-high-speed-off-road-ground-navigation-that-uses-ssl-to-augment-vision-space-with-imu-data-is-on-arxiv-https-arxiv-org-abs-2402-07065",
+          title: '[CAHSOR](https://arxiv.org/abs/2402.07065): Competence-Aware High-Speed Off-Road Ground Navigation that uses SSL to augment vision space...',
+          description: "",
+          section: "News",},{id: "news-vanp-https-arxiv-org-abs-2403-08109-and-tal-https-arxiv-org-abs-2403-16419-two-models-that-use-ssl-to-understand-the-surrounding-in-indoor-outdoor-environments-and-vertically-challenging-terrains-are-on-arxiv",
+          title: '[VANP](https://arxiv.org/abs/2403.08109) and [TAL](https://arxiv.org/abs/2403.16419) two models that use SSL to understand the surrounding in...',
+          description: "",
+          section: "News",},{id: "news-both-vanp-https-arxiv-org-abs-2403-08109-and-tal-https-arxiv-org-abs-2403-16419-were-accepted-at-iros-2024",
+          title: 'Both [VANP](https://arxiv.org/abs/2403.08109) and [TAL](https://arxiv.org/abs/2403.16419) were accepted at IROS 2024.',
+          description: "",
+          section: "News",},{id: "news-traverse-the-non-traversable-estimating-traversability-for-wheeled-mobility-on-vertically-challenging-terrain-https-arxiv-org-abs-2409-17479-is-on-arxiv",
+          title: '[Traverse the Non-Traversable: Estimating Traversability for Wheeled Mobility on Vertically Challenging Terrain](https://arxiv.org/abs/2409.17479) is...',
+          description: "",
+          section: "News",},{id: "news-verticoder-self-supervised-kinodynamic-representation-learning-on-vertically-challenging-terrain-https-arxiv-org-abs-2409-11570-was-accepted-at-icra-2025",
+          title: '[VertiCoder: Self-Supervised Kinodynamic Representation Learning on Vertically Challenging Terrain](https://arxiv.org/abs/2409.11570) was accepted at ICRA...',
+          description: "",
+          section: "News",},{id: "news-m2p2-a-multi-modal-passive-perception-dataset-for-off-road-mobility-in-extreme-low-light-conditions-https-arxiv-org-abs-2410-01105-was-accepted-at-iros-2025",
+          title: '[M2P2: A Multi-Modal Passive Perception Dataset for Off-Road Mobility in Extreme Low-Light Conditions](https://arxiv.org/abs/2410.01105)...',
+          description: "",
+          section: "News",},{id: "news-social-llava-enhancing-robot-navigation-through-human-language-reasoning-in-social-spaces-https-arxiv-org-abs-2501-09024-introduces-a-vision-language-model-and-dataset-for-human-like-reasoning-in-socially-aware-robot-navigation-was-accepted-at-iros-2025",
+          title: '[Social-LLaVA: Enhancing Robot Navigation through Human-Language Reasoning in Social Spaces](https://arxiv.org/abs/2501.09024) introduces a vision-language...',
+          description: "",
+          section: "News",},{id: "news-vertiformer-a-data-efficient-multi-task-transformer-for-off-road-robot-mobility-https-arxiv-org-abs-2502-00543-combines-dynamics-learning-and-planning-for-off-road-navigation-is-on-arxiv",
+          title: '[VertiFormer: A Data-Efficient Multi-Task Transformer for Off-Road Robot Mobility](https://arxiv.org/abs/2502.00543) combines dynamics learning and...',
+          description: "",
+          section: "News",},{id: "news-zero-shot-adaptation-to-robot-structural-damage-via-natural-language-informed-kinodynamics-modeling-https-arxiv-org-abs-2602-12385-introduces-language-informed-kinodynamics-modeling-for-zero-shot-adaptation-to-robot-structural-damage-is-on-arxiv",
+          title: '[Zero-Shot Adaptation to Robot Structural Damage via Natural Language-Informed Kinodynamics Modeling](https://arxiv.org/abs/2602.12385) introduces language-informed...',
+          description: "",
+          section: "News",},{id: "news-received-the-best-student-presentation-award-at-the-1st-workshop-on-long-term-deployments-in-the-wild-lowi-https-mobile-robotics-hub-github-io-workshop2026-at-ieee-icra-2026-in-vienna-austria-for-the-presentation-of-vertiformer-https-arxiv-org-abs-2502-00543",
+          title: 'Received the **Best Student Presentation Award** at the [1st Workshop on Long-term Deployments...',
+          description: "",
+          section: "News",},{id: "news-received-a-10-000-microsoft-azure-compute-grant-through-the-microsoft-research-accelerator-program-to-support-the-hydra-https-robotixx-github-io-hydra-project",
+          title: 'Received a **$10,000 Microsoft Azure Compute Grant** through the Microsoft Research Accelerator Program...',
+          description: "",
+          section: "News",},{id: "news-humain-human-aware-implicit-social-robot-navigation-https-arxiv-org-abs-2607-07357-was-accepted-at-iros-2026",
+          title: '[HumAIN: Human-Aware Implicit Social Robot Navigation](https://arxiv.org/abs/2607.07357) was accepted at IROS 2026.',
+          description: "",
+          section: "News",},{id: "news-hydra-a-navigation-world-action-model-with-discrete-latent-planning-and-continuous-flow-matching-execution-https-arxiv-org-abs-2608-28995-introduces-a-unified-world-model-and-planner-that-can-perform-planning-in-latent-space-is-on-arxiv",
+          title: '[Hydra: A Navigation World Action Model with Discrete Latent Planning and Continuous Flow-Matching...',
+          description: "",
+          section: "News",},{
+        id: 'social-cv',
+        title: 'CV',
+        section: 'Socials',
+        handler: () => {
+          window.open("/assets/pdf/cv.pdf", "_blank");
+        },
+      },{
+        id: 'social-email',
+        title: 'email',
+        section: 'Socials',
+        handler: () => {
+          window.open("mailto:%6D%6E%61%7A%65%72%69%72@%67%6D%75.%65%64%75", "_blank");
+        },
+      },{
+        id: 'social-rss',
+        title: 'RSS Feed',
+        section: 'Socials',
+        handler: () => {
+          window.open("/feed.xml", "_blank");
+        },
+      },{
+        id: 'social-scholar',
+        title: 'Google Scholar',
+        section: 'Socials',
+        handler: () => {
+          window.open("https://scholar.google.com/citations?user=Luud0jcAAAAJ", "_blank");
+        },
+      },{
+        id: 'social-linkedin',
+        title: 'LinkedIn',
+        section: 'Socials',
+        handler: () => {
+          window.open("https://www.linkedin.com/in/mhnazeri", "_blank");
+        },
+      },{
+      id: 'light-theme',
+      title: 'Change theme to light',
+      description: 'Change the theme of the site to Light',
+      section: 'Theme',
+      handler: () => {
+        setThemeSetting("light");
+      },
+    },
+    {
+      id: 'dark-theme',
+      title: 'Change theme to dark',
+      description: 'Change the theme of the site to Dark',
+      section: 'Theme',
+      handler: () => {
+        setThemeSetting("dark");
+      },
+    },
+    {
+      id: 'system-theme',
+      title: 'Use system default theme',
+      description: 'Change the theme of the site to System Default',
+      section: 'Theme',
+      handler: () => {
+        setThemeSetting("system");
+      },
+    },];
+
+</script> <script src="/assets/al_search/js/shortcut-key.js"></script> </body> </html>
