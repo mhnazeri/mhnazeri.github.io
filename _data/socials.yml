@@ -4,11 +4,10 @@
 # cv_pdf: /assets/pdf/cv.pdf # path to your CV PDF file
 email: mnazerir@gmu.edu # your email address
 # inspirehep_id: # Inspire HEP author ID
-rss_icon: false # comment this line to hide the RSS icon
 scholar_userid: Luud0jcAAAAJ # your Google Scholar ID
 # wechat_qr: # filename of your wechat qr-code saved as an image (e.g., wechat-qr.png if saved to assets/img/wechat-qr.png)
 # whatsapp_number: # your WhatsApp number (full phone number in international format. Omit any zeroes, brackets, or dashes when adding the phone number in international format.)
-# github_username: mhnazeri # your GitHub user name
+github_username: mhnazeri # your GitHub user name
 # gitlab_username: mhnazeri # your GitLab user name
 # twitter_username: # your Twitter handle
 linkedin_username: mhnazeri # your LinkedIn user name
